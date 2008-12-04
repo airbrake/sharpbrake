@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -11,7 +12,6 @@ namespace HopSharp
 		public void Send(Exception e)
 		{
 			HoptoadNotice notice = new HoptoadNotice();
-			notice.ApiKey = "12345678";
 
 			// Set the exception related fields
 			notice.ErrorClass = e.GetType().FullName;
@@ -33,24 +33,42 @@ namespace HopSharp
 
 		public void Send(HoptoadNotice notice)
 		{
-			// Create the web request
-			HttpWebRequest request = WebRequest.Create("http://hoptoadapp.com/notices/") as HttpWebRequest;
-			if (request == null)
-				return;
+			try
+			{
+				// If no API key, get it from the appSettings
+				if (string.IsNullOrEmpty(notice.ApiKey))
+				{
+					// If none is set, just return... throwing an exception is pointless, since one was already thrown!
+					if (string.IsNullOrEmpty(ConfigurationManager.AppSettings["Hoptoad:ApiKey"]))
+						return;
+					notice.ApiKey = ConfigurationManager.AppSettings["Hoptoad:ApiKey"];
+				}
 
-			// Set the basic headers
-			request.ContentType = "application/json";
-			request.Accept = "text/xml, application/xml";
-			request.KeepAlive = false;
+				// Create the web request
+				HttpWebRequest request = WebRequest.Create("http://hoptoadapp.com/notices/") as HttpWebRequest;
+				if (request == null)
+					return;
 
-			// It is important to set the method late... .NET quirk, it will interfere with headers set after
-			request.Method = "POST";
+				// Set the basic headers
+				request.ContentType = "application/json";
+				request.Accept = "text/xml, application/xml";
+				request.KeepAlive = false;
 
-			// Go populate the body
-			SetRequestBody(request, notice);
+				// It is important to set the method late... .NET quirk, it will interfere with headers set after
+				request.Method = "POST";
 
-			// Begin the request, yay async
-			request.BeginGetResponse(RequestCallback, null);
+				// Go populate the body
+				SetRequestBody(request, notice);
+
+				// Begin the request, yay async
+				request.BeginGetResponse(RequestCallback, null);
+			}
+			catch
+			{
+				// Since an exception was already thrown, allowing another one to bubble up is pointless
+				// But we should log it or something
+				// TODO this could be better
+			}
 		}
 
 		private void RequestCallback(IAsyncResult ar)
@@ -67,7 +85,10 @@ namespace HopSharp
 			}
 			catch(WebException e)
 			{
-				Console.WriteLine("." + e.Message +".");
+				// Since an exception was already thrown, allowing another one to bubble up is pointless
+				// But we should log it or something
+				// TODO this could be better
+				Console.WriteLine("." + e.Message + ".");
 				StreamReader sr = new StreamReader(e.Response.GetResponseStream());
 				Console.WriteLine(sr.ReadToEnd());
 				sr.Close();
