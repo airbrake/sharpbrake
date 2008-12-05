@@ -22,9 +22,8 @@ namespace HopSharp
 			HttpContext context = HttpContext.Current;
 			if (context != null)
 			{
-				notice.Environment = context.Request.ServerVariables;
 				notice.Request.Add("params", context.Request.Form);
-				notice.Session = context.Session;
+				notice.SetSession(context.Session);
 			}
 
 			// Send the notice

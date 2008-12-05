@@ -31,7 +31,6 @@ namespace Tests
 			notice.ErrorMessage = "sdlfds";
 			notice.ErrorClass = "sdflshs";
 			notice.Backtrace = "blah1\npoop2";
-			notice.Environment = Environment.GetEnvironmentVariables();
 
 			string json = notice.Serialize();
 

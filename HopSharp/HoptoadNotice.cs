@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Web.SessionState;
 using Newtonsoft.Json;
 
 namespace HopSharp
@@ -9,7 +9,6 @@ namespace HopSharp
 	{
 		public HoptoadNotice()
 		{
-			Environment = new Dictionary<string,string>();
 			Session = new Dictionary<string, object>();
 			Request = new Dictionary<string, object>();
 		}
@@ -23,11 +22,8 @@ namespace HopSharp
 		[JsonProperty("error_message")]
 		public string ErrorMessage { get; set; }
 
-		[JsonProperty("environment")]
-		public IEnumerable Environment { get; set; }
-
 		[JsonProperty("session")]
-		public IEnumerable Session { get; set; }
+		public IDictionary<string, object> Session { get; set; }
 
 		[JsonProperty("request")]
 		public IDictionary<string, object> Request { get; set; }
@@ -35,6 +31,12 @@ namespace HopSharp
 		[JsonProperty("backtrace")]
 		[JsonConverter(typeof(BacktraceConverter))]
 		public string Backtrace { get; set; }
+	
+		public void SetSession(HttpSessionState session)
+		{
+			foreach(string key in session.Keys)
+				Session.Add(key, session[key]);
+		}
 
 		public string Serialize()
 		{
