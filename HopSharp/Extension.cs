@@ -4,7 +4,7 @@ namespace HopSharp
 {
 	public static class Extension
 	{
-		public static void SentToHoptoad(this Exception exception)
+		public static void SendToHoptoad(this Exception exception)
 		{
 			HoptoadClient client = new HoptoadClient();
 			client.Send(exception);
