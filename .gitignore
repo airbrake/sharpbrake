@@ -1,0 +1,11 @@
+bin
+obj
+Log
+*.suo
+*csproj.user
+.*.swp
+*.resharper*
+_ReSharper*
+
+#project-specific
+*.log
