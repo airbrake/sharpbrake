@@ -27,7 +27,7 @@ namespace Tests
 		{
 			HoptoadNotice notice = new HoptoadNotice();
 
-			notice.ApiKey = "12345678";	
+			notice.ApiKey = "12345678";
 			notice.ErrorMessage = "sdlfds";
 			notice.ErrorClass = "sdflshs";
 			notice.Backtrace = "blah1\npoop2";
@@ -35,7 +35,7 @@ namespace Tests
 			string json = notice.Serialize();
 
 			Console.WriteLine(json);
-				Assert.AreEqual("{\"notice\":{\"api_key\":\"12345678\",\"error_class\":\"sdflshs\",\"error_message\":\"sdlfds\",\"session\":{},\"request\":{},\"backtrace\":[\"blah1\",\"poop2\"]}}", json);
+			Assert.AreEqual("{\"notice\":{\"api_key\":\"12345678\",\"error_class\":\"sdflshs\",\"error_message\":\"sdlfds\",\"session\":{},\"request\":{},\"backtrace\":[\"blah1\",\"poop2\"]}}", json);
 		}
 	}
 }
