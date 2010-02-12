@@ -4,6 +4,7 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Web;
+using HopSharp.Serialization;
 
 namespace HopSharp
 {
@@ -11,23 +12,20 @@ namespace HopSharp
 	{
 		public void Send(Exception e)
 		{
-			HoptoadNotice notice = new HoptoadNotice();
+			var notice = new HoptoadNotice();
 
-			// Set the exception related fields
-			notice.ErrorClass = e.GetType().FullName;
-			notice.ErrorMessage = e.GetType().Name + ": " + e.Message;
-			notice.Backtrace = e.StackTrace;
+			var error = new HoptoadError {
+				Class = e.GetType().FullName,
+				Message = e.GetType().Name + ": " + e.Message,
+				Backtrace = new[] { new TraceLine() { File = "unknown.cs", LineNumber = 0, Method = "unknown" } }
+			};
 
-			// If we have an HttpContext, load the environment, request, and session information
-			HttpContext context = HttpContext.Current;
-			if (context != null)
-			{
-				notice.Request.Add("params", context.Request.Form);
-				notice.SetSession(context.Session);
-			}
+			notice.Error = error;
+
+			//TODO: set up request, session and server headers
 
 			// Send the notice
-			Send(notice);
+			this.Send(notice);
 		}
 
 		public void Send(HoptoadNotice notice)
@@ -73,7 +71,7 @@ namespace HopSharp
 		private void RequestCallback(IAsyncResult ar)
 		{
 			// Get it back
-			HttpWebRequest request = ar.AsyncState as HttpWebRequest;
+			var request = ar.AsyncState as HttpWebRequest;
 			if (request == null)
 				return;
 
@@ -82,13 +80,13 @@ namespace HopSharp
 			{
 				request.EndGetResponse(ar);
 			}
-			catch(WebException e)
+			catch (WebException e)
 			{
 				// Since an exception was already thrown, allowing another one to bubble up is pointless
 				// But we should log it or something
 				// TODO this could be better
 				Console.WriteLine("." + e.Message + ".");
-				StreamReader sr = new StreamReader(e.Response.GetResponseStream());
+				var sr = new StreamReader(e.Response.GetResponseStream());
 				Console.WriteLine(sr.ReadToEnd());
 				sr.Close();
 			}
@@ -96,12 +94,13 @@ namespace HopSharp
 
 		private void SetRequestBody(HttpWebRequest request, HoptoadNotice notice)
 		{
-			// Get the bytes
-			byte[] payload = Encoding.UTF8.GetBytes(notice.Serialize());
+			var serializer = new CleanXmlSerializer<HoptoadNotice>();
+			var xml = serializer.ToXml(notice);
+
+			var payload = Encoding.UTF8.GetBytes(xml);
 			request.ContentLength = payload.Length;
 
-			// Get the request stream and write the bytes
-			using (Stream stream = request.GetRequestStream())
+			using (var stream = request.GetRequestStream())
 			{
 				stream.Write(payload, 0, payload.Length);
 				stream.Close();

@@ -2,12 +2,12 @@ using System.IO;
 using System.Text;
 using System.Xml.Serialization;
 using HopSharp;
+using HopSharp.Serialization;
 using NUnit.Framework;
 
 namespace Tests
 {
 	[XmlRoot("notice", Namespace = "")]
-	[XmlType(AnonymousType = true)]
 	public class TestNotice
 	{
 		[XmlElement("api-key")]
@@ -25,8 +25,10 @@ namespace Tests
 		}
 	}
 
+	[TestFixture]
 	public class CleanXmlGeneration
 	{
+		[Test]
 		public void Xml_contains_no_fluff()
 		{
 			var notice = new TestNotice { 

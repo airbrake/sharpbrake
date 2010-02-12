@@ -1,7 +1,7 @@
 using System.IO;
 using System.Xml.Serialization;
 
-namespace HopSharp
+namespace HopSharp.Serialization
 {
 	//Wrap XML serialization and do not generate processing instructions on document start 
 	//as well as xsi and xsd namespace definitions
