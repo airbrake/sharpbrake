@@ -1,0 +1,5 @@
+<appSettings>
+	<add key="Hoptoad:ApiKey" value="CHANGE ME!" />
+	<add key="Hoptoad:Environment" value="dev" />
+</appSettings>
+

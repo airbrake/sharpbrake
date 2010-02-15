@@ -10,17 +10,16 @@ namespace HopSharp
 {
 	public class HoptoadClient
 	{
+		private HoptoadNoticeBuilder builder;
+
+		public HoptoadClient()
+		{
+			this.builder = new HoptoadNoticeBuilder();	
+		}
+
 		public void Send(Exception e)
 		{
-			var notice = new HoptoadNotice();
-
-			var error = new HoptoadError {
-				Class = e.GetType().FullName,
-				Message = e.GetType().Name + ": " + e.Message,
-				Backtrace = new[] { new TraceLine() { File = "unknown.cs", LineNumber = 0, Method = "unknown" } }
-			};
-
-			notice.Error = error;
+			var notice = this.builder.Notice(e);
 
 			//TODO: set up request, session and server headers
 
@@ -38,17 +37,18 @@ namespace HopSharp
 					// If none is set, just return... throwing an exception is pointless, since one was already thrown!
 					if (string.IsNullOrEmpty(ConfigurationManager.AppSettings["Hoptoad:ApiKey"]))
 						return;
-					notice.ApiKey = ConfigurationManager.AppSettings["Hoptoad:ApiKey"];
+
+					notice.ApiKey = this.builder.Configuration.ApiKey;
 				}
 
 				// Create the web request
-				HttpWebRequest request = WebRequest.Create("http://hoptoadapp.com/notices/") as HttpWebRequest;
+				HttpWebRequest request = WebRequest.Create("http://hoptoadapp.com/notifier_api/v2/notices") as HttpWebRequest;
 				if (request == null)
 					return;
 
 				// Set the basic headers
-				request.ContentType = "application/json";
-				request.Accept = "text/xml, application/xml";
+				request.ContentType = "text/xml";
+				request.Accept = "text/xml";
 				request.KeepAlive = false;
 
 				// It is important to set the method late... .NET quirk, it will interfere with headers set after

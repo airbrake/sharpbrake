@@ -20,11 +20,16 @@ namespace HopSharp
 			this.configuration = configuration;
 		}
 
+		public HoptoadConfiguration Configuration
+		{
+			get { return this.configuration; }
+		}
+
 		public HoptoadServerEnvironment ServerEnvironment()
 		{
 			var environment = new HoptoadServerEnvironment { 
-				EnvironmentName = this.configuration.EnvironmentName,
-				ProjectRoot = this.configuration.ProjectRoot
+				EnvironmentName = this.Configuration.EnvironmentName,
+				ProjectRoot = this.Configuration.ProjectRoot
 			};
 			return environment;
 		}
@@ -42,7 +47,7 @@ namespace HopSharp
 		public HoptoadNotice Notice(HoptoadError error)
 		{
 			var notice = new HoptoadNotice { 
-				ApiKey = this.configuration.ApiKey,
+				ApiKey = this.Configuration.ApiKey,
 				Error = error,
 				Notifier = this.Notifier(),
 				ServerEnvironment = this.ServerEnvironment(),
@@ -53,7 +58,7 @@ namespace HopSharp
 		public HoptoadNotice Notice(Exception exception)
 		{
 			var notice = new HoptoadNotice { 
-				ApiKey = this.configuration.ApiKey,
+				ApiKey = this.Configuration.ApiKey,
 				Error = this.ErrorFromException(exception),
 				Notifier = this.Notifier(),
 				ServerEnvironment = this.ServerEnvironment(),
