@@ -52,6 +52,7 @@
     <Compile Include="ErrorSchemaValidation.cs" />
     <Compile Include="HoptoadValidator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="NoticeComponentsCreation.cs" />
     <Compile Include="XmlGeneration.cs" />
   </ItemGroup>
   <ItemGroup>

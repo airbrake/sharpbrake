@@ -55,6 +55,8 @@
   <ItemGroup>
     <Compile Include="Extension.cs" />
     <Compile Include="HoptoadClient.cs" />
+    <Compile Include="HoptoadConfiguration.cs" />
+    <Compile Include="HoptoadNoticeBuilder.cs" />
     <Compile Include="Serialization\HoptoadError.cs" />
     <Compile Include="Serialization\HoptoadNotice.cs" />
     <Compile Include="Serialization\HoptoadNotifier.cs" />
