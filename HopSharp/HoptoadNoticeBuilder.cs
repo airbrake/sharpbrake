@@ -1,4 +1,7 @@
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
 using HopSharp.Serialization;
 
@@ -45,6 +48,51 @@ namespace HopSharp
 				ServerEnvironment = this.ServerEnvironment(),
 			};
 			return notice;
+		}
+
+		public HoptoadNotice Notice(Exception exception)
+		{
+			var notice = new HoptoadNotice { 
+				ApiKey = this.configuration.ApiKey,
+				Error = this.ErrorFromException(exception),
+				Notifier = this.Notifier(),
+				ServerEnvironment = this.ServerEnvironment(),
+			};
+			return notice;
+		}
+
+		public HoptoadError ErrorFromException(Exception exception)
+		{
+			var error = new HoptoadError { 
+				Class = exception.GetType().FullName,
+				Message = exception.GetType().Name + ": " + exception.Message,
+				Backtrace = this.BuildBacktrace(exception).ToArray(),
+			};
+			return error;
+		}
+
+		private IEnumerable<TraceLine> BuildBacktrace(Exception exception)
+		{
+			var stackTrace = new StackTrace(exception);
+			var frames = stackTrace.GetFrames();
+			foreach (var frame in frames)
+			{
+				var method = frame.GetMethod();
+
+				var lineNumber = frame.GetFileLineNumber();
+				if (lineNumber == 0)
+					lineNumber = frame.GetILOffset();
+
+				var file = frame.GetFileName();
+				if (string.IsNullOrEmpty(file))
+					file = method.ReflectedType.FullName;
+
+				yield return new TraceLine { 
+					File = file,
+					LineNumber = lineNumber,
+					Method = method.Name
+				};
+			}
 		}
 	}
 }

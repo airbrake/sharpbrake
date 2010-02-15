@@ -1,3 +1,4 @@
+using System;
 using HopSharp;
 using HopSharp.Serialization;
 using NUnit.Framework;
@@ -39,11 +40,32 @@ namespace Tests
 		[Test]
 		public void Notice_contains_ServerEnvironment_and_Notifier()
 		{
-			var notice = this.builder.Notice(null);
+			var notice = this.builder.Notice((HoptoadError) null);
 			Assert.IsNotNull(notice.ServerEnvironment);
 			Assert.IsNotNull(notice.Notifier);
 			Assert.IsNotEmpty(notice.ApiKey);
 			Assert.IsNotEmpty(notice.Version);
+		}
+
+		[Test]
+		public void Building_error_from_dotNET_exception()
+		{
+			Exception exception = null;
+			try
+			{
+				throw new InvalidOperationException("test error");
+			}
+			catch (Exception testException)
+			{
+				exception = testException;
+			}
+
+			var error = this.builder.ErrorFromException(exception);
+			Assert.AreNotEqual(0, error.Backtrace.Length);
+			
+			var trace = error.Backtrace[0];
+			Assert.AreEqual("Building_error_from_dotNET_exception", trace.Method);
+			Assert.AreNotEqual(0, trace.LineNumber);
 		}
 	}
 }
