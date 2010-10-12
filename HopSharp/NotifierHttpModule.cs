@@ -3,22 +3,28 @@ using System.Web;
 
 namespace HopSharp
 {
-	public class NotifierHttpModule : IHttpModule
-	{
-		public void Init(HttpApplication context)
-		{
-			context.Error += new EventHandler(context_Error);
-		}
+    public class NotifierHttpModule : IHttpModule
+    {
+        #region IHttpModule Members
 
-		void context_Error(object sender, EventArgs e)
-		{
-			HttpApplication application = (HttpApplication)sender;
-			HoptoadClient client = new HoptoadClient();
+        public void Init(HttpApplication context)
+        {
+            context.Error += ContextError;
+        }
 
-			Exception exception = application.Server.GetLastError();
-			client.Send(exception);
-		}
+        public void Dispose()
+        {
+        }
 
-		public void Dispose()  { }
-	}
+        #endregion
+
+        private static void ContextError(object sender, EventArgs e)
+        {
+            var application = (HttpApplication) sender;
+
+            Exception exception = application.Server.GetLastError();
+            if (!(exception is HttpException) || ((HttpException) exception).GetHttpCode() != 404)
+                exception.SendToHoptoad();
+        }
+    }
 }

@@ -5,6 +5,7 @@ Log
 *csproj.user
 .*.swp
 *.resharper*
+*.ReSharper*
 _ReSharper*
 
 #project-specific
