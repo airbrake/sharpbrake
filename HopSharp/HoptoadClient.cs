@@ -3,35 +3,57 @@ using System.Configuration;
 using System.IO;
 using System.Net;
 using System.Text;
+
+using Common.Logging;
+
 using HopSharp.Serialization;
 
 namespace HopSharp
 {
+   /// <summary>
+   /// The client responsible for communicating exceptions to the HopToad service.
+   /// </summary>
     public class HoptoadClient
     {
         private readonly HoptoadNoticeBuilder _builder;
+        private readonly ILog _log;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HoptoadClient"/> class.
+        /// </summary>
         public HoptoadClient()
         {
             _builder = new HoptoadNoticeBuilder();
+            _log = LogManager.GetCurrentClassLogger();
         }
 
-        public void Send(Exception e)
+        /// <summary>
+        /// Sends the specified exception to HopToad.
+        /// </summary>
+        /// <param name="exception">The e.</param>
+        public void Send(Exception exception)
         {
-            HoptoadNotice notice = _builder.Notice(e);
+            HoptoadNotice notice = _builder.Notice(exception);
 
             //TODO: set up request, session and server headers
+            // Why would that be necessary, it's set in Send(HoptoadNotice), isn't it? - @asbjornu
 
             // Send the notice
             Send(notice);
         }
 
+        /// <summary>
+        /// Sends the specified notice to HopToad.
+        /// </summary>
+        /// <param name="notice">The notice.</param>
         public void Send(HoptoadNotice notice)
         {
+            _log.DebugFormat("{0}.Send({1})", GetType(), notice);
+
             try
             {
                 // If no API key, get it from the appSettings
-                if (string.IsNullOrEmpty(notice.ApiKey))
+                if (String.IsNullOrEmpty(notice.ApiKey))
                 {
                     // If none is set, just return... throwing an exception is pointless, since one was already thrown!
                     if (string.IsNullOrEmpty(ConfigurationManager.AppSettings["Hoptoad:ApiKey"]))
@@ -42,6 +64,7 @@ namespace HopSharp
 
                 // Create the web request
                 var request = WebRequest.Create("http://hoptoadapp.com/notifier_api/v2/notices") as HttpWebRequest;
+                
                 if (request == null)
                     return;
 
@@ -61,34 +84,43 @@ namespace HopSharp
             }
             catch (Exception exception)
             {
-
+                _log.Fatal("An error occurred while trying to send to HopToad.", exception);
             }
         }
 
-        private static void RequestCallback(IAsyncResult ar)
+        private void RequestCallback(IAsyncResult ar)
         {
+           _log.DebugFormat("{0}.RequestCallback({1})", GetType(), ar);
+           
             // Get it back
             var request = ar.AsyncState as HttpWebRequest;
+
             if (request == null)
+            {
+                _log.FatalFormat("{0}.AsyncState was null or not of type {1}.", ar.AsyncState, typeof(HttpWebRequest));
                 return;
+            }
 
             // We want to swallow any error responses
             try
             {
                 request.EndGetResponse(ar);
             }
-            catch (WebException e)
+            catch (WebException exception)
             {
                 // Since an exception was already thrown, allowing another one to bubble up is pointless
                 // But we should log it or something
-                // TODO this could be better
-                Console.WriteLine("." + e.Message + ".");
-                var responseStream = e.Response.GetResponseStream();
-                if (responseStream != null)
+                _log.Fatal("An error occurred while retrieving the web response", exception);
+
+                using (var responseStream = exception.Response.GetResponseStream())
                 {
-                    var sr = new StreamReader(responseStream);
-                    Console.WriteLine(sr.ReadToEnd());
-                    sr.Close();
+                   if (responseStream == null)
+                       return;
+
+                   using (var sr = new StreamReader(responseStream))
+                   {
+                      _log.Debug(sr.ReadToEnd());
+                   }
                 }
             }
         }
@@ -104,7 +136,6 @@ namespace HopSharp
             using (Stream stream = request.GetRequestStream())
             {
                 stream.Write(payload, 0, payload.Length);
-                stream.Close();
             }
         }
     }

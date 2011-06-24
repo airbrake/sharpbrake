@@ -30,6 +30,7 @@ namespace Tests
         public void Building_error_from_dotNET_exception()
         {
             Exception exception;
+
             try
             {
                 throw new InvalidOperationException("test error");
@@ -60,7 +61,7 @@ namespace Tests
         [Test]
         public void Notifier_initialized_correctly()
         {
-            HoptoadNotifier notifier = _builder.Notifier();
+            HoptoadNotifier notifier = _builder.Notifier;
             Assert.AreEqual("hopsharp", notifier.Name);
             Assert.AreEqual("http://github.com/krobertson/hopsharp", notifier.Url);
             Assert.AreEqual("2.0.0.0", notifier.Version);
@@ -69,7 +70,7 @@ namespace Tests
         [Test]
         public void Server_environment_read_from_Hoptoad_config()
         {
-            HoptoadServerEnvironment environment = _builder.ServerEnvironment();
+            HoptoadServerEnvironment environment = _builder.ServerEnvironment;
             Assert.AreEqual(_config.EnvironmentName, environment.EnvironmentName);
         }
     }
