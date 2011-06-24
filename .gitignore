@@ -11,3 +11,4 @@ _ReSharper*
 #project-specific
 *.log
 Hoptoad.config
+/*.docstates

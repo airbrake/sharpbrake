@@ -1,11 +1,11 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HopSharp", "HopSharp\HopSharp.csproj", "{EE7CE02E-3CA9-4D01-8D57-E98911466B44}"
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HopSharp.2010", "HopSharp\HopSharp.2010.csproj", "{EE7CE02E-3CA9-4D01-8D57-E98911466B44}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{9D9863D8-EDB6-4B34-94C1-3894B00EBF97}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.2010", "Tests\Tests.2010.csproj", "{9D9863D8-EDB6-4B34-94C1-3894B00EBF97}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleWeb", "SampleWeb\SampleWeb.csproj", "{91EFAC45-916F-46D5-B96D-5C7F186DE3CE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleWeb.2010", "SampleWeb\SampleWeb.2010.csproj", "{91EFAC45-916F-46D5-B96D-5C7F186DE3CE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

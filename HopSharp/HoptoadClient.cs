@@ -59,13 +59,9 @@ namespace HopSharp
                 // Begin the request, yay async
                 request.BeginGetResponse(RequestCallback, null);
             }
-// ReSharper disable EmptyGeneralCatchClause
-            catch
-// ReSharper restore EmptyGeneralCatchClause
+            catch (Exception exception)
             {
-                // Since an exception was already thrown, allowing another one to bubble up is pointless
-                // But we should log it or something
-                // TODO this could be better
+
             }
         }
 
