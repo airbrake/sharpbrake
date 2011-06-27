@@ -57,11 +57,12 @@
     <Compile Include="RequestEndEventArgs.cs" />
     <Compile Include="RequestEndEventHandler.cs" />
     <Compile Include="Serialization\HoptoadError.cs" />
-    <Compile Include="Serialization\HoptoadResponse.cs" />
+    <Compile Include="HoptoadResponse.cs" />
     <Compile Include="Serialization\HoptoadNotice.cs" />
     <Compile Include="Serialization\HoptoadNotifier.cs" />
     <Compile Include="Serialization\HoptoadRequest.cs" />
     <Compile Include="Serialization\HoptoadResponseError.cs" />
+    <Compile Include="Serialization\HoptoadResponseNotice.cs" />
     <Compile Include="Serialization\HoptoadServerEnvironment.cs" />
     <Compile Include="NotifierHttpModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
