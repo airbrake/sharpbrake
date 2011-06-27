@@ -1,19 +1,20 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Xml;
-using System.Xml.Schema;
-using System.Xml.Serialization;
 
-namespace HopSharp.Serialization
+using Common.Logging;
+
+using HopSharp.Serialization;
+
+namespace HopSharp
 {
    /// <summary>
    /// The response retreived from HopToad.
    /// </summary>
-   [Serializable]
-   [XmlRoot("errors")]
-   public class HoptoadResponse : IXmlSerializable
+   public class HoptoadResponse
    {
       private readonly string content;
       private readonly long contentLength;
@@ -21,17 +22,9 @@ namespace HopSharp.Serialization
       private readonly WebHeaderCollection headers;
       private readonly bool isFromCache;
       private readonly bool isMutuallyAuthenticated;
+      private readonly ILog log;
       private readonly Uri responseUri;
       private HoptoadResponseError[] errors;
-
-
-      /// <summary>
-      /// Initializes a new instance of the <see cref="HoptoadResponse"/> class.
-      /// </summary>
-      [Obsolete("Don't use. For serialization only.", true)]
-      public HoptoadResponse()
-      {
-      }
 
 
       /// <summary>
@@ -41,6 +34,7 @@ namespace HopSharp.Serialization
       /// <param name="content">The content.</param>
       public HoptoadResponse(WebResponse response, string content)
       {
+         this.log = LogManager.GetCurrentClassLogger();
          this.content = content;
          this.errors = new HoptoadResponseError[0];
 
@@ -56,18 +50,21 @@ namespace HopSharp.Serialization
             this.responseUri = response.TryGet(x => x.ResponseUri);
          }
 
-         var serializer = new CleanXmlSerializer<HoptoadResponse>();
-         var hoptoadResponse = serializer.FromXml(content);
-
-         if (hoptoadResponse != null)
-            this.errors = hoptoadResponse.Errors;
+         try
+         {
+            Deserialize(content);
+         }
+         catch (Exception exception)
+         {
+            this.log.FatalFormat(
+               "An error occurred while deserializing the following content:\n{0}", exception, content);
+         }
       }
 
 
       /// <summary>
       /// Gets the content.
       /// </summary>
-      [XmlIgnore]
       public string Content
       {
          get { return this.content; }
@@ -79,7 +76,6 @@ namespace HopSharp.Serialization
       /// <value>
       /// The length of the content.
       /// </value>
-      [XmlIgnore]
       public long ContentLength
       {
          get { return this.contentLength; }
@@ -91,7 +87,6 @@ namespace HopSharp.Serialization
       /// <value>
       /// The type of the content.
       /// </value>
-      [XmlIgnore]
       public string ContentType
       {
          get { return this.contentType; }
@@ -100,8 +95,6 @@ namespace HopSharp.Serialization
       /// <summary>
       /// Gets the errors.
       /// </summary>
-      [XmlArray("errors")]
-      [XmlArrayItem("error")]
       public HoptoadResponseError[] Errors
       {
          get { return this.errors; }
@@ -110,7 +103,6 @@ namespace HopSharp.Serialization
       /// <summary>
       /// Gets the headers.
       /// </summary>
-      [XmlIgnore]
       public WebHeaderCollection Headers
       {
          get { return this.headers; }
@@ -122,7 +114,6 @@ namespace HopSharp.Serialization
       /// <value>
       /// 	<c>true</c> if this instance is from cache; otherwise, <c>false</c>.
       /// </value>
-      [XmlIgnore]
       public bool IsFromCache
       {
          get { return this.isFromCache; }
@@ -134,53 +125,22 @@ namespace HopSharp.Serialization
       /// <value>
       /// 	<c>true</c> if this instance is mutually authenticated; otherwise, <c>false</c>.
       /// </value>
-      [XmlIgnore]
       public bool IsMutuallyAuthenticated
       {
          get { return this.isMutuallyAuthenticated; }
       }
 
       /// <summary>
+      /// Gets the notice returned from Hoptoad.
+      /// </summary>
+      public HoptoadResponseNotice Notice { get; private set; }
+
+      /// <summary>
       /// Gets the response URI.
       /// </summary>
-      [XmlIgnore]
       public Uri ResponseUri
       {
          get { return this.responseUri; }
-      }
-
-
-      /// <summary>
-      /// This method is reserved and should not be used. When implementing the IXmlSerializable interface, you should return null (Nothing in Visual Basic) from this method, and instead, if specifying a custom schema is required, apply the <see cref="T:System.Xml.Serialization.XmlSchemaProviderAttribute"/> to the class.
-      /// </summary>
-      /// <returns>
-      /// An <see cref="T:System.Xml.Schema.XmlSchema"/> that describes the XML representation of the object that is produced by the <see cref="M:System.Xml.Serialization.IXmlSerializable.WriteXml(System.Xml.XmlWriter)"/> method and consumed by the <see cref="M:System.Xml.Serialization.IXmlSerializable.ReadXml(System.Xml.XmlReader)"/> method.
-      /// </returns>
-      public XmlSchema GetSchema()
-      {
-         return null;
-      }
-
-
-      /// <summary>
-      /// Generates an object from its XML representation.
-      /// </summary>
-      /// <param name="reader">The <see cref="T:System.Xml.XmlReader"/> stream from which the object is deserialized. 
-      ///                 </param>
-      public void ReadXml(XmlReader reader)
-      {
-         this.errors = BuildErrorsFrom(reader).ToArray();
-      }
-
-
-      /// <summary>
-      /// Converts an object into its XML representation.
-      /// </summary>
-      /// <param name="writer">The <see cref="T:System.Xml.XmlWriter"/> stream to which the object is serialized. 
-      ///                 </param>
-      public void WriteXml(XmlWriter writer)
-      {
-         // We're never going to serialize the response from HopToad, only deserialize, so only ReadXml is implemented.
       }
 
 
@@ -194,6 +154,67 @@ namespace HopSharp.Serialization
                   if (reader.LocalName == "error")
                      yield return new HoptoadResponseError(reader.ReadElementContentAsString());
                   break;
+            }
+         }
+      }
+
+
+      private static HoptoadResponseNotice BuildNoticeFrom(XmlReader reader)
+      {
+         int id = 0;
+         int errorId = 0;
+         string url = null;
+
+         while (reader.Read())
+         {
+            switch (reader.NodeType)
+            {
+               case XmlNodeType.Element:
+                  switch (reader.LocalName)
+                  {
+                     case "id":
+                        id = reader.ReadElementContentAsInt();
+                        break;
+
+                     case "error-id":
+                        errorId = reader.ReadElementContentAsInt();
+                        break;
+
+                     case "url":
+                        url = reader.ReadElementContentAsString();
+                        break;
+                  }
+                  break;
+            }
+         }
+
+         return new HoptoadResponseNotice
+         {
+            Id = id,
+            ErrorId = errorId,
+            Url = url,
+         };
+      }
+
+
+      private void Deserialize(string xml)
+      {
+         using (var stringReader = new StringReader(xml))
+         {
+            using (var reader = XmlReader.Create(stringReader))
+            {
+               reader.MoveToContent();
+
+               switch (reader.LocalName)
+               {
+                  case "errors":
+                     this.errors = BuildErrorsFrom(reader).ToArray();
+                     break;
+
+                  case "notice":
+                     Notice = BuildNoticeFrom(reader);
+                     break;
+               }
             }
          }
       }

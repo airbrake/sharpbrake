@@ -44,18 +44,6 @@ namespace HopSharp.Serialization
             }
         }
 
-       public TRoot FromXml(string xml)
-       {
-          using (var reader = new StringReader(xml))
-          using (var xmlReader = XmlReader.Create(reader))
-          {
-             if (!_serializer.CanDeserialize(xmlReader))
-                return default(TRoot);
-
-             return (TRoot)_serializer.Deserialize(xmlReader);
-          }
-       }
-
         #region Nested type: XmlTextWriterFormattedNoDeclaration
 
         private class XmlTextWriterFormattedNoDeclaration : XmlTextWriter
