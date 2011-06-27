@@ -55,6 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ErrorSchemaValidation.cs" />
+    <Compile Include="HoptoadClientTests.cs" />
     <Compile Include="HoptoadValidator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="NoticeComponentsCreation.cs" />
