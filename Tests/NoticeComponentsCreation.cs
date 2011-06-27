@@ -43,7 +43,7 @@ namespace Tests
             HoptoadError error = _builder.ErrorFromException(exception);
             Assert.AreNotEqual(0, error.Backtrace.Length);
 
-            TraceLine trace = error.Backtrace[0];
+            HoptoadTraceLine trace = error.Backtrace[0];
             Assert.AreEqual("Building_error_from_dotNET_exception", trace.Method);
             Assert.AreNotEqual(0, trace.LineNumber);
         }
@@ -64,7 +64,7 @@ namespace Tests
             HoptoadNotifier notifier = _builder.Notifier;
             Assert.AreEqual("hopsharp", notifier.Name);
             Assert.AreEqual("http://github.com/krobertson/hopsharp", notifier.Url);
-            Assert.AreEqual("2.0.0.0", notifier.Version);
+            Assert.AreEqual("2.1.0.0", notifier.Version);
         }
 
         [Test]

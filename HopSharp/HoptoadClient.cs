@@ -11,13 +11,14 @@ using HopSharp.Serialization;
 namespace HopSharp
 {
    /// <summary>
-   /// The client responsible for communicating exceptions to the HopToad service.
+   /// The client responsible for communicating exceptions to the Hoptoad service.
    /// </summary>
     public class HoptoadClient
     {
+        const string hoptoadUri = "http://hoptoadapp.com/notifier_api/v2/notices";
         private readonly HoptoadNoticeBuilder _builder;
         private readonly ILog _log;
-
+        
         /// <summary>
         /// Initializes a new instance of the <see cref="HoptoadClient"/> class.
         /// </summary>
@@ -27,8 +28,15 @@ namespace HopSharp
             _log = LogManager.GetCurrentClassLogger();
         }
 
+
         /// <summary>
-        /// Sends the specified exception to HopToad.
+        /// Occurs when the request ends.
+        /// </summary>
+        public event RequestEndEventHandler RequestEnd;
+
+
+        /// <summary>
+        /// Sends the specified exception to Hoptoad.
         /// </summary>
         /// <param name="exception">The e.</param>
         public void Send(Exception exception)
@@ -41,9 +49,10 @@ namespace HopSharp
             // Send the notice
             Send(notice);
         }
+       
 
         /// <summary>
-        /// Sends the specified notice to HopToad.
+        /// Sends the specified notice to Hoptoad.
         /// </summary>
         /// <param name="notice">The notice.</param>
         public void Send(HoptoadNotice notice)
@@ -56,17 +65,23 @@ namespace HopSharp
                 if (String.IsNullOrEmpty(notice.ApiKey))
                 {
                     // If none is set, just return... throwing an exception is pointless, since one was already thrown!
-                    if (string.IsNullOrEmpty(ConfigurationManager.AppSettings["Hoptoad:ApiKey"]))
+                    if (String.IsNullOrEmpty(ConfigurationManager.AppSettings["Hoptoad:ApiKey"]))
+                    {
+                        _log.Fatal("No 'Hoptoad:ApiKey' found. Please define one in AppSettings.");
                         return;
+                    }
 
-                    notice.ApiKey = _builder.Configuration.ApiKey;
+                   notice.ApiKey = _builder.Configuration.ApiKey;
                 }
 
                 // Create the web request
-                var request = WebRequest.Create("http://hoptoadapp.com/notifier_api/v2/notices") as HttpWebRequest;
-                
+                var request = WebRequest.Create(hoptoadUri) as HttpWebRequest;
+
                 if (request == null)
+                {
+                    _log.FatalFormat("Couldn't create a request to '{0}'.", hoptoadUri);
                     return;
+                }
 
                 // Set the basic headers
                 request.ContentType = "text/xml";
@@ -80,13 +95,38 @@ namespace HopSharp
                 SetRequestBody(request, notice);
 
                 // Begin the request, yay async
-                request.BeginGetResponse(RequestCallback, null);
+                request.BeginGetResponse(RequestCallback, request);
             }
             catch (Exception exception)
             {
-                _log.Fatal("An error occurred while trying to send to HopToad.", exception);
+                _log.Fatal("An error occurred while trying to send to Hoptoad.", exception);
             }
         }
+
+
+        private void OnRequestEnd(WebRequest request, WebResponse response)
+        {
+           string responseBody;
+
+           using (var responseStream = response.GetResponseStream())
+           {
+              if (responseStream == null)
+                 return;
+
+              using (var sr = new StreamReader(responseStream))
+              {
+                 responseBody = sr.ReadToEnd();
+                 _log.DebugFormat("Received from Hoptoad:\n{0}", responseBody);
+              }
+           }
+
+           if (RequestEnd != null)
+           {
+              RequestEndEventArgs e = new RequestEndEventArgs(request, response, responseBody);
+              RequestEnd(this, e);
+           }
+        }
+
 
         private void RequestCallback(IAsyncResult ar)
         {
@@ -97,38 +137,33 @@ namespace HopSharp
 
             if (request == null)
             {
-                _log.FatalFormat("{0}.AsyncState was null or not of type {1}.", ar.AsyncState, typeof(HttpWebRequest));
+                _log.FatalFormat("{0}.AsyncState was null or not of type {1}.", typeof(IAsyncResult), typeof(HttpWebRequest));
                 return;
             }
+
+            WebResponse response;
 
             // We want to swallow any error responses
             try
             {
-                request.EndGetResponse(ar);
+                response = request.EndGetResponse(ar);
             }
             catch (WebException exception)
             {
                 // Since an exception was already thrown, allowing another one to bubble up is pointless
-                // But we should log it or something
                 _log.Fatal("An error occurred while retrieving the web response", exception);
-
-                using (var responseStream = exception.Response.GetResponseStream())
-                {
-                   if (responseStream == null)
-                       return;
-
-                   using (var sr = new StreamReader(responseStream))
-                   {
-                      _log.Debug(sr.ReadToEnd());
-                   }
-                }
+                response = exception.Response;
             }
+
+            OnRequestEnd(request, response);
         }
 
-        private static void SetRequestBody(WebRequest request, HoptoadNotice notice)
+        private void SetRequestBody(WebRequest request, HoptoadNotice notice)
         {
             var serializer = new CleanXmlSerializer<HoptoadNotice>();
             string xml = serializer.ToXml(notice);
+
+            _log.DebugFormat("Sending the following to '{0}':\n{1}", request.RequestUri, xml);
 
             byte[] payload = Encoding.UTF8.GetBytes(xml);
             request.ContentLength = payload.Length;

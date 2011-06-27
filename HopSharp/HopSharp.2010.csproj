@@ -50,18 +50,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Extension.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="HoptoadClient.cs" />
     <Compile Include="HoptoadConfiguration.cs" />
     <Compile Include="HoptoadNoticeBuilder.cs" />
+    <Compile Include="RequestEndEventArgs.cs" />
+    <Compile Include="RequestEndEventHandler.cs" />
     <Compile Include="Serialization\HoptoadError.cs" />
+    <Compile Include="Serialization\HoptoadResponse.cs" />
     <Compile Include="Serialization\HoptoadNotice.cs" />
     <Compile Include="Serialization\HoptoadNotifier.cs" />
+    <Compile Include="Serialization\HoptoadRequest.cs" />
+    <Compile Include="Serialization\HoptoadResponseError.cs" />
     <Compile Include="Serialization\HoptoadServerEnvironment.cs" />
     <Compile Include="NotifierHttpModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serialization\CleanXmlSerializer.cs" />
-    <Compile Include="Serialization\TraceLine.cs" />
+    <Compile Include="Serialization\HoptoadTraceLine.cs" />
+    <Compile Include="Serialization\HoptoadVar.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\hoptoad_2_0.xsd">

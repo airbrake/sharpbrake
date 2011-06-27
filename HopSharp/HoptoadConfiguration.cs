@@ -5,7 +5,7 @@ using System.Web;
 namespace HopSharp
 {
    /// <summary>
-   /// Configuration class for HopToad.
+   /// Configuration class for Hoptoad.
    /// </summary>
     public class HoptoadConfiguration
     {
@@ -24,8 +24,12 @@ namespace HopSharp
 
 
         /// <summary>
-        /// Gets or sets the project root.
+        /// Gets or sets the project root. By default set to  <see cref="HttpRequest.ApplicationPath"/>
+        /// if <see cref="HttpContext.Current"/> is not null, else <see cref="Environment.CurrentDirectory"/>. 
         /// </summary>
+        /// <remarks>
+        /// Only set this if you need to override the default project root.
+        /// </remarks>
         /// <value>
         /// The project root.
         /// </value>

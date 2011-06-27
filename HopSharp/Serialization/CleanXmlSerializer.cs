@@ -12,6 +12,7 @@ namespace HopSharp.Serialization
     public class CleanXmlSerializer<TRoot>
     {
         private readonly XmlSerializerNamespaces _namespaces;
+        private readonly XmlSerializer _serializer;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CleanXmlSerializer&lt;TRoot&gt;"/> class.
@@ -23,6 +24,7 @@ namespace HopSharp.Serialization
 
             //Add an empty namespace and empty value
             _namespaces.Add("", "");
+            _serializer = new XmlSerializer(typeof(TRoot));
         }
 
         /// <summary>
@@ -37,11 +39,22 @@ namespace HopSharp.Serialization
             using (var writer = new StringWriter())
             using (var xmlWriter = new XmlTextWriterFormattedNoDeclaration(writer))
             {
-               var serializer = new XmlSerializer(typeof(TRoot));
-               serializer.Serialize(xmlWriter, source, _namespaces);
+               this._serializer.Serialize(xmlWriter, source, _namespaces);
                return writer.ToString();
             }
         }
+
+       public TRoot FromXml(string xml)
+       {
+          using (var reader = new StringReader(xml))
+          using (var xmlReader = XmlReader.Create(reader))
+          {
+             if (!_serializer.CanDeserialize(xmlReader))
+                return default(TRoot);
+
+             return (TRoot)_serializer.Deserialize(xmlReader);
+          }
+       }
 
         #region Nested type: XmlTextWriterFormattedNoDeclaration
 

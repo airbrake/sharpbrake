@@ -17,7 +17,7 @@ namespace Tests
                                    Message = "something blew up",
                                    Backtrace = new[]
                                                    {
-                                                       new TraceLine {File = "unknown.cs", LineNumber = 0, Method = "unknown"}
+                                                       new HoptoadTraceLine ("unknown.cs", 0) { Method = "unknown"}
                                                    }
                                };
             notice.Notifier = new HoptoadNotifier
@@ -26,10 +26,9 @@ namespace Tests
                                       Version = "2.0",
                                       Url = "http://github.com/krobertson/hopsharp"
                                   };
-            notice.ServerEnvironment = new HoptoadServerEnvironment
+            notice.ServerEnvironment = new HoptoadServerEnvironment("staging")
                                            {
                                                ProjectRoot = "/test",
-                                               EnvironmentName = "staging"
                                            };
 
             var serializer = new CleanXmlSerializer<HoptoadNotice>();

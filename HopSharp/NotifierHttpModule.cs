@@ -4,7 +4,7 @@ using System.Web;
 namespace HopSharp
 {
    /// <summary>
-   /// The <see cref="IHttpModule"/> that notifies HopToad of unhandled exceptions in the application.
+   /// The <see cref="IHttpModule"/> that notifies Hoptoad of unhandled exceptions in the application.
    /// </summary>
     public class NotifierHttpModule : IHttpModule
     {
@@ -29,7 +29,7 @@ namespace HopSharp
         #endregion
 
         /// <summary>
-        /// Notifies HopToad of the unhandled application error that occurred.
+        /// Notifies Hoptoad of the unhandled application error that occurred.
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
