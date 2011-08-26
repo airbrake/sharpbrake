@@ -39,7 +39,7 @@ namespace SharpBrake
             throw new ArgumentNullException("configuration");
 
          _configuration = configuration;
-         _log = LogManager.GetCurrentClassLogger();
+      	_log = LogManager.GetLogger(GetType());
       }
 
 

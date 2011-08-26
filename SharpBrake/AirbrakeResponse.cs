@@ -34,7 +34,7 @@ namespace SharpBrake
       /// <param name="content">The content.</param>
       public AirbrakeResponse(WebResponse response, string content)
       {
-         this.log = LogManager.GetCurrentClassLogger();
+         this.log = LogManager.GetLogger(GetType());
          this.content = content;
          this.errors = new AirbrakeResponseError[0];
 
