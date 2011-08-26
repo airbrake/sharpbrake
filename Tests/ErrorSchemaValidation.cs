@@ -1,4 +1,4 @@
-using HopSharp.Serialization;
+using SharpBrake.Serialization;
 using NUnit.Framework;
 
 namespace Tests
@@ -9,32 +9,32 @@ namespace Tests
         [Test]
         public void Minimal_notice_generates_valid_XML()
         {
-            var notice = new HoptoadNotice();
+            var notice = new AirbrakeNotice();
             notice.ApiKey = "123456";
-            notice.Error = new HoptoadError
+            notice.Error = new AirbrakeError
                                {
                                    Class = "TestError",
                                    Message = "something blew up",
                                    Backtrace = new[]
                                                    {
-                                                       new HoptoadTraceLine ("unknown.cs", 0) { Method = "unknown"}
+                                                       new AirbrakeTraceLine ("unknown.cs", 0) { Method = "unknown"}
                                                    }
                                };
-            notice.Notifier = new HoptoadNotifier
+            notice.Notifier = new AirbrakeNotifier
                                   {
                                       Name = "hopsharp",
                                       Version = "2.0",
                                       Url = "http://github.com/krobertson/hopsharp"
                                   };
-            notice.ServerEnvironment = new HoptoadServerEnvironment("staging")
+            notice.ServerEnvironment = new AirbrakeServerEnvironment("staging")
                                            {
                                                ProjectRoot = "/test",
                                            };
 
-            var serializer = new CleanXmlSerializer<HoptoadNotice>();
+            var serializer = new CleanXmlSerializer<AirbrakeNotice>();
             string xml = serializer.ToXml(notice);
 
-            HoptoadValidator.ValidateSchema(xml);
+            AirbrakeValidator.ValidateSchema(xml);
         }
     }
 }

@@ -1,29 +1,29 @@
 using System;
 using System.Xml.Serialization;
 
-namespace HopSharp.Serialization
+namespace SharpBrake.Serialization
 {
    /// <summary>
    /// The params, session, and cgi-data elements can contain one or more var elements for each parameter or variable that was set when the error occurred. Each var element should have a @key attribute for the name of the variable, and element text content for the value of the variable.
    /// </summary>
    [XmlRoot("var")]
-   public class HoptoadVar
+   public class AirbrakeVar
    {
       /// <summary>
-      /// Initializes a new instance of the <see cref="HoptoadVar"/> class.
+      /// Initializes a new instance of the <see cref="AirbrakeVar"/> class.
       /// </summary>
       [Obsolete("Don't use. Only for serialization.", true)]
-      public HoptoadVar()
+      public AirbrakeVar()
       {
       }
 
 
       /// <summary>
-      /// Initializes a new instance of the <see cref="HoptoadVar"/> class.
+      /// Initializes a new instance of the <see cref="AirbrakeVar"/> class.
       /// </summary>
       /// <param name="key">The key.</param>
       /// <param name="value">The value.</param>
-      public HoptoadVar(string key, string value)
+      public AirbrakeVar(string key, string value)
       {
          Key = key;
          Value = value;

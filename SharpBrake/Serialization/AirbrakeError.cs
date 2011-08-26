@@ -1,13 +1,13 @@
 using System;
 using System.Xml.Serialization;
 
-namespace HopSharp.Serialization
+namespace SharpBrake.Serialization
 {
    /// <summary>
-   /// Represents the Hoptoad "error" element.
+   /// Represents the Airbrake "error" element.
    /// </summary>
-   [XmlInclude(typeof(HoptoadTraceLine))]
-   public class HoptoadError
+   [XmlInclude(typeof(AirbrakeTraceLine))]
+   public class AirbrakeError
    {
       /// <summary>
       /// Required. Each line element describes one code location or frame in the backtrace when the
@@ -18,7 +18,7 @@ namespace HopSharp.Serialization
       /// </value>
       [XmlArray("backtrace")]
       [XmlArrayItem("line")]
-      public HoptoadTraceLine[] Backtrace { get; set; }
+      public AirbrakeTraceLine[] Backtrace { get; set; }
 
       /// <summary>
       /// Required. The class name or type of error that occurred.

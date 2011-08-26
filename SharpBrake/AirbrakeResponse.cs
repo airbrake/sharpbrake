@@ -7,14 +7,14 @@ using System.Xml;
 
 using Common.Logging;
 
-using HopSharp.Serialization;
+using SharpBrake.Serialization;
 
-namespace HopSharp
+namespace SharpBrake
 {
    /// <summary>
-   /// The response retreived from HopToad.
+   /// The response retreived from Airbrake.
    /// </summary>
-   public class HoptoadResponse
+   public class AirbrakeResponse
    {
       private readonly string content;
       private readonly long contentLength;
@@ -24,19 +24,19 @@ namespace HopSharp
       private readonly bool isMutuallyAuthenticated;
       private readonly ILog log;
       private readonly Uri responseUri;
-      private HoptoadResponseError[] errors;
+      private AirbrakeResponseError[] errors;
 
 
       /// <summary>
-      /// Initializes a new instance of the <see cref="HoptoadResponse"/> class.
+      /// Initializes a new instance of the <see cref="AirbrakeResponse"/> class.
       /// </summary>
       /// <param name="response">The response.</param>
       /// <param name="content">The content.</param>
-      public HoptoadResponse(WebResponse response, string content)
+      public AirbrakeResponse(WebResponse response, string content)
       {
          this.log = LogManager.GetCurrentClassLogger();
          this.content = content;
-         this.errors = new HoptoadResponseError[0];
+         this.errors = new AirbrakeResponseError[0];
 
          if (response == null)
          {
@@ -95,7 +95,7 @@ namespace HopSharp
       /// <summary>
       /// Gets the errors.
       /// </summary>
-      public HoptoadResponseError[] Errors
+      public AirbrakeResponseError[] Errors
       {
          get { return this.errors; }
       }
@@ -131,9 +131,9 @@ namespace HopSharp
       }
 
       /// <summary>
-      /// Gets the notice returned from Hoptoad.
+      /// Gets the notice returned from Airbrake.
       /// </summary>
-      public HoptoadResponseNotice Notice { get; private set; }
+      public AirbrakeResponseNotice Notice { get; private set; }
 
       /// <summary>
       /// Gets the response URI.
@@ -144,7 +144,7 @@ namespace HopSharp
       }
 
 
-      private static IEnumerable<HoptoadResponseError> BuildErrorsFrom(XmlReader reader)
+      private static IEnumerable<AirbrakeResponseError> BuildErrorsFrom(XmlReader reader)
       {
          while (reader.Read())
          {
@@ -152,14 +152,14 @@ namespace HopSharp
             {
                case XmlNodeType.Element:
                   if (reader.LocalName == "error")
-                     yield return new HoptoadResponseError(reader.ReadElementContentAsString());
+                     yield return new AirbrakeResponseError(reader.ReadElementContentAsString());
                   break;
             }
          }
       }
 
 
-      private static HoptoadResponseNotice BuildNoticeFrom(XmlReader reader)
+      private static AirbrakeResponseNotice BuildNoticeFrom(XmlReader reader)
       {
          int id = 0;
          int errorId = 0;
@@ -188,7 +188,7 @@ namespace HopSharp
             }
          }
 
-         return new HoptoadResponseNotice
+         return new AirbrakeResponseNotice
          {
             Id = id,
             ErrorId = errorId,

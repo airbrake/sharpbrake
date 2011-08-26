@@ -1,16 +1,16 @@
 ﻿using System;
 
-namespace HopSharp
+namespace SharpBrake
 {
     public static class Extensions
     {
        /// <summary>
-       /// Sends the <paramref name="exception"/> to hoptoad.
+       /// Sends the <paramref name="exception"/> to Airbrake.
        /// </summary>
        /// <param name="exception">The exception.</param>
-        public static void SendToHoptoad(this Exception exception)
+        public static void SendToAirbrake(this Exception exception)
         {
-            var client = new HoptoadClient();
+            var client = new AirbrakeClient();
             client.Send(exception);
         }
 

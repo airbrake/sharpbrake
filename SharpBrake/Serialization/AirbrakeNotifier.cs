@@ -1,17 +1,17 @@
 using System.Xml.Serialization;
 
-namespace HopSharp.Serialization
+namespace SharpBrake.Serialization
 {
     /// <summary>
-    /// The class that identifies HopSharp as the library sending errors to Hoptoad.
+    /// The class that identifies HopSharp as the library sending errors to Airbrake.
     /// </summary>
-    public class HoptoadNotifier
+    public class AirbrakeNotifier
     {
         /// <summary>
-        /// Required. The name of the notifier client submitting the request, such as "hoptoad4j" or "rack-hoptoad."
+        /// Required. The name of the notifier client submitting the request.
         /// </summary>
         /// <value>
-        /// The name of the notifier client submitting the request, such as "hoptoad4j" or "rack-hoptoad."
+        /// The name of the notifier client submitting the request.
         /// </value>
         [XmlElement("name")]
         public string Name { get; set; }

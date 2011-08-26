@@ -56,14 +56,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\HopSharp\HopSharp.2008.csproj">
-      <Project>{EE7CE02E-3CA9-4D01-8D57-E98911466B44}</Project>
-      <Name>HopSharp</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Hoptoad.config" />
-    <None Include="Hoptoad.config.example" />
+    <None Include="Airbrake.config" />
+    <None Include="Airbrake.config.example" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -83,7 +77,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>8279</DevelopmentServerPort>
+          <DevelopmentServerPort>55419</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>
           </IISUrl>

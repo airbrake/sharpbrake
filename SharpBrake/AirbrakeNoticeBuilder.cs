@@ -7,33 +7,33 @@ using System.Web;
 
 using Common.Logging;
 
-using HopSharp.Serialization;
+using SharpBrake.Serialization;
 
-namespace HopSharp
+namespace SharpBrake
 {
    /// <summary>
-   /// Responsible for building the notice that is sent to Hoptoad.
+   /// Responsible for building the notice that is sent to Airbrake.
    /// </summary>
-   public class HoptoadNoticeBuilder
+   public class AirbrakeNoticeBuilder
    {
-      private readonly HoptoadConfiguration _configuration;
+      private readonly AirbrakeConfiguration _configuration;
       private readonly ILog _log;
 
 
       /// <summary>
-      /// Initializes a new instance of the <see cref="HoptoadNoticeBuilder"/> class.
+      /// Initializes a new instance of the <see cref="AirbrakeNoticeBuilder"/> class.
       /// </summary>
-      public HoptoadNoticeBuilder()
-         : this(new HoptoadConfiguration())
+      public AirbrakeNoticeBuilder()
+         : this(new AirbrakeConfiguration())
       {
       }
 
 
       /// <summary>
-      /// Initializes a new instance of the <see cref="HoptoadNoticeBuilder"/> class.
+      /// Initializes a new instance of the <see cref="AirbrakeNoticeBuilder"/> class.
       /// </summary>
       /// <param name="configuration">The configuration.</param>
-      public HoptoadNoticeBuilder(HoptoadConfiguration configuration)
+      public AirbrakeNoticeBuilder(AirbrakeConfiguration configuration)
       {
          if (configuration == null)
             throw new ArgumentNullException("configuration");
@@ -46,7 +46,7 @@ namespace HopSharp
       /// <summary>
       /// Gets the configuration.
       /// </summary>
-      public HoptoadConfiguration Configuration
+      public AirbrakeConfiguration Configuration
       {
          get { return this._configuration; }
       }
@@ -54,15 +54,15 @@ namespace HopSharp
       /// <summary>
       /// Gets the notifier.
       /// </summary>
-      public HoptoadNotifier Notifier
+      public AirbrakeNotifier Notifier
       {
          get
          {
-            var notifer = new HoptoadNotifier
+            var notifer = new AirbrakeNotifier
             {
                Name = "hopsharp",
                Url = "http://github.com/krobertson/hopsharp",
-               Version = typeof(HoptoadNotice).Assembly.GetName().Version.ToString()
+               Version = typeof(AirbrakeNotice).Assembly.GetName().Version.ToString()
             };
 
             return notifer;
@@ -72,11 +72,11 @@ namespace HopSharp
       /// <summary>
       /// Gets the server environment.
       /// </summary>
-      public HoptoadServerEnvironment ServerEnvironment
+      public AirbrakeServerEnvironment ServerEnvironment
       {
          get
          {
-            var environment = new HoptoadServerEnvironment(Configuration.EnvironmentName)
+            var environment = new AirbrakeServerEnvironment(Configuration.EnvironmentName)
             {
                ProjectRoot = Configuration.ProjectRoot
             };
@@ -87,20 +87,20 @@ namespace HopSharp
 
 
       /// <summary>
-      /// Creates a <see cref="HoptoadError"/> from the the specified exception.
+      /// Creates a <see cref="AirbrakeError"/> from the the specified exception.
       /// </summary>
       /// <param name="exception">The exception.</param>
       /// <returns>
-      /// A <see cref="HoptoadError"/>, created from the the specified exception.
+      /// A <see cref="AirbrakeError"/>, created from the the specified exception.
       /// </returns>
-      public HoptoadError ErrorFromException(Exception exception)
+      public AirbrakeError ErrorFromException(Exception exception)
       {
          if (exception == null)
             throw new ArgumentNullException("exception");
 
          _log.DebugFormat("{0}.Notice({1})", exception, GetType(), exception.GetType());
 
-         var error = new HoptoadError
+         var error = new AirbrakeError
          {
             Class = exception.GetType().FullName,
             Message = exception.GetType().Name + ": " + exception.Message,
@@ -112,15 +112,15 @@ namespace HopSharp
 
 
       /// <summary>
-      /// Creates a <see cref="HoptoadNotice"/> from the the specified error.
+      /// Creates a <see cref="AirbrakeNotice"/> from the the specified error.
       /// </summary>
       /// <param name="error">The error.</param>
       /// <returns></returns>
-      public HoptoadNotice Notice(HoptoadError error)
+      public AirbrakeNotice Notice(AirbrakeError error)
       {
          _log.DebugFormat("{0}.Notice({1})", GetType(), error);
 
-         var notice = new HoptoadNotice
+         var notice = new AirbrakeNotice
          {
             ApiKey = Configuration.ApiKey,
             Error = error,
@@ -132,7 +132,7 @@ namespace HopSharp
          {
             Assembly assembly = Assembly.GetExecutingAssembly();
 
-            notice.Request = new HoptoadRequest(HttpContext.Current.Request.Url, assembly.CodeBase)
+            notice.Request = new AirbrakeRequest(HttpContext.Current.Request.Url, assembly.CodeBase)
             {
                Params = BuildParams().ToArray(),
                Session = BuildSession().ToArray(),
@@ -145,20 +145,20 @@ namespace HopSharp
 
 
       /// <summary>
-      /// Creates a <see cref="HoptoadNotice"/> from the the specified exception.
+      /// Creates a <see cref="AirbrakeNotice"/> from the the specified exception.
       /// </summary>
       /// <param name="exception">The exception.</param>
       /// <returns>
-      /// A <see cref="HoptoadNotice"/>, created from the the specified exception.
+      /// A <see cref="AirbrakeNotice"/>, created from the the specified exception.
       /// </returns>
-      public HoptoadNotice Notice(Exception exception)
+      public AirbrakeNotice Notice(Exception exception)
       {
          if (exception == null)
             throw new ArgumentNullException("exception");
 
          _log.DebugFormat("{0}.Notice({1})", exception, GetType(), exception.GetType());
 
-         var notice = new HoptoadNotice
+         var notice = new AirbrakeNotice
          {
             ApiKey = Configuration.ApiKey,
             Error = ErrorFromException(exception),
@@ -170,15 +170,15 @@ namespace HopSharp
       }
 
 
-      private static IEnumerable<HoptoadTraceLine> BuildBacktrace(Exception exception)
+      private static IEnumerable<AirbrakeTraceLine> BuildBacktrace(Exception exception)
       {
          var stackTrace = new StackTrace(exception);
          StackFrame[] frames = stackTrace.GetFrames();
 
          if (frames == null || frames.Length == 0)
          {
-            // Hoptoad requires that at least one line is present in the XML.
-            yield return new HoptoadTraceLine("none", 0);
+            // Airbrake requires that at least one line is present in the XML.
+            yield return new AirbrakeTraceLine("none", 0);
             yield break;
          }
 
@@ -196,7 +196,7 @@ namespace HopSharp
             if (string.IsNullOrEmpty(file))
                file = method.ReflectedType.FullName;
 
-            yield return new HoptoadTraceLine(file, lineNumber)
+            yield return new AirbrakeTraceLine(file, lineNumber)
             {
                Method = method.Name
             };
@@ -204,28 +204,28 @@ namespace HopSharp
       }
 
 
-      private static IEnumerable<HoptoadVar> BuildCgiData()
+      private static IEnumerable<AirbrakeVar> BuildCgiData()
       {
          return from key in HttpContext.Current.Request.ServerVariables.AllKeys
                 let value = HttpContext.Current.Request.ServerVariables[key]
-                select new HoptoadVar(key, value);
+                select new AirbrakeVar(key, value);
       }
 
 
-      private static IEnumerable<HoptoadVar> BuildParams()
+      private static IEnumerable<AirbrakeVar> BuildParams()
       {
          return from key in HttpContext.Current.Request.Params.AllKeys
                 let value = HttpContext.Current.Request.Params[key]
-                select new HoptoadVar(key, value);
+                select new AirbrakeVar(key, value);
       }
 
 
-      private static IEnumerable<HoptoadVar> BuildSession()
+      private static IEnumerable<AirbrakeVar> BuildSession()
       {
          return from key in HttpContext.Current.Session.Keys.Cast<string>()
                 let v = HttpContext.Current.Session[key]
                 let value = v != null ? v.ToString() : null
-                select new HoptoadVar(key, value);
+                select new AirbrakeVar(key, value);
       }
    }
 }

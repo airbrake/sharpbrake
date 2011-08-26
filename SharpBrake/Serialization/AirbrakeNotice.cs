@@ -1,27 +1,27 @@
 ﻿using System.Xml.Serialization;
 
-namespace HopSharp.Serialization
+namespace SharpBrake.Serialization
 {
    /// <summary>
-   /// The root notice class that encapsulate the error being sent to Hoptoad.
+   /// The root notice class that encapsulate the error being sent to Airbrake.
    /// </summary>
    [XmlRoot("notice", Namespace = "")]
-   public class HoptoadNotice
+   public class AirbrakeNotice
    {
       /// <summary>
-      /// Initializes a new instance of the <see cref="HoptoadNotice"/> class.
+      /// Initializes a new instance of the <see cref="AirbrakeNotice"/> class.
       /// </summary>
-      public HoptoadNotice()
+      public AirbrakeNotice()
       {
          Version = "2.0";
       }
 
 
       /// <summary>
-      /// Required. The API key for the project that this error belongs to. The API key can be found by viewing the edit project form on the Hoptoad site.
+      /// Required. The API key for the project that this error belongs to. The API key can be found by viewing the edit project form on the Airbrake site.
       /// </summary>
       /// <value>
-      /// The API key for the project that this error belongs to. The API key can be found by viewing the edit project form on the Hoptoad site.
+      /// The API key for the project that this error belongs to. The API key can be found by viewing the edit project form on the Airbrake site.
       /// </value>
       [XmlElement("api-key")]
       public string ApiKey { get; set; }
@@ -33,7 +33,7 @@ namespace HopSharp.Serialization
       /// The error.
       /// </value>
       [XmlElement("error")]
-      public HoptoadError Error { get; set; }
+      public AirbrakeError Error { get; set; }
 
       /// <summary>
       /// Gets or sets the notifier.
@@ -42,7 +42,7 @@ namespace HopSharp.Serialization
       /// The notifier.
       /// </value>
       [XmlElement("notifier")]
-      public HoptoadNotifier Notifier { get; set; }
+      public AirbrakeNotifier Notifier { get; set; }
 
       /// <summary>
       /// Optional. If this error occurred during an HTTP request, the children of this element can be used to describe the request that caused the error.
@@ -51,7 +51,7 @@ namespace HopSharp.Serialization
       /// The children of this element can be used to describe the request that caused the error.
       /// </value>
       [XmlElement("request")]
-      public HoptoadRequest Request { get; set; }
+      public AirbrakeRequest Request { get; set; }
 
       /// <summary>
       /// Gets or sets the server environment.
@@ -60,7 +60,7 @@ namespace HopSharp.Serialization
       /// The server environment.
       /// </value>
       [XmlElement("server-environment")]
-      public HoptoadServerEnvironment ServerEnvironment { get; set; }
+      public AirbrakeServerEnvironment ServerEnvironment { get; set; }
 
       /// <summary>
       /// Required. The version of the API being used. Should be set to "2.1".

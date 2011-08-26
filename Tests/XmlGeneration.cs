@@ -1,6 +1,7 @@
 using System.Xml.Serialization;
-using HopSharp.Serialization;
 using NUnit.Framework;
+
+using SharpBrake.Serialization;
 
 namespace Tests
 {

@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Net;
 
-using HopSharp.Serialization;
-
-namespace HopSharp
+namespace SharpBrake
 {
    /// <summary>
    /// The event arguments passed to <see cref="RequestEndEventHandler"/>.
@@ -12,7 +10,7 @@ namespace HopSharp
    public class RequestEndEventArgs : EventArgs
    {
       private readonly WebRequest request;
-      private readonly HoptoadResponse response;
+      private readonly AirbrakeResponse response;
 
 
       /// <summary>
@@ -24,7 +22,7 @@ namespace HopSharp
       public RequestEndEventArgs(WebRequest request, WebResponse response, string content)
       {
          this.request = request;
-         this.response = new HoptoadResponse(response, content);
+         this.response = new AirbrakeResponse(response, content);
       }
 
 
@@ -39,7 +37,7 @@ namespace HopSharp
       /// <summary>
       /// Gets the response.
       /// </summary>
-      public HoptoadResponse Response
+      public AirbrakeResponse Response
       {
          get { return this.response; }
       }
