@@ -2,7 +2,7 @@ using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace HopSharp.Serialization
+namespace SharpBrake.Serialization
 {
    /// <summary>
    /// Wraps XML serialization and doesn't generate processing instructions on document start 

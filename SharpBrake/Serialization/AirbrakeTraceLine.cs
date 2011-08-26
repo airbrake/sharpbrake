@@ -1,7 +1,7 @@
 using System;
 using System.Xml.Serialization;
 
-namespace HopSharp.Serialization
+namespace SharpBrake.Serialization
 {
     /// <summary>
     /// Required. This element can occur more than once. Each line element describes one
@@ -10,23 +10,23 @@ namespace HopSharp.Serialization
     /// @method attribute should be used.
     /// </summary>
     [XmlRoot("line")]
-    public class HoptoadTraceLine
+    public class AirbrakeTraceLine
     {
        /// <summary>
-       /// Initializes a new instance of the <see cref="HoptoadTraceLine"/> class.
+       /// Initializes a new instance of the <see cref="AirbrakeTraceLine"/> class.
        /// </summary>
        [Obsolete("Don't use, only for serialization.", true)]
-       public HoptoadTraceLine()
+       public AirbrakeTraceLine()
        {
        }
 
 
        /// <summary>
-       /// Initializes a new instance of the <see cref="HoptoadTraceLine"/> class.
+       /// Initializes a new instance of the <see cref="AirbrakeTraceLine"/> class.
        /// </summary>
        /// <param name="file">The file.</param>
        /// <param name="lineNumber">The line number.</param>
-       public HoptoadTraceLine(string file, int lineNumber)
+       public AirbrakeTraceLine(string file, int lineNumber)
        {
           if (file == null)
              throw new ArgumentNullException("file");

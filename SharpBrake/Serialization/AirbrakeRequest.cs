@@ -1,29 +1,29 @@
 using System;
 using System.Xml.Serialization;
 
-namespace HopSharp.Serialization
+namespace SharpBrake.Serialization
 {
    /// <summary>
    /// Optional. If this error occurred during an HTTP request, the children of this element can be used to describe the request that caused the error.
    /// </summary>
-   [XmlInclude(typeof(HoptoadVar))]
-   public class HoptoadRequest
+   [XmlInclude(typeof(AirbrakeVar))]
+   public class AirbrakeRequest
    {
       /// <summary>
-      /// Initializes a new instance of the <see cref="HoptoadRequest"/> class.
+      /// Initializes a new instance of the <see cref="AirbrakeRequest"/> class.
       /// </summary>
       [Obsolete("Don't use. Only for serialization.", true)]
-      public HoptoadRequest()
+      public AirbrakeRequest()
       {
       }
 
 
       /// <summary>
-      /// Initializes a new instance of the <see cref="HoptoadRequest"/> class.
+      /// Initializes a new instance of the <see cref="AirbrakeRequest"/> class.
       /// </summary>
       /// <param name="url">The URL.</param>
       /// <param name="component">The component.</param>
-      public HoptoadRequest(string url, string component)
+      public AirbrakeRequest(string url, string component)
       {
          Url = url;
          Component = component;
@@ -31,11 +31,11 @@ namespace HopSharp.Serialization
 
 
       /// <summary>
-      /// Initializes a new instance of the <see cref="HoptoadRequest"/> class.
+      /// Initializes a new instance of the <see cref="AirbrakeRequest"/> class.
       /// </summary>
       /// <param name="url">The URL.</param>
       /// <param name="component">The component.</param>
-      public HoptoadRequest(Uri url, string component)
+      public AirbrakeRequest(Uri url, string component)
       {
          Url = url == null ? null : url.ToString();
          Component = component;
@@ -59,7 +59,7 @@ namespace HopSharp.Serialization
       /// </value>
       [XmlArray("cgi-data")]
       [XmlArrayItem("var")]
-      public HoptoadVar[] CgiData { get; set; }
+      public AirbrakeVar[] CgiData { get; set; }
 
       /// <summary>
       /// Required only if there is a request element. The component in which the error occurred. In model-view-controller frameworks like Rails, this should be set to the controller. Otherwise, this can be set to a route or other request category.
@@ -78,7 +78,7 @@ namespace HopSharp.Serialization
       /// </value>
       [XmlArray("params")]
       [XmlArrayItem("var")]
-      public HoptoadVar[] Params { get; set; }
+      public AirbrakeVar[] Params { get; set; }
 
       /// <summary>
       /// Optional. A list of var elements describing session variables from the request.
@@ -88,7 +88,7 @@ namespace HopSharp.Serialization
       /// </value>
       [XmlArray("session")]
       [XmlArrayItem("var")]
-      public HoptoadVar[] Session { get; set; }
+      public AirbrakeVar[] Session { get; set; }
 
       /// <summary>
       /// Required only if there is a request element. The URL at which the error occurred.

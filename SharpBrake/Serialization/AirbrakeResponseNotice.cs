@@ -1,10 +1,9 @@
-using System;
 using System.Xml.Serialization;
 
-namespace HopSharp.Serialization
+namespace SharpBrake.Serialization
 {
    [XmlRoot("notice")]
-   public class HoptoadResponseNotice
+   public class AirbrakeResponseNotice
    {
       public int ErrorId { get; set; }
       public string Url { get; set; }

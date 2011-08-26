@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Web;
 
-namespace HopSharp
+namespace SharpBrake
 {
    /// <summary>
-   /// The <see cref="IHttpModule"/> that notifies Hoptoad of unhandled exceptions in the application.
+   /// The <see cref="IHttpModule"/> that notifies Airbrake of unhandled exceptions in the application.
    /// </summary>
     public class NotifierHttpModule : IHttpModule
     {
@@ -29,7 +29,7 @@ namespace HopSharp
         #endregion
 
         /// <summary>
-        /// Notifies Hoptoad of the unhandled application error that occurred.
+        /// Notifies Airbrake of the unhandled application error that occurred.
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
@@ -40,7 +40,7 @@ namespace HopSharp
             Exception exception = application.Server.GetLastError();
 
             if (!(exception is HttpException) || ((HttpException) exception).GetHttpCode() != 404)
-                exception.SendToHoptoad();
+                exception.SendToAirbrake();
         }
     }
 }

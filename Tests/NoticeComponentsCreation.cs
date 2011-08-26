@@ -1,7 +1,8 @@
 using System;
-using HopSharp;
-using HopSharp.Serialization;
 using NUnit.Framework;
+
+using SharpBrake;
+using SharpBrake.Serialization;
 
 namespace Tests
 {
@@ -13,18 +14,18 @@ namespace Tests
         [SetUp]
         public void SetUp()
         {
-            _config = new HoptoadConfiguration
+            _config = new AirbrakeConfiguration
                          {
                              ApiKey = "123456",
                              EnvironmentName = "test"
                          };
-            _builder = new HoptoadNoticeBuilder(_config);
+            _builder = new AirbrakeNoticeBuilder(_config);
         }
 
         #endregion
 
-        private HoptoadConfiguration _config;
-        private HoptoadNoticeBuilder _builder;
+        private AirbrakeConfiguration _config;
+        private AirbrakeNoticeBuilder _builder;
 
         [Test]
         public void Building_error_from_dotNET_exception()
@@ -40,10 +41,10 @@ namespace Tests
                 exception = testException;
             }
 
-            HoptoadError error = _builder.ErrorFromException(exception);
+            AirbrakeError error = _builder.ErrorFromException(exception);
             Assert.AreNotEqual(0, error.Backtrace.Length);
 
-            HoptoadTraceLine trace = error.Backtrace[0];
+            AirbrakeTraceLine trace = error.Backtrace[0];
             Assert.AreEqual("Building_error_from_dotNET_exception", trace.Method);
             Assert.AreNotEqual(0, trace.LineNumber);
         }
@@ -51,7 +52,7 @@ namespace Tests
         [Test]
         public void Notice_contains_ServerEnvironment_and_Notifier()
         {
-            HoptoadNotice notice = _builder.Notice((HoptoadError) null);
+            AirbrakeNotice notice = _builder.Notice((AirbrakeError) null);
             Assert.IsNotNull(notice.ServerEnvironment);
             Assert.IsNotNull(notice.Notifier);
             Assert.IsNotEmpty(notice.ApiKey);
@@ -61,16 +62,16 @@ namespace Tests
         [Test]
         public void Notifier_initialized_correctly()
         {
-            HoptoadNotifier notifier = _builder.Notifier;
+            AirbrakeNotifier notifier = _builder.Notifier;
             Assert.AreEqual("hopsharp", notifier.Name);
             Assert.AreEqual("http://github.com/krobertson/hopsharp", notifier.Url);
             Assert.AreEqual("2.1.0.0", notifier.Version);
         }
 
         [Test]
-        public void Server_environment_read_from_Hoptoad_config()
+        public void Server_environment_read_from_Airbrake_config()
         {
-            HoptoadServerEnvironment environment = _builder.ServerEnvironment;
+            AirbrakeServerEnvironment environment = _builder.ServerEnvironment;
             Assert.AreEqual(_config.EnvironmentName, environment.EnvironmentName);
         }
     }

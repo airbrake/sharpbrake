@@ -2,20 +2,20 @@ using System;
 using System.Configuration;
 using System.Web;
 
-namespace HopSharp
+namespace SharpBrake
 {
    /// <summary>
-   /// Configuration class for Hoptoad.
+   /// Configuration class for Airbrake.
    /// </summary>
-    public class HoptoadConfiguration
+    public class AirbrakeConfiguration
     {
        /// <summary>
-       /// Initializes a new instance of the <see cref="HoptoadConfiguration"/> class.
+       /// Initializes a new instance of the <see cref="AirbrakeConfiguration"/> class.
        /// </summary>
-        public HoptoadConfiguration()
+        public AirbrakeConfiguration()
         {
-            ApiKey = ConfigurationManager.AppSettings["Hoptoad:ApiKey"];
-            EnvironmentName = ConfigurationManager.AppSettings["Hoptoad:Environment"];
+            ApiKey = ConfigurationManager.AppSettings["Airbrake:ApiKey"];
+            EnvironmentName = ConfigurationManager.AppSettings["Airbrake:Environment"];
 
             ProjectRoot = HttpContext.Current != null
                ? HttpContext.Current.Request.ApplicationPath

@@ -1,34 +1,35 @@
 using System;
 using System.Threading;
 
-using HopSharp;
-using HopSharp.Serialization;
 
 using NUnit.Framework;
+
+using SharpBrake;
+using SharpBrake.Serialization;
 
 namespace Tests
 {
    [TestFixture]
-   public class HoptoadClientTests
+   public class AirbrakeClientTests
    {
       #region Setup/Teardown
 
       [SetUp]
       public void SetUp()
       {
-         this.client = new HoptoadClient();
+         this.client = new AirbrakeClient();
       }
 
       #endregion
 
-      private HoptoadClient client;
+      private AirbrakeClient client;
 
 
       [Test]
       public void Send_EndRequestEventIsInvoked_And_ResponseOnlyContainsApiError()
       {
          bool requestEndInvoked = false;
-         HoptoadResponseError[] errors = null;
+         AirbrakeResponseError[] errors = null;
          int i = 0;
 
          this.client.RequestEnd += (sender, e) =>
@@ -37,21 +38,21 @@ namespace Tests
             errors = e.Response.Errors;
          };
 
-         var configuration = new HoptoadConfiguration
+         var configuration = new AirbrakeConfiguration
          {
             ApiKey = Guid.NewGuid().ToString("N"),
             EnvironmentName = "test",
          };
 
-         var builder = new HoptoadNoticeBuilder(configuration);
+         var builder = new AirbrakeNoticeBuilder(configuration);
 
-         HoptoadNotice notice = builder.Notice(new Exception("Test"));
+         AirbrakeNotice notice = builder.Notice(new Exception("Test"));
 
-         notice.Request = new HoptoadRequest("http://example.com", "Test")
+         notice.Request = new AirbrakeRequest("http://example.com", "Test")
          {
             Params = new[]
             {
-               new HoptoadVar("TestKey", "TestValue")
+               new AirbrakeVar("TestKey", "TestValue")
             }
          };
 

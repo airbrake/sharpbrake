@@ -1,11 +1,11 @@
-namespace HopSharp.Serialization
+namespace SharpBrake.Serialization
 {
-   public class HoptoadResponseError
+   public class AirbrakeResponseError
    {
       private readonly string message;
 
 
-      public HoptoadResponseError(string message)
+      public AirbrakeResponseError(string message)
       {
          this.message = message;
       }
