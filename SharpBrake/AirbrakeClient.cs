@@ -66,9 +66,9 @@ namespace SharpBrake
 				if (String.IsNullOrEmpty(notice.ApiKey))
 				{
 					// If none is set, just return... throwing an exception is pointless, since one was already thrown!
-					if (String.IsNullOrEmpty(ConfigurationManager.AppSettings["Airbrake:ApiKey"]))
+					if (String.IsNullOrEmpty(ConfigurationManager.AppSettings["Airbrake.ApiKey"]))
 					{
-						this._log.Fatal("No 'Airbrake:ApiKey' found. Please define one in AppSettings.");
+						this._log.Fatal("No 'Airbrake.ApiKey' found. Please define one in AppSettings.");
 						return;
 					}
 
@@ -117,7 +117,7 @@ namespace SharpBrake
 				using (var sr = new StreamReader(responseStream))
 				{
 					responseBody = sr.ReadToEnd();
-					this._log.DebugFormat("Received from Airbrake:\n{0}", responseBody);
+					this._log.DebugFormat("Received from Airbrake.\n{0}", responseBody);
 				}
 			}
 

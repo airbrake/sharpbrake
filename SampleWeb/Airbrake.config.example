@@ -1,5 +1,4 @@
 <appSettings>
-	<add key="Hoptoad:ApiKey" value="CHANGE ME!" />
-	<add key="Hoptoad:Environment" value="dev" />
+	<add key="Airbrake.ApiKey" value="CHANGE ME!" />
+	<add key="Airbrake.Environment" value="dev" />
 </appSettings>
-

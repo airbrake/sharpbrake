@@ -14,8 +14,8 @@ namespace SharpBrake
        /// </summary>
         public AirbrakeConfiguration()
         {
-            ApiKey = ConfigurationManager.AppSettings["Airbrake:ApiKey"];
-            EnvironmentName = ConfigurationManager.AppSettings["Airbrake:Environment"];
+            ApiKey = ConfigurationManager.AppSettings["Airbrake.ApiKey"];
+            EnvironmentName = ConfigurationManager.AppSettings["Airbrake.Environment"];
 
             ProjectRoot = HttpContext.Current != null
                ? HttpContext.Current.Request.ApplicationPath
