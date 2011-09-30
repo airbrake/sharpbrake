@@ -3,9 +3,9 @@ using System.Xml.Serialization;
 
 namespace SharpBrake.Serialization
 {
-   /// <summary>
-   /// Contains information about the environment in which the error occurred.
-   /// </summary>
+    /// <summary>
+    /// Contains information about the environment in which the error occurred.
+    /// </summary>
     public class AirbrakeServerEnvironment
     {
         /// <summary>
@@ -14,10 +14,10 @@ namespace SharpBrake.Serialization
         /// <param name="environmentName">Name of the environment.</param>
         public AirbrakeServerEnvironment(string environmentName)
         {
-           if (environmentName == null)
-              throw new ArgumentNullException("environmentName");
+            if (environmentName == null)
+                throw new ArgumentNullException("environmentName");
 
-           EnvironmentName = environmentName;
+            EnvironmentName = environmentName;
         }
 
 

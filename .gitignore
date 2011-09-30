@@ -4,8 +4,8 @@ Log
 *.suo
 *csproj.user
 .*.swp
-*.resharper*
-*.ReSharper*
+*.resharper.user*
+*.ReSharper.user*
 _ReSharper*
 
 #project-specific

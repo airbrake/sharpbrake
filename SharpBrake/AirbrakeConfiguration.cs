@@ -4,22 +4,22 @@ using System.Web;
 
 namespace SharpBrake
 {
-   /// <summary>
-   /// Configuration class for Airbrake.
-   /// </summary>
+    /// <summary>
+    /// Configuration class for Airbrake.
+    /// </summary>
     public class AirbrakeConfiguration
     {
-       /// <summary>
-       /// Initializes a new instance of the <see cref="AirbrakeConfiguration"/> class.
-       /// </summary>
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AirbrakeConfiguration"/> class.
+        /// </summary>
         public AirbrakeConfiguration()
         {
             ApiKey = ConfigurationManager.AppSettings["Airbrake.ApiKey"];
             EnvironmentName = ConfigurationManager.AppSettings["Airbrake.Environment"];
 
             ProjectRoot = HttpContext.Current != null
-               ? HttpContext.Current.Request.ApplicationPath
-               : Environment.CurrentDirectory;
+                              ? HttpContext.Current.Request.ApplicationPath
+                              : Environment.CurrentDirectory;
         }
 
 
@@ -34,7 +34,7 @@ namespace SharpBrake
         /// The project root.
         /// </value>
         public string ProjectRoot { get; set; }
-       
+
         /// <summary>
         /// Gets or sets the API key.
         /// </summary>
@@ -42,7 +42,7 @@ namespace SharpBrake
         /// The API key.
         /// </value>
         public string ApiKey { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the name of the environment.
         /// </summary>

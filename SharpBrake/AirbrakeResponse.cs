@@ -55,8 +55,9 @@ namespace SharpBrake
             }
             catch (Exception exception)
             {
-                this.log.FatalFormat(
-                    "An error occurred while deserializing the following content:\n{0}", exception, content);
+                this.log.Fatal(f => f(
+                    "An error occurred while deserializing the following content:\n{0}", content),
+                               exception);
             }
         }
 

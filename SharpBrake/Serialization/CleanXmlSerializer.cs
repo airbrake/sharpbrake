@@ -4,15 +4,16 @@ using System.Xml.Serialization;
 
 namespace SharpBrake.Serialization
 {
-   /// <summary>
-   /// Wraps XML serialization and doesn't generate processing instructions on document start 
-   /// as well as xsi and xsd namespace definitions
-   /// </summary>
-   /// <typeparam name="TRoot">The type of the root.</typeparam>
+    /// <summary>
+    /// Wraps XML serialization and doesn't generate processing instructions on document start 
+    /// as well as xsi and xsd namespace definitions
+    /// </summary>
+    /// <typeparam name="TRoot">The type of the root.</typeparam>
     public class CleanXmlSerializer<TRoot>
     {
-        private readonly XmlSerializerNamespaces _namespaces;
-        private readonly XmlSerializer _serializer;
+        private readonly XmlSerializerNamespaces namespaces;
+        private readonly XmlSerializer serializer;
+
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CleanXmlSerializer&lt;TRoot&gt;"/> class.
@@ -20,12 +21,13 @@ namespace SharpBrake.Serialization
         public CleanXmlSerializer()
         {
             //Create our own namespaces for the output
-            _namespaces = new XmlSerializerNamespaces();
+            this.namespaces = new XmlSerializerNamespaces();
 
             //Add an empty namespace and empty value
-            _namespaces.Add("", "");
-            _serializer = new XmlSerializer(typeof(TRoot));
+            this.namespaces.Add("", "");
+            this.serializer = new XmlSerializer(typeof(TRoot));
         }
+
 
         /// <summary>
         /// Serializes the <see cref="source"/> to XML.
@@ -37,10 +39,12 @@ namespace SharpBrake.Serialization
         public string ToXml(TRoot source)
         {
             using (var writer = new StringWriter())
-            using (var xmlWriter = new XmlTextWriterFormattedNoDeclaration(writer))
             {
-               this._serializer.Serialize(xmlWriter, source, _namespaces);
-               return writer.ToString();
+                using (var xmlWriter = new XmlTextWriterFormattedNoDeclaration(writer))
+                {
+                    this.serializer.Serialize(xmlWriter, source, this.namespaces);
+                    return writer.ToString();
+                }
             }
         }
 
@@ -54,9 +58,11 @@ namespace SharpBrake.Serialization
                 Formatting = Formatting.Indented;
             }
 
+
             public override void WriteStartDocument()
             {
             }
+
 
             // suppress
         }

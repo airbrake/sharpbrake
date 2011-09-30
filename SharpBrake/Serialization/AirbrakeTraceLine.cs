@@ -12,31 +12,31 @@ namespace SharpBrake.Serialization
     [XmlRoot("line")]
     public class AirbrakeTraceLine
     {
-       /// <summary>
-       /// Initializes a new instance of the <see cref="AirbrakeTraceLine"/> class.
-       /// </summary>
-       [Obsolete("Don't use, only for serialization.", true)]
-       public AirbrakeTraceLine()
-       {
-       }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AirbrakeTraceLine"/> class.
+        /// </summary>
+        [Obsolete("Don't use, only for serialization.", true)]
+        public AirbrakeTraceLine()
+        {
+        }
 
 
-       /// <summary>
-       /// Initializes a new instance of the <see cref="AirbrakeTraceLine"/> class.
-       /// </summary>
-       /// <param name="file">The file.</param>
-       /// <param name="lineNumber">The line number.</param>
-       public AirbrakeTraceLine(string file, int lineNumber)
-       {
-          if (file == null)
-             throw new ArgumentNullException("file");
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AirbrakeTraceLine"/> class.
+        /// </summary>
+        /// <param name="file">The file.</param>
+        /// <param name="lineNumber">The line number.</param>
+        public AirbrakeTraceLine(string file, int lineNumber)
+        {
+            if (file == null)
+                throw new ArgumentNullException("file");
 
-          File = file;
-          LineNumber = lineNumber;
-       }
+            File = file;
+            LineNumber = lineNumber;
+        }
 
 
-       /// <summary>
+        /// <summary>
         /// Gets or sets the file the error occurred in.
         /// </summary>
         /// <value>

@@ -16,10 +16,10 @@ namespace SharpBrake
     /// </summary>
     public class AirbrakeNoticeBuilder
     {
-        private readonly AirbrakeConfiguration _configuration;
-        private readonly ILog _log;
-        private AirbrakeServerEnvironment _environment;
-        private AirbrakeNotifier _notifier;
+        private readonly AirbrakeConfiguration configuration;
+        private readonly ILog log;
+        private AirbrakeServerEnvironment environment;
+        private AirbrakeNotifier notifier;
 
 
         /// <summary>
@@ -40,8 +40,8 @@ namespace SharpBrake
             if (configuration == null)
                 throw new ArgumentNullException("configuration");
 
-            _configuration = configuration;
-            _log = LogManager.GetLogger(GetType());
+            this.configuration = configuration;
+            this.log = LogManager.GetLogger(GetType());
         }
 
 
@@ -50,7 +50,7 @@ namespace SharpBrake
         /// </summary>
         public AirbrakeConfiguration Configuration
         {
-            get { return _configuration; }
+            get { return this.configuration; }
         }
 
         /// <summary>
@@ -60,7 +60,7 @@ namespace SharpBrake
         {
             get
             {
-                return _notifier ?? (_notifier = new AirbrakeNotifier
+                return this.notifier ?? (this.notifier = new AirbrakeNotifier
                 {
                     Name = "SharpBrake",
                     Url = "https://github.com/asbjornu/SharpBrake",
@@ -76,10 +76,10 @@ namespace SharpBrake
         {
             get
             {
-                string env = this._configuration.EnvironmentName;
-                return _environment ?? (_environment = new AirbrakeServerEnvironment(env)
+                string env = this.configuration.EnvironmentName;
+                return this.environment ?? (this.environment = new AirbrakeServerEnvironment(env)
                 {
-                    ProjectRoot = _configuration.ProjectRoot
+                    ProjectRoot = this.configuration.ProjectRoot
                 });
             }
         }
@@ -97,7 +97,7 @@ namespace SharpBrake
             if (exception == null)
                 throw new ArgumentNullException("exception");
 
-            _log.DebugFormat("{0}.Notice({1})", exception, GetType(), exception.GetType());
+            this.log.Debug(f => f("{0}.Notice({1})", exception, GetType(), exception.GetType()));
 
             var error = new AirbrakeError
             {
@@ -117,7 +117,7 @@ namespace SharpBrake
         /// <returns></returns>
         public AirbrakeNotice Notice(AirbrakeError error)
         {
-            _log.DebugFormat("{0}.Notice({1})", GetType(), error);
+            this.log.Debug(f => f("{0}.Notice({1})", GetType(), error));
 
             var notice = new AirbrakeNotice
             {
@@ -155,7 +155,7 @@ namespace SharpBrake
             if (exception == null)
                 throw new ArgumentNullException("exception");
 
-            _log.DebugFormat("{0}.Notice({1})", exception, GetType(), exception.GetType());
+            this.log.Debug(f => f("{0}.Notice({1})", GetType(), exception.GetType()), exception);
 
             var notice = new AirbrakeNotice
             {
