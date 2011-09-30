@@ -8,13 +8,13 @@ The SharpBrake library can be used in two forms.  First, you can either programm
 Usage
 ------------------------------
 
-To use the library, you'll need to build the project and drop the SharpBrake.dll in your site's bin directory.  To configure the library, you'll need to edit your application's .config file to include your API key for Airbrake:
+To use the library, you'll need to build the project and drop the files SharpBrake.dll and Common.Logging.dll in your application's bin directory.  To configure the library, you'll need to edit your application's .config file to include your API key for Airbrake:
 
 	<appSettings>
 		<add key="Airbrake.ApiKey" value="1234567890abcdefg"/>
 	</appSettings>
 
-To programmatically report exceptions, all you need to do is ensure you've included the `SharpBrake` namespace, and then call the `SendToAirbrake()` method on the exception.  This is done using extension methods.  For example:
+To programmatically report exceptions, all you need to do is ensure you've included the `SharpBrake` namespace, and then call the `SendToAirbrake()` method on the exception.  This is done using extension methods. For example:
 
 	using SharpBrake;
 
