@@ -97,7 +97,7 @@ namespace SharpBrake
             if (exception == null)
                 throw new ArgumentNullException("exception");
 
-            this.log.Debug(f => f("{0}.Notice({1})", exception, GetType(), exception.GetType()));
+            this.log.Debug(f => f("{0}.Notice({1})", GetType(), exception.GetType()), exception);
 
             var error = new AirbrakeError
             {
