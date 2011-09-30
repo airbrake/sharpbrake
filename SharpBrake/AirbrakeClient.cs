@@ -25,8 +25,8 @@ namespace SharpBrake
 		/// </summary>
 		public AirbrakeClient()
 		{
-			this._builder = new AirbrakeNoticeBuilder();
-			this._log = LogManager.GetLogger(GetType());
+			_builder = new AirbrakeNoticeBuilder();
+			_log = LogManager.GetLogger(GetType());
 		}
 
 
@@ -42,7 +42,7 @@ namespace SharpBrake
 		/// <param name="exception">The e.</param>
 		public void Send(Exception exception)
 		{
-			AirbrakeNotice notice = this._builder.Notice(exception);
+			AirbrakeNotice notice = _builder.Notice(exception);
 
 			//TODO: set up request, session and server headers
 			// Why would that be necessary, it's set in Send(AirbrakeNotice), isn't it? - @asbjornu
@@ -58,7 +58,7 @@ namespace SharpBrake
 		/// <param name="notice">The notice.</param>
 		public void Send(AirbrakeNotice notice)
 		{
-			this._log.DebugFormat("{0}.Send({1})", GetType(), notice);
+			_log.DebugFormat("{0}.Send({1})", GetType(), notice);
 
 			try
 			{
@@ -68,11 +68,11 @@ namespace SharpBrake
 					// If none is set, just return... throwing an exception is pointless, since one was already thrown!
 					if (String.IsNullOrEmpty(ConfigurationManager.AppSettings["Airbrake.ApiKey"]))
 					{
-						this._log.Fatal("No 'Airbrake.ApiKey' found. Please define one in AppSettings.");
+						_log.Fatal("No 'Airbrake.ApiKey' found. Please define one in AppSettings.");
 						return;
 					}
 
-					notice.ApiKey = this._builder.Configuration.ApiKey;
+					notice.ApiKey = _builder.Configuration.ApiKey;
 				}
 
 				// Create the web request
@@ -80,7 +80,7 @@ namespace SharpBrake
 
 				if (request == null)
 				{
-					this._log.FatalFormat("Couldn't create a request to '{0}'.", airbrakeUri);
+					_log.FatalFormat("Couldn't create a request to '{0}'.", airbrakeUri);
 					return;
 				}
 
@@ -100,7 +100,7 @@ namespace SharpBrake
 			}
 			catch (Exception exception)
 			{
-				this._log.Fatal("An error occurred while trying to send to Airbrake.", exception);
+				_log.Fatal("An error occurred while trying to send to Airbrake.", exception);
 			}
 		}
 
@@ -117,7 +117,7 @@ namespace SharpBrake
 				using (var sr = new StreamReader(responseStream))
 				{
 					responseBody = sr.ReadToEnd();
-					this._log.DebugFormat("Received from Airbrake.\n{0}", responseBody);
+					_log.DebugFormat("Received from Airbrake.\n{0}", responseBody);
 				}
 			}
 
@@ -131,14 +131,14 @@ namespace SharpBrake
 
 		private void RequestCallback(IAsyncResult ar)
 		{
-			this._log.DebugFormat("{0}.RequestCallback({1})", GetType(), ar);
+			_log.DebugFormat("{0}.RequestCallback({1})", GetType(), ar);
 
 			// Get it back
 			var request = ar.AsyncState as HttpWebRequest;
 
 			if (request == null)
 			{
-				this._log.FatalFormat("{0}.AsyncState was null or not of type {1}.", typeof(IAsyncResult), typeof(HttpWebRequest));
+				_log.FatalFormat("{0}.AsyncState was null or not of type {1}.", typeof(IAsyncResult), typeof(HttpWebRequest));
 				return;
 			}
 
@@ -152,7 +152,7 @@ namespace SharpBrake
 			catch (WebException exception)
 			{
 				// Since an exception was already thrown, allowing another one to bubble up is pointless
-				this._log.Fatal("An error occurred while retrieving the web response", exception);
+				_log.Fatal("An error occurred while retrieving the web response", exception);
 				response = exception.Response;
 			}
 
@@ -165,7 +165,7 @@ namespace SharpBrake
 			var serializer = new CleanXmlSerializer<AirbrakeNotice>();
 			string xml = serializer.ToXml(notice);
 
-			this._log.DebugFormat("Sending the following to '{0}':\n{1}", request.RequestUri, xml);
+			_log.DebugFormat("Sending the following to '{0}':\n{1}", request.RequestUri, xml);
 
 			byte[] payload = Encoding.UTF8.GetBytes(xml);
 			request.ContentLength = payload.Length;

@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 
-[assembly: AssemblyTitle("HopSharp")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("SharpBrake")]
+[assembly: AssemblyDescription("Airbrake Notifier for .NET")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("HopSharp")]
-[assembly: AssemblyCopyright("Copyright ©  2008")]
+[assembly: AssemblyProduct("SharpBrake")]
+[assembly: AssemblyCopyright("")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -35,5 +35,5 @@ using System.Runtime.InteropServices;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 
-[assembly: AssemblyVersion("2.1.0.0")]
-[assembly: AssemblyFileVersion("2.1.0.0")]
+[assembly: AssemblyVersion("2.1.1.0")]
+[assembly: AssemblyFileVersion("2.1.1.0")]

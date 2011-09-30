@@ -51,6 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AirbrakeResponseError.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="AirbrakeClient.cs" />
     <Compile Include="AirbrakeConfiguration.cs" />
@@ -62,7 +63,6 @@
     <Compile Include="Serialization\AirbrakeNotice.cs" />
     <Compile Include="Serialization\AirbrakeNotifier.cs" />
     <Compile Include="Serialization\AirbrakeRequest.cs" />
-    <Compile Include="Serialization\AirbrakeResponseError.cs" />
     <Compile Include="Serialization\AirbrakeResponseNotice.cs" />
     <Compile Include="Serialization\AirbrakeServerEnvironment.cs" />
     <Compile Include="NotifierHttpModule.cs" />

@@ -2,11 +2,36 @@ using System.Xml.Serialization;
 
 namespace SharpBrake.Serialization
 {
-   [XmlRoot("notice")]
-   public class AirbrakeResponseNotice
-   {
-      public int ErrorId { get; set; }
-      public string Url { get; set; }
-      public int Id { get; set; }
-   }
+	/// <summary>
+	/// The notice returned from Airbrake.
+	/// </summary>
+	[XmlRoot("notice")]
+	public class AirbrakeResponseNotice
+	{
+		/// <summary>
+		/// Gets the error id.
+		/// </summary>
+		/// <value>
+		/// The error id.
+		/// </value>
+		public int ErrorId { get; set; }
+
+		/// <summary>
+		/// Gets the id of the created notice.
+		/// </summary>
+		/// <value>
+		/// The id of the created notice.
+		/// </value>
+		[XmlElement("id")]
+		public int Id { get; set; }
+
+		/// <summary>
+		/// Gets the URL of the created notice.
+		/// </summary>
+		/// <value>
+		/// The URL of the created notice.
+		/// </value>
+		[XmlElement("url")]
+		public string Url { get; set; }
+	}
 }

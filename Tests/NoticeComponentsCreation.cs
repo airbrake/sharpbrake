@@ -63,9 +63,9 @@ namespace Tests
         public void Notifier_initialized_correctly()
         {
             AirbrakeNotifier notifier = _builder.Notifier;
-            Assert.AreEqual("hopsharp", notifier.Name);
-            Assert.AreEqual("http://github.com/krobertson/hopsharp", notifier.Url);
-            Assert.AreEqual("2.1.0.0", notifier.Version);
+            Assert.AreEqual("SharpBrake", notifier.Name);
+            Assert.AreEqual("https://github.com/asbjornu/SharpBrake", notifier.Url);
+            Assert.AreEqual("2.1.1.0", notifier.Version);
         }
 
         [Test]
