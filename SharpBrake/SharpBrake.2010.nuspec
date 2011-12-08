@@ -1,10 +1,10 @@
-<?xml version="1.0"?>
+ï»¿<?xml version="1.0"?>
 <package>
   <metadata>
     <id>SharpBrake</id>
     <version>$version$</version>
-    <authors>Asbjørn Ulsberg, Michael Friis</authors>
-    <owners>Asbjørn Ulsberg, Michael Friis</owners>
+    <authors>AsbjÃ¸rn Ulsberg, Michael Friis</authors>
+    <owners>AsbjÃ¸rn Ulsberg, Michael Friis</owners>
     <projectUrl>https://github.com/asbjornu/SharpBrake</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
