@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Package</id>
+    <version>1.0</version>
+    <authors>Asbjørn Ulsberg, Michael Friis</authors>
+    <owners>Asbjørn Ulsberg, Michael Friis</owners>
+    <projectUrl>https://github.com/asbjornu/SharpBrake</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Package description</description>
+    <releaseNotes>Summary of changes made in this release of the package.</releaseNotes>
+    <copyright>Copyright 2011</copyright>
+    <tags>Logging Airbrake</tags>
+    <dependencies>
+      <dependency id="Common.Logging" />
+    </dependencies>
+  </metadata>
+</package>
