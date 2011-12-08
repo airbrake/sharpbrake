@@ -30,7 +30,7 @@ namespace SharpBrake.Serialization
 
 
         /// <summary>
-        /// Serializes the <see cref="source"/> to XML.
+        /// Serializes the <paramref name="source"/> to XML.
         /// </summary>
         /// <param name="source">The source.</param>
         /// <returns>
@@ -62,9 +62,6 @@ namespace SharpBrake.Serialization
             public override void WriteStartDocument()
             {
             }
-
-
-            // suppress
         }
 
         #endregion
