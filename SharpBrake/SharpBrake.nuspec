@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Package</id>
-    <version>1.0</version>
+    <version>$version$</version>
     <authors>Asbjørn Ulsberg, Michael Friis</authors>
     <owners>Asbjørn Ulsberg, Michael Friis</owners>
     <projectUrl>https://github.com/asbjornu/SharpBrake</projectUrl>
