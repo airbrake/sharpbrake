@@ -7,10 +7,11 @@ The SharpBrake library can be used in two ways:
 2. You can configure the `HttpModule` in `web.config`, which will catch any unhandled exceptions on your site and report them to Airbrake.
 
 ## Usage
-To use the library, you'll need to build the project and drop the files *SharpBrake.dll* and *Common.Logging.dll* in your application's bin directory.  To configure the library, you'll need to edit your application's .config file to include your API key for Airbrake:
+To use the library, you'll need to build the project and drop the files *SharpBrake.dll* and *Common.Logging.dll* in your application's bin directory.  To configure the library, you'll need to edit your application's .config file to include your API key for Airbrake as well as an environment name:
 
 	<appSettings>
 		<add key="Airbrake.ApiKey" value="1234567890abcdefg"/>
+		<add key="Airbrake.Environment" value="Whatever"/>
 	</appSettings>
 
 To programmatically report exceptions, all you need to do is ensure you've included the `SharpBrake` namespace, and then call the `SendToAirbrake()` extension method on the exception.  For example:
