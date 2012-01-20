@@ -193,7 +193,9 @@ namespace SharpBrake
                 string file = frame.GetFileName();
 
                 if (string.IsNullOrEmpty(file))
-                    file = method.ReflectedType.FullName;
+                {
+                	file = method.ReflectedType != null ? method.ReflectedType.FullName : "(unknown)";
+                }
 
                 yield return new AirbrakeTraceLine(file, lineNumber)
                 {
