@@ -13,3 +13,4 @@ _ReSharper*
 Hoptoad.config
 /*.docstates
 /*.user
+/packages/
