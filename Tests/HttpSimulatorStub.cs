@@ -17,23 +17,27 @@ namespace Subtext.TestLibrary
         }
 
 
-        public void SetFormVariable(string key, string value)
+        public HttpSimulator SetFormVariable(string key, string value)
         {
+            return this;
         }
 
 
-        public void SetHeader(string headerKey1, string headerValue1)
+        public HttpSimulator SetHeader(string headerKey1, string headerValue1)
         {
+            return this;
         }
 
 
-        public void SetReferer(Uri uri)
+        public HttpSimulator SetReferer(Uri uri)
         {
+            return this;
         }
 
 
-        public void SimulateRequest(Uri uri)
+        public HttpSimulator SimulateRequest(Uri uri)
         {
+            return this;
         }
     }
 }

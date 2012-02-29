@@ -61,7 +61,7 @@ namespace SharpBrake.Tests
         public void Notice_contains_Request()
         {
             AirbrakeNotice notice = null;
-            const string url = "http://example.com/";
+            const string url = "http://example.com/?Query.Key1=Query.Value1&Query.Key2=Query.Value2";
             const string referer = "http://github.com/";
             string physicalApplicationPath = Environment.CurrentDirectory + Path.DirectorySeparatorChar;
             var httpSimulator = new HttpSimulator("/", physicalApplicationPath)
@@ -103,8 +103,12 @@ namespace SharpBrake.Tests
 
             Assert.That(notice.Request.Params,
                         Contains.Item(new AirbrakeVar("APPL_PHYSICAL_PATH", physicalApplicationPath)));
+            Assert.That(notice.Request.Params,
+                        Contains.Item(new AirbrakeVar("QUERY_STRING", "Query.Key1=Query.Value1&Query.Key2=Query.Value2")));
             Assert.That(notice.Request.Params, Contains.Item(new AirbrakeVar("Form.Key1", "Form.Value1")));
             Assert.That(notice.Request.Params, Contains.Item(new AirbrakeVar("Form.Key2", "Form.Value2")));
+            Assert.That(notice.Request.Params, Contains.Item(new AirbrakeVar("Query.Key1", "Query.Value1")));
+            Assert.That(notice.Request.Params, Contains.Item(new AirbrakeVar("Query.Key2", "Query.Value2")));
         }
 
 
