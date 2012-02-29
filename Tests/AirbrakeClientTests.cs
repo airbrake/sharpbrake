@@ -1,5 +1,4 @@
 using System;
-using System.Threading;
 
 using NUnit.Framework;
 
@@ -57,16 +56,7 @@ namespace Tests
 
             this.client.Send(notice);
 
-            while (!requestEndInvoked)
-            {
-                // Sleep for maximum 5 seconds to wait for the request to end. Can probably be done more elegantly.
-                if (i++ == 50)
-                    break;
-
-                Thread.Sleep(100);
-            }
-
-            Assert.That(requestEndInvoked, Is.True);
+            Assert.That(requestEndInvoked, Is.True.After(5000));
             Assert.That(errors, Is.Not.Null);
             Assert.That(errors, Has.Length.EqualTo(1));
         }
