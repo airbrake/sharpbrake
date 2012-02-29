@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using System.Xml.Serialization;
 
 namespace SharpBrake.Serialization
@@ -44,8 +45,14 @@ namespace SharpBrake.Serialization
         [XmlElement("message")]
         public string Message { get; set; }
 
+        /// <summary>
+        /// Gets or sets the method that had the <c>catch</c> which created this <see cref="AirbrakeError"/>.
+        /// </summary>
+        /// <value>
+        /// The method that had the <c>catch</c> which created this <see cref="AirbrakeError"/>.
+        /// </value>
         [XmlIgnore]
-        internal Type CatchingType { get; set; }
+        internal MethodBase CatchingMethod { get; set; }
 
 
         /// <summary>

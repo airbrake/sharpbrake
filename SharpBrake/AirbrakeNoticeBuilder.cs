@@ -101,12 +101,12 @@ namespace SharpBrake
 
             this.log.Debug(f => f("{0}.Notice({1})", GetType(), exception.GetType()), exception);
 
-            Type catchingType;
-            var backtrace = BuildBacktrace(exception, out catchingType);
+            MethodBase catchingMethod;
+            var backtrace = BuildBacktrace(exception, out catchingMethod);
 
             var error = Activator.CreateInstance<AirbrakeError>();
 
-            error.CatchingType = catchingType;
+            error.CatchingMethod = catchingMethod;
             error.Class = exception.GetType().FullName;
             error.Message = exception.GetType().Name + ": " + exception.Message;
             error.Backtrace = backtrace;
@@ -132,11 +132,11 @@ namespace SharpBrake
                 ServerEnvironment = ServerEnvironment,
             };
 
-            Type catchingType = (error != null)
-                                    ? error.CatchingType
-                                    : null;
+            MethodBase catchingMethod = (error != null)
+                                            ? error.CatchingMethod
+                                            : null;
 
-            AddInfoFromHttpContext(notice, catchingType);
+            AddInfoFromHttpContext(notice, catchingMethod);
 
             return notice;
         }
@@ -162,7 +162,7 @@ namespace SharpBrake
         }
 
 
-        private static void AddInfoFromHttpContext(AirbrakeNotice notice, Type throwingType)
+        private static void AddInfoFromHttpContext(AirbrakeNotice notice, MethodBase catchingMethod)
         {
             HttpContext httpContext = HttpContext.Current;
 
@@ -171,12 +171,20 @@ namespace SharpBrake
 
             HttpRequest request = httpContext.Request;
 
-            string component = (throwingType != null)
-                                   ? throwingType.FullName
-                                   : String.Empty;
+            string component = String.Empty;
+            string action = String.Empty;
+
+            if (catchingMethod != null)
+            {
+                action = catchingMethod.Name;
+
+                if (catchingMethod.DeclaringType != null)
+                    component = catchingMethod.DeclaringType.FullName;
+            }
 
             notice.Request = new AirbrakeRequest(request.Url, component)
             {
+                Action = action,
                 CgiData = BuildVars(request.Headers).ToArray(),
                 Params = BuildVars(request.Params).ToArray(),
                 Session = BuildVars(httpContext.Session).ToArray(),
@@ -205,7 +213,7 @@ namespace SharpBrake
         }
 
 
-        private AirbrakeTraceLine[] BuildBacktrace(Exception exception, out Type catchingType)
+        private AirbrakeTraceLine[] BuildBacktrace(Exception exception, out MethodBase catchingMethod)
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
 
@@ -215,9 +223,9 @@ namespace SharpBrake
             if (assembly.EntryPoint == null)
                 assembly = Assembly.GetEntryAssembly();
 
-            catchingType = assembly == null || assembly.EntryPoint == null
-                               ? null
-                               : assembly.EntryPoint.DeclaringType;
+            catchingMethod = assembly == null
+                                 ? null
+                                 : assembly.EntryPoint;
 
             List<AirbrakeTraceLine> lines = new List<AirbrakeTraceLine>();
             var stackTrace = new StackTrace(exception);
@@ -235,7 +243,7 @@ namespace SharpBrake
             {
                 MethodBase method = frame.GetMethod();
 
-                catchingType = method.DeclaringType;
+                catchingMethod = method;
 
                 int lineNumber = frame.GetFileLineNumber();
 
