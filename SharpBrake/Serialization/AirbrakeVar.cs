@@ -47,5 +47,61 @@ namespace SharpBrake.Serialization
         /// </value>
         [XmlText]
         public string Value { get; set; }
+
+
+        /// <summary>
+        /// Determines whether the specified <see cref="System.Object"/> is equal to this instance.
+        /// </summary>
+        /// <param name="obj">The <see cref="System.Object"/> to compare with this instance.</param>
+        /// <returns>
+        ///   <c>true</c> if the specified <see cref="System.Object"/> is equal to this instance; otherwise, <c>false</c>.
+        /// </returns>
+        /// <exception cref="T:System.NullReferenceException">
+        /// The <paramref name="obj"/> parameter is null.
+        ///   </exception>
+        public override bool Equals(object obj)
+        {
+            AirbrakeVar other = obj as AirbrakeVar;
+
+            if (obj == null)
+                return false;
+
+            return GetHashCode() == obj.GetHashCode();
+        }
+
+
+        /// <summary>
+        /// Returns a hash code for this instance.
+        /// </summary>
+        /// <returns>
+        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
+        /// </returns>
+        public override int GetHashCode()
+        {
+            int hashCode = 0;
+
+            if (Key != null)
+                hashCode += Key.GetHashCode();
+
+            if (Value != null)
+                hashCode += Value.GetHashCode();
+
+            if (hashCode == 0)
+                hashCode = base.GetHashCode();
+
+            return hashCode;
+        }
+
+
+        /// <summary>
+        /// Returns a <see cref="System.String"/> that represents this instance.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="System.String"/> that represents this instance.
+        /// </returns>
+        public override string ToString()
+        {
+            return String.Format("[{0} : {1}]", Key, Value);
+        }
     }
 }
