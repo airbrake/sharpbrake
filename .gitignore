@@ -12,3 +12,4 @@ _ReSharper*
 *.log
 Hoptoad.config
 /*.docstates
+/*.user
