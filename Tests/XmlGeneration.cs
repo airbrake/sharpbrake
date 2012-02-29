@@ -1,4 +1,5 @@
 using System.Xml.Serialization;
+
 using NUnit.Framework;
 
 using SharpBrake.Serialization;
@@ -22,10 +23,10 @@ namespace Tests
         public void Xml_contains_no_fluff()
         {
             var notice = new TestNotice
-                             {
-                                 ApiKey = "123456",
-                                 Version = "2.0"
-                             };
+            {
+                ApiKey = "123456",
+                Version = "2.0"
+            };
 
             var serializer = new CleanXmlSerializer<TestNotice>();
             string xml = serializer.ToXml(notice);

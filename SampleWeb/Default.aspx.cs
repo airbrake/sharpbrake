@@ -10,6 +10,7 @@ namespace SampleWeb
             Load += PageLoad;
         }
 
+
         protected void PageLoad(object sender, EventArgs e)
         {
             throw new InvalidOperationException("Sample error");

@@ -31,21 +31,21 @@ namespace SharpBrake.Serialization
 
 
         /// <summary>
-        /// Optional. The path to the project in which the error occurred, such as RAILS_ROOT or DOCUMENT_ROOT.
-        /// </summary>
-        /// <value>
-        /// The project root.
-        /// </value>
-        [XmlElement("project-root")]
-        public string ProjectRoot { get; set; }
-
-        /// <summary>
         /// Required. The name of the server environment in which the error occurred, such as "staging" or "production."
         /// </summary>
         /// <value>
         /// The name of the environment.
         /// </value>
-        [XmlElement("environment-name")]
+        [XmlElement("environment-name", Order = 1)]
         public string EnvironmentName { get; set; }
+
+        /// <summary>
+        /// Optional. The path to the project in which the error occurred, such as RAILS_ROOT or DOCUMENT_ROOT.
+        /// </summary>
+        /// <value>
+        /// The project root.
+        /// </value>
+        [XmlElement("project-root", Order = 0)]
+        public string ProjectRoot { get; set; }
     }
 }

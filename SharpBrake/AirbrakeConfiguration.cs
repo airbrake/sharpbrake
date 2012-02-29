@@ -24,18 +24,6 @@ namespace SharpBrake
 
 
         /// <summary>
-        /// Gets or sets the project root. By default set to  <see cref="HttpRequest.ApplicationPath"/>
-        /// if <see cref="HttpContext.Current"/> is not null, else <see cref="Environment.CurrentDirectory"/>. 
-        /// </summary>
-        /// <remarks>
-        /// Only set this if you need to override the default project root.
-        /// </remarks>
-        /// <value>
-        /// The project root.
-        /// </value>
-        public string ProjectRoot { get; set; }
-
-        /// <summary>
         /// Gets or sets the API key.
         /// </summary>
         /// <value>
@@ -50,5 +38,17 @@ namespace SharpBrake
         /// The name of the environment.
         /// </value>
         public string EnvironmentName { get; set; }
+
+        /// <summary>
+        /// Gets or sets the project root. By default set to  <see cref="HttpRequest.ApplicationPath"/>
+        /// if <see cref="HttpContext.Current"/> is not null, else <see cref="Environment.CurrentDirectory"/>. 
+        /// </summary>
+        /// <remarks>
+        /// Only set this if you need to override the default project root.
+        /// </remarks>
+        /// <value>
+        /// The project root.
+        /// </value>
+        public string ProjectRoot { get; set; }
     }
 }

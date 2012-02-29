@@ -17,15 +17,6 @@ namespace SharpBrake.Serialization
         public string Name { get; set; }
 
         /// <summary>
-        /// Required. The version number of the notifier client submitting the request.
-        /// </summary>
-        /// <value>
-        /// The version number of the notifier client submitting the request.
-        /// </value>
-        [XmlElement("version")]
-        public string Version { get; set; }
-
-        /// <summary>
         /// Required. A URL at which more information can be obtained concerning the notifier client.
         /// </summary>
         /// <value>
@@ -33,5 +24,14 @@ namespace SharpBrake.Serialization
         /// </value>
         [XmlElement("url")]
         public string Url { get; set; }
+
+        /// <summary>
+        /// Required. The version number of the notifier client submitting the request.
+        /// </summary>
+        /// <value>
+        /// The version number of the notifier client submitting the request.
+        /// </value>
+        [XmlElement("version")]
+        public string Version { get; set; }
     }
 }
