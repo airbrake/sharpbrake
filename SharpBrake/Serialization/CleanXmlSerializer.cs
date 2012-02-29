@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
@@ -8,8 +9,7 @@ namespace SharpBrake.Serialization
     /// Wraps XML serialization and doesn't generate processing instructions on document start 
     /// as well as xsi and xsd namespace definitions
     /// </summary>
-    /// <typeparam name="TRoot">The type of the root.</typeparam>
-    public class CleanXmlSerializer<TRoot>
+    public abstract class CleanXmlSerializer
     {
         private readonly XmlSerializerNamespaces namespaces;
         private readonly XmlSerializer serializer;
@@ -18,14 +18,14 @@ namespace SharpBrake.Serialization
         /// <summary>
         /// Initializes a new instance of the <see cref="CleanXmlSerializer&lt;TRoot&gt;"/> class.
         /// </summary>
-        public CleanXmlSerializer()
+        protected CleanXmlSerializer(Type type)
         {
             //Create our own namespaces for the output
             this.namespaces = new XmlSerializerNamespaces();
 
             //Add an empty namespace and empty value
             this.namespaces.Add("", "");
-            this.serializer = new XmlSerializer(typeof(TRoot));
+            this.serializer = new XmlSerializer(type);
         }
 
 
@@ -36,7 +36,7 @@ namespace SharpBrake.Serialization
         /// <returns>
         /// The <paramref name="source"/> serialized to XML.
         /// </returns>
-        public string ToXml(TRoot source)
+        protected string ToXml(object source)
         {
             using (var writer = new StringWriter())
             {
@@ -46,6 +46,21 @@ namespace SharpBrake.Serialization
                     return writer.ToString();
                 }
             }
+        }
+
+
+        /// <summary>
+        /// Serializes the <paramref name="source"/> to XML.
+        /// </summary>
+        /// <typeparam name="T">The type of the object that is to be serialized.</typeparam>
+        /// <param name="source">The source.</param>
+        /// <returns>
+        /// The <paramref name="source"/> serialized to XML.
+        /// </returns>
+        public static string ToXml<T>(T source)
+        {
+            CleanXmlSerializer<T> serializer = new CleanXmlSerializer<T>();
+            return serializer.ToXml(source);
         }
 
         #region Nested type: XmlTextWriterFormattedNoDeclaration

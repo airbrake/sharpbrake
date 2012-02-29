@@ -71,6 +71,7 @@
     <Compile Include="Serialization\AirbrakeTraceLine.cs" />
     <Compile Include="Serialization\AirbrakeVar.cs" />
     <Compile Include="Serialization\CleanXmlSerializer.cs" />
+    <Compile Include="Serialization\CleanXmlSerializer`1.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="hoptoad_2_1.xsd">
