@@ -2,10 +2,9 @@ using System;
 
 using NUnit.Framework;
 
-using SharpBrake;
 using SharpBrake.Serialization;
 
-namespace Tests
+namespace SharpBrake.Tests
 {
     [TestFixture]
     public class AirbrakeClientTests

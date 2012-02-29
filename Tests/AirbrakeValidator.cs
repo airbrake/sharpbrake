@@ -6,9 +6,7 @@ using System.Xml.Schema;
 
 using NUnit.Framework;
 
-using SharpBrake;
-
-namespace Tests
+namespace SharpBrake.Tests
 {
     public class AirbrakeValidator
     {

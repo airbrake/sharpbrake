@@ -1,8 +1,10 @@
+using System;
+
 using NUnit.Framework;
 
 using SharpBrake.Serialization;
 
-namespace Tests
+namespace SharpBrake.Tests
 {
     [TestFixture]
     public class ErrorSchemaValidation
@@ -10,17 +12,19 @@ namespace Tests
         [Test]
         public void Minimal_notice_generates_valid_XML()
         {
-            var notice = new AirbrakeNotice();
-            notice.ApiKey = "123456";
-            notice.Error = new AirbrakeError
+            var notice = new AirbrakeNotice
             {
-                Class = "TestError",
-                Message = "something blew up",
-                Backtrace = new[]
-                {
-                    new AirbrakeTraceLine("unknown.cs", 0) { Method = "unknown" }
-                }
+                ApiKey = "123456",
+                Error = Activator.CreateInstance<AirbrakeError>()
             };
+
+            notice.Error.Class = "TestError";
+            notice.Error.Message = "something blew up";
+            notice.Error.Backtrace = new[]
+            {
+                new AirbrakeTraceLine("unknown.cs", 0) { Method = "unknown" }
+            };
+
             notice.Notifier = new AirbrakeNotifier
             {
                 Name = "hopsharp",

@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Web;
+using System.Web.SessionState;
 
 using Common.Logging;
 
@@ -99,12 +101,15 @@ namespace SharpBrake
 
             this.log.Debug(f => f("{0}.Notice({1})", GetType(), exception.GetType()), exception);
 
-            var error = new AirbrakeError
-            {
-                Class = exception.GetType().FullName,
-                Message = exception.GetType().Name + ": " + exception.Message,
-                Backtrace = BuildBacktrace(exception).ToArray(),
-            };
+            Type catchingType;
+            var backtrace = BuildBacktrace(exception, out catchingType);
+
+            var error = Activator.CreateInstance<AirbrakeError>();
+
+            error.CatchingType = catchingType;
+            error.Class = exception.GetType().FullName;
+            error.Message = exception.GetType().Name + ": " + exception.Message;
+            error.Backtrace = backtrace;
 
             return error;
         }
@@ -127,17 +132,11 @@ namespace SharpBrake
                 ServerEnvironment = ServerEnvironment,
             };
 
-            if (HttpContext.Current != null)
-            {
-                Assembly assembly = Assembly.GetExecutingAssembly();
+            Type catchingType = (error != null)
+                                    ? error.CatchingType
+                                    : null;
 
-                notice.Request = new AirbrakeRequest(HttpContext.Current.Request.Url, assembly.CodeBase)
-                {
-                    Params = BuildParams().ToArray(),
-                    Session = BuildSession().ToArray(),
-                    CgiData = BuildCgiData().ToArray(),
-                };
-            }
+            AddInfoFromHttpContext(notice, catchingType);
 
             return notice;
         }
@@ -157,74 +156,112 @@ namespace SharpBrake
 
             this.log.Debug(f => f("{0}.Notice({1})", GetType(), exception.GetType()), exception);
 
-            var notice = new AirbrakeNotice
-            {
-                ApiKey = Configuration.ApiKey,
-                Error = ErrorFromException(exception),
-                Notifier = Notifier,
-                ServerEnvironment = ServerEnvironment,
-            };
+            AirbrakeError error = ErrorFromException(exception);
 
-            return notice;
+            return Notice(error);
         }
 
 
-        private static IEnumerable<AirbrakeTraceLine> BuildBacktrace(Exception exception)
+        private static void AddInfoFromHttpContext(AirbrakeNotice notice, Type throwingType)
         {
+            HttpContext httpContext = HttpContext.Current;
+
+            if (httpContext == null)
+                return;
+
+            HttpRequest request = httpContext.Request;
+
+            string component = (throwingType != null)
+                                   ? throwingType.FullName
+                                   : String.Empty;
+
+            notice.Request = new AirbrakeRequest(request.Url, component)
+            {
+                CgiData = BuildVars(request.Headers).ToArray(),
+                Params = BuildVars(request.Params).ToArray(),
+                Session = BuildVars(httpContext.Session).ToArray(),
+            };
+        }
+
+
+        private static IEnumerable<AirbrakeVar> BuildVars(NameValueCollection formData)
+        {
+            return from key in formData.AllKeys
+                   where !String.IsNullOrEmpty(key)
+                   let value = formData[key]
+                   where !String.IsNullOrEmpty(value)
+                   select new AirbrakeVar(key, value);
+        }
+
+
+        private static IEnumerable<AirbrakeVar> BuildVars(HttpSessionState httpSessionState)
+        {
+            return from key in httpSessionState.Keys.Cast<string>()
+                   where !String.IsNullOrEmpty(key)
+                   let v = httpSessionState[key]
+                   let value = v != null ? v.ToString() : null
+                   where !String.IsNullOrEmpty(value)
+                   select new AirbrakeVar(key, value);
+        }
+
+
+        private AirbrakeTraceLine[] BuildBacktrace(Exception exception, out Type catchingType)
+        {
+            Assembly assembly = Assembly.GetExecutingAssembly();
+
+            if (assembly.EntryPoint == null)
+                assembly = Assembly.GetCallingAssembly();
+
+            if (assembly.EntryPoint == null)
+                assembly = Assembly.GetEntryAssembly();
+
+            catchingType = assembly == null || assembly.EntryPoint == null
+                               ? null
+                               : assembly.EntryPoint.DeclaringType;
+
+            List<AirbrakeTraceLine> lines = new List<AirbrakeTraceLine>();
             var stackTrace = new StackTrace(exception);
             StackFrame[] frames = stackTrace.GetFrames();
 
             if (frames == null || frames.Length == 0)
             {
                 // Airbrake requires that at least one line is present in the XML.
-                yield return new AirbrakeTraceLine("none", 0);
-                yield break;
+                AirbrakeTraceLine line = new AirbrakeTraceLine("none", 0);
+                lines.Add(line);
+                return lines.ToArray();
             }
 
             foreach (StackFrame frame in frames)
             {
                 MethodBase method = frame.GetMethod();
 
+                catchingType = method.DeclaringType;
+
                 int lineNumber = frame.GetFileLineNumber();
 
                 if (lineNumber == 0)
+                {
+                    this.log.Debug(f => f("No line number found in {0}, using IL offset instead.", method));
                     lineNumber = frame.GetILOffset();
+                }
 
                 string file = frame.GetFileName();
 
-                if (string.IsNullOrEmpty(file))
-                    file = method.ReflectedType != null ? method.ReflectedType.FullName : "(unknown)";
+                /*if (String.IsNullOrEmpty(file))
+                    file = method.ReflectedType != null ? method.ReflectedType.FullName : "(unknown)";*/
 
-                yield return new AirbrakeTraceLine(file, lineNumber)
+                if (String.IsNullOrEmpty(file))
+                    file = method.ReflectedType.FullName;
+
+                AirbrakeTraceLine line = new AirbrakeTraceLine(file, lineNumber)
                 {
                     Method = method.Name
                 };
+
+                lines.Add(line);
             }
-        }
 
-
-        private static IEnumerable<AirbrakeVar> BuildCgiData()
-        {
-            return from key in HttpContext.Current.Request.ServerVariables.AllKeys
-                   let value = HttpContext.Current.Request.ServerVariables[key]
-                   select new AirbrakeVar(key, value);
-        }
-
-
-        private static IEnumerable<AirbrakeVar> BuildParams()
-        {
-            return from key in HttpContext.Current.Request.Params.AllKeys
-                   let value = HttpContext.Current.Request.Params[key]
-                   select new AirbrakeVar(key, value);
-        }
-
-
-        private static IEnumerable<AirbrakeVar> BuildSession()
-        {
-            return from key in HttpContext.Current.Session.Keys.Cast<string>()
-                   let v = HttpContext.Current.Session[key]
-                   let value = v != null ? v.ToString() : null
-                   select new AirbrakeVar(key, value);
+            return lines.ToArray();
         }
     }
 }

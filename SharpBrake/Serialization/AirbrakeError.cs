@@ -9,6 +9,12 @@ namespace SharpBrake.Serialization
     [XmlInclude(typeof(AirbrakeTraceLine))]
     public class AirbrakeError
     {
+        [Obsolete("", true)]
+        public AirbrakeError()
+        {
+        }
+
+
         /// <summary>
         /// Required. Each line element describes one code location or frame in the backtrace when the
         /// error occurred.
@@ -37,6 +43,9 @@ namespace SharpBrake.Serialization
         /// </value>
         [XmlElement("message")]
         public string Message { get; set; }
+
+        [XmlIgnore]
+        internal Type CatchingType { get; set; }
 
 
         /// <summary>

@@ -4,7 +4,7 @@ using NUnit.Framework;
 
 using SharpBrake.Serialization;
 
-namespace Tests
+namespace SharpBrake.Tests
 {
     [XmlRoot("notice", Namespace = "")]
     public class TestNotice

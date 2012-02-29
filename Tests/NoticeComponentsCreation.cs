@@ -1,11 +1,13 @@
 using System;
+using System.IO;
 
 using NUnit.Framework;
 
-using SharpBrake;
 using SharpBrake.Serialization;
 
-namespace Tests
+using Subtext.TestLibrary;
+
+namespace SharpBrake.Tests
 {
     [TestFixture]
     public class NoticeComponentsCreation
@@ -44,11 +46,65 @@ namespace Tests
             }
 
             AirbrakeError error = this.builder.ErrorFromException(exception);
-            Assert.AreNotEqual(0, error.Backtrace.Length);
+            Assert.That(error.Backtrace, Has.Length.GreaterThan(0));
 
             AirbrakeTraceLine trace = error.Backtrace[0];
-            Assert.AreEqual("Building_error_from_dotNET_exception", trace.Method);
-            Assert.AreNotEqual(0, trace.LineNumber);
+            Assert.That(trace.Method, Is.EqualTo("Building_error_from_dotNET_exception"));
+            Assert.That(trace.LineNumber, Is.GreaterThan(0));
+        }
+
+
+        [Test(
+            Description =
+                "This test will fail in Visual Studio 2008 since we can't reference HttpSimulator from .NET 3.5."
+            )]
+        public void Notice_contains_Request()
+        {
+            AirbrakeNotice notice = null;
+            const string url = "http://example.com/";
+            const string referer = "http://github.com/";
+            string physicalApplicationPath = Environment.CurrentDirectory + Path.DirectorySeparatorChar;
+            var httpSimulator = new HttpSimulator("/", physicalApplicationPath)
+                .SetFormVariable("Form.Key1", "Form.Value1")
+                .SetFormVariable("Form.Key2", "Form.Value2")
+                .SetHeader("Header.Key1", "Header.Value1")
+                .SetHeader("Header.Key2", "Header.Value2")
+                .SetReferer(new Uri(referer))
+                .SimulateRequest(new Uri(url));
+
+            using (httpSimulator)
+            {
+                try
+                {
+                    Thrower.Throw(new Exception("Halp!"));
+                }
+                catch (Exception exception)
+                {
+                    AirbrakeError error = this.builder.ErrorFromException(exception);
+                    notice = this.builder.Notice(error);
+                }
+            }
+
+            Console.WriteLine(CleanXmlSerializer.ToXml(notice));
+
+            Assert.That(notice, Is.Not.Null);
+            Assert.That(notice.Error, Is.Not.Null);
+            Assert.That(notice.Request, Is.Not.Null);
+            Assert.That(notice.Request.Url, Is.EqualTo(url));
+            Assert.That(notice.Request.Component, Is.EqualTo(GetType().FullName));
+
+            Assert.That(notice.Request.CgiData,
+                        Contains.Item(new AirbrakeVar("Content-Type", "application/x-www-form-urlencoded")));
+            Assert.That(notice.Request.CgiData,
+                        Contains.Item(new AirbrakeVar("Header.Key1", "Header.Value1")));
+            Assert.That(notice.Request.CgiData,
+                        Contains.Item(new AirbrakeVar("Header.Key2", "Header.Value2")));
+            Assert.That(notice.Request.CgiData, Contains.Item(new AirbrakeVar("Referer", referer)));
+
+            Assert.That(notice.Request.Params,
+                        Contains.Item(new AirbrakeVar("APPL_PHYSICAL_PATH", physicalApplicationPath)));
+            Assert.That(notice.Request.Params, Contains.Item(new AirbrakeVar("Form.Key1", "Form.Value1")));
+            Assert.That(notice.Request.Params, Contains.Item(new AirbrakeVar("Form.Key2", "Form.Value2")));
         }
 
 
@@ -56,10 +112,12 @@ namespace Tests
         public void Notice_contains_ServerEnvironment_and_Notifier()
         {
             AirbrakeNotice notice = this.builder.Notice((AirbrakeError)null);
-            Assert.IsNotNull(notice.ServerEnvironment);
-            Assert.IsNotNull(notice.Notifier);
-            Assert.IsNotEmpty(notice.ApiKey);
-            Assert.IsNotEmpty(notice.Version);
+            Assert.That(notice.ServerEnvironment, Is.Not.Null);
+            Assert.That(notice.ServerEnvironment.ProjectRoot, Is.Not.Null);
+            Assert.That(notice.ServerEnvironment.EnvironmentName, Is.Not.Null);
+            Assert.That(notice.Notifier, Is.Not.Null);
+            Assert.That(notice.ApiKey, Is.Not.Empty);
+            Assert.That(notice.Version, Is.Not.Null);
         }
 
 
@@ -67,9 +125,9 @@ namespace Tests
         public void Notifier_initialized_correctly()
         {
             AirbrakeNotifier notifier = this.builder.Notifier;
-            Assert.AreEqual("SharpBrake", notifier.Name);
-            Assert.AreEqual("https://github.com/asbjornu/SharpBrake", notifier.Url);
-            Assert.AreEqual("2.1.2.0", notifier.Version);
+            Assert.That(notifier.Name, Is.EqualTo("SharpBrake"));
+            Assert.That(notifier.Url, Is.EqualTo("https://github.com/asbjornu/SharpBrake"));
+            Assert.That(notifier.Version, Is.EqualTo("2.1.3.0"));
         }
 
 
@@ -77,7 +135,39 @@ namespace Tests
         public void Server_environment_read_from_Airbrake_config()
         {
             AirbrakeServerEnvironment environment = this.builder.ServerEnvironment;
-            Assert.AreEqual(this.config.EnvironmentName, environment.EnvironmentName);
+            Assert.That(environment.EnvironmentName, Is.EqualTo(this.config.EnvironmentName));
+        }
+
+
+        [Test]
+        [Ignore("Pending https://github.com/asbjornu/SharpBrake/pull/3")]
+        public void StackTrace_contains_lambda_expression()
+        {
+            Exception exception = null;
+
+            try
+            {
+                Action action = () =>
+                {
+                    Action inner = () => { throw new InvalidOperationException("test error"); };
+                    inner.Invoke();
+                };
+
+                action.Invoke();
+            }
+            catch (Exception testException)
+            {
+                exception = testException;
+            }
+
+            AirbrakeError error = this.builder.ErrorFromException(exception);
+
+            CleanXmlSerializer<AirbrakeError> serializer = new CleanXmlSerializer<AirbrakeError>();
+            Console.WriteLine(serializer.ToXml(error));
+
+            Assert.That(error.Backtrace, Has.Length.GreaterThan(0));
+
+            AirbrakeTraceLine trace = error.Backtrace[0];
         }
     }
 }
