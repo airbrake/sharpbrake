@@ -62,7 +62,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ErrorSchemaValidation.cs" />
+    <Compile Include="SchemaValidation.cs" />
     <Compile Include="AirbrakeClientTests.cs" />
     <Compile Include="AirbrakeValidator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
