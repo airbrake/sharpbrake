@@ -5,13 +5,13 @@ namespace SampleWeb
 {
     public partial class Default : Page
     {
-        public Default()
+        protected Default()
         {
             Load += PageLoad;
         }
 
 
-        protected void PageLoad(object sender, EventArgs e)
+        private static void PageLoad(object sender, EventArgs e)
         {
             throw new InvalidOperationException("Sample error");
         }
