@@ -12,6 +12,38 @@ namespace SharpBrake.Tests
     {
         public static void ValidateSchema(string xml)
         {
+            var schema = GetXmlSchema();
+
+            XmlReaderSettings settings = new XmlReaderSettings
+            {
+                ValidationType = ValidationType.Schema,
+            };
+
+            var errorBuffer = new StringBuilder();
+
+            settings.ValidationEventHandler += (sender, args) => errorBuffer.AppendLine(args.Message);
+            settings.Schemas.Add(schema);
+
+            using (var reader = new StringReader(xml))
+            {
+                using (var xmlReader = new XmlTextReader(reader))
+                {
+                    using (var validator = XmlReader.Create(xmlReader, settings))
+                    {
+                        while (validator.Read())
+                        {
+                        }
+                    }
+                }
+            }
+
+            if (errorBuffer.Length > 0)
+                Assert.Fail(errorBuffer.ToString());
+        }
+
+
+        private static XmlSchema GetXmlSchema()
+        {
             const string xsd = "hoptoad_2_1.xsd";
 
             Type clientType = typeof(AirbrakeClient);
@@ -22,32 +54,9 @@ namespace SharpBrake.Tests
                 if (schemaStream == null)
                     Assert.Fail("{0}.{1} not found.", clientType.Namespace, xsd);
 
-                schema = XmlSchema.Read(schemaStream, (sender, args) => { });
+                schema = XmlSchema.Read(schemaStream, (sender, args) => {  });
             }
-
-            var reader = new StringReader(xml);
-            var xmlReader = new XmlTextReader(reader);
-
-            XmlReaderSettings settings = new XmlReaderSettings
-            {
-                ValidationType = ValidationType.Schema,
-            };
-
-            var errorBuffer = new StringBuilder();
-
-            settings.ValidationEventHandler += (sender, args) => errorBuffer.AppendLine(args.Message);
-
-            settings.Schemas.Add(schema);
-
-            using (var validator = XmlReader.Create(xmlReader, settings))
-            {
-                while (validator.Read())
-                {
-                }
-            }
-
-            if (errorBuffer.Length > 0)
-                Assert.Fail(errorBuffer.ToString());
+            return schema;
         }
     }
 }
