@@ -44,19 +44,16 @@ namespace SharpBrake.Tests
 
         private static XmlSchema GetXmlSchema()
         {
-            const string xsd = "hoptoad_2_1.xsd";
-
             Type clientType = typeof(AirbrakeClient);
-            XmlSchema schema;
+            const string xsd = "hoptoad_2_1.xsd";
 
             using (Stream schemaStream = clientType.Assembly.GetManifestResourceStream(clientType, xsd))
             {
                 if (schemaStream == null)
                     Assert.Fail("{0}.{1} not found.", clientType.Namespace, xsd);
 
-                schema = XmlSchema.Read(schemaStream, (sender, args) => {  });
+                return XmlSchema.Read(schemaStream, (sender, args) => {  });
             }
-            return schema;
         }
     }
 }
