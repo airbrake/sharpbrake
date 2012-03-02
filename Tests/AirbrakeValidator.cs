@@ -8,7 +8,7 @@ using NUnit.Framework;
 
 namespace SharpBrake.Tests
 {
-    public class AirbrakeValidator
+    public static class AirbrakeValidator
     {
         public static void ValidateSchema(string xml)
         {
@@ -21,7 +21,6 @@ namespace SharpBrake.Tests
 
             var errorBuffer = new StringBuilder();
 
-            settings.ValidationEventHandler += (sender, args) => errorBuffer.AppendLine(args.Message);
             settings.Schemas.Add(schema);
 
             using (var reader = new StringReader(xml))
@@ -52,7 +51,7 @@ namespace SharpBrake.Tests
                 if (schemaStream == null)
                     Assert.Fail("{0}.{1} not found.", clientType.Namespace, xsd);
 
-                return XmlSchema.Read(schemaStream, (sender, args) => {  });
+                return XmlSchema.Read(schemaStream, null);
             }
         }
     }
