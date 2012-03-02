@@ -19,8 +19,6 @@ namespace SharpBrake.Tests
                 ValidationType = ValidationType.Schema,
             };
 
-            var errorBuffer = new StringBuilder();
-
             settings.Schemas.Add(schema);
 
             using (var reader = new StringReader(xml))
@@ -35,9 +33,6 @@ namespace SharpBrake.Tests
                     }
                 }
             }
-
-            if (errorBuffer.Length > 0)
-                Assert.Fail(errorBuffer.ToString());
         }
 
 
