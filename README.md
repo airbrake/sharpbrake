@@ -9,7 +9,7 @@ The SharpBrake library can be used in two ways:
 ## Usage
 First, you need to get the library down from the internets and onto your local hard drive. The preferred method to accomplish this is to install [NuGet](http://nuget.org/) and then via any of its many interfaces install the [SharpBrake Package](http://nuget.org/packages/SharpBrake).
 
-If you want to build the library yourself, you can [fork or clone](http://help.github.com/fork-a-repo/) it and build it with Visual Studio (2008 or 2010; both are supported). Drop the files *SharpBrake.dll* and *Common.Logging.dll* in your application's bin directory and you're almost good to go.
+If you want to build the library yourself, you can [fork or clone](http://help.github.com/fork-a-repo/) it and build it with Visual Studio (2008 or 2010; both are supported). Drop the files *SharpBrake.dll* and *Common.Logging.dll* into your application's bin directory and you're almost good to go.
 
 Once SharpBrake is downloaded, built, installed or otherwise resides in your application's bin directory, you'll need to edit your application's .config file to include your API key for Airbrake as well as an environment name:
 
