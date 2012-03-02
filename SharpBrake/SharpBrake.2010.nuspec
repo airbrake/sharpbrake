@@ -8,7 +8,7 @@
     <projectUrl>https://github.com/asbjornu/SharpBrake</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <copyright>Copyright 2011</copyright>
+    <copyright>Copyright 2012</copyright>
     <tags>Logging Airbrake</tags>
     <dependencies>
       <dependency id="Common.Logging" />
