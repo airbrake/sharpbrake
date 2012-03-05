@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Web.UI;
 
-namespace SampleWeb
+namespace SharpBrake.WebFormsApp
 {
     public partial class Default : Page
     {
