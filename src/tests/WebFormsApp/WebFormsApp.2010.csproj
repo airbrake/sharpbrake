@@ -9,8 +9,8 @@
     <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SampleWeb</RootNamespace>
-    <AssemblyName>SampleWeb</AssemblyName>
+    <RootNamespace>SharpBrake.WebFormsApp</RootNamespace>
+    <AssemblyName>SharpBrake.WebFormsApp</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
@@ -67,7 +67,6 @@
   <ItemGroup>
     <Content Include="Airbrake.config" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\..\app\SharpBrake\SharpBrake.2010.csproj">
       <Project>{EE7CE02E-3CA9-4D01-8D57-E98911466B44}</Project>
