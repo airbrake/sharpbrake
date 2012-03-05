@@ -154,13 +154,13 @@ namespace SharpBrake.Tests
 
             try
             {
-                Action action = () =>
+                Action<object> action = o =>
                 {
-                    Action inner = () => { throw new InvalidOperationException("test error"); };
-                    inner.Invoke();
+                    Action<object, object, object> inner = (a, b, c) => Thrower.Throw(new Exception("Test"));
+                    inner.Invoke(1, 2, 3);
                 };
 
-                action.Invoke();
+                action.Invoke(Guid.NewGuid());
             }
             catch (Exception testException)
             {
@@ -168,7 +168,10 @@ namespace SharpBrake.Tests
             }
 
             // TODO: Figure out how to get this to fail.
-            this.builder.ErrorFromException(exception);
+            AirbrakeError error = this.builder.ErrorFromException(exception);
+            
+            Assert.That(error.Backtrace, Is.Not.Null);
+            Assert.That(error.Backtrace, Has.Length.EqualTo(4));
         }
     }
 }
