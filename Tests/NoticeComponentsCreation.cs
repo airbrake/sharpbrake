@@ -1,6 +1,6 @@
 using System;
 using System.IO;
-
+using System.Linq.Expressions;
 using NUnit.Framework;
 
 using SharpBrake.Serialization;
@@ -147,27 +147,21 @@ namespace SharpBrake.Tests
 
 
         [Test]
-        [Ignore("Pending https://github.com/asbjornu/SharpBrake/pull/3")]
         public void StackTrace_contains_lambda_expression()
         {
             Exception exception = null;
 
-            try
+			try
             {
-                Action action = () =>
-                {
-                    Action inner = () => { throw new InvalidOperationException("test error"); };
-                    inner.Invoke();
-                };
+ 				Expression<Func<int>> inner = () => ((string)null).Length;
 
-                action.Invoke();
+            	inner.Compile()();
             }
             catch (Exception testException)
             {
                 exception = testException;
             }
 
-            // TODO: Figure out how to get this to fail.
             this.builder.ErrorFromException(exception);
         }
     }
