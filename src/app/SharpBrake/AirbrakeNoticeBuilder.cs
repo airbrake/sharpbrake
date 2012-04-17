@@ -255,11 +255,14 @@ namespace SharpBrake
 
                 string file = frame.GetFileName();
 
-                /*if (String.IsNullOrEmpty(file))
-                    file = method.ReflectedType != null ? method.ReflectedType.FullName : "(unknown)";*/
-
                 if (String.IsNullOrEmpty(file))
-                    file = method.ReflectedType.FullName;
+                {
+                    // ReSharper disable ConditionIsAlwaysTrueOrFalse
+                    file = method.ReflectedType != null
+                               ? method.ReflectedType.FullName
+                               : "(unknown)";
+                    // ReSharper restore ConditionIsAlwaysTrueOrFalse
+                }
 
                 AirbrakeTraceLine line = new AirbrakeTraceLine(file, lineNumber)
                 {
