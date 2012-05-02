@@ -13,7 +13,7 @@ namespace SharpBrake.Serialization
         /// </summary>
         public AirbrakeNotice()
         {
-            Version = "2.0";
+            Version = "2.2";
         }
 
 
