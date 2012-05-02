@@ -38,7 +38,7 @@ namespace SharpBrake.Tests
         private static XmlSchema GetXmlSchema()
         {
             Type clientType = typeof(AirbrakeClient);
-            const string xsd = "hoptoad_2_1.xsd";
+            const string xsd = "airbrake_2_2.xsd";
 
             using (Stream schemaStream = clientType.Assembly.GetManifestResourceStream(clientType, xsd))
             {

@@ -15,7 +15,7 @@ namespace SharpBrake
     /// </summary>
     public class AirbrakeClient
     {
-        private const string airbrakeUri = "http://airbrakeapp.com/notifier_api/v2/notices";
+        private const string airbrakeUri = "https://airbrake.io/notifier_api/v2/notices";
         private readonly AirbrakeNoticeBuilder builder;
         private readonly ILog log;
 
