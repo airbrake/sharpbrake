@@ -23,6 +23,7 @@ namespace SharpBrake.Tests
 
 
         [Test]
+        [Ignore("This test needs to be rewritten for the 2.2 API")]
         public void Send_EndRequestEventIsInvoked_And_ResponseOnlyContainsApiError()
         {
             bool requestEndInvoked = false;
