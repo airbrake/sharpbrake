@@ -182,12 +182,16 @@ namespace SharpBrake
                     component = catchingMethod.DeclaringType.FullName;
             }
 
+            AirbrakeVar[] cgiData = BuildVars(request.Headers).ToArray();
+            AirbrakeVar[] parameters = BuildVars(request.Params).ToArray();
+            AirbrakeVar[] session = BuildVars(httpContext.Session).ToArray();
+
             notice.Request = new AirbrakeRequest(request.Url, component)
             {
                 Action = action,
-                CgiData = BuildVars(request.Headers).ToArray(),
-                Params = BuildVars(request.Params).ToArray(),
-                Session = BuildVars(httpContext.Session).ToArray(),
+                CgiData = cgiData.Any() ? cgiData : null,
+                Params = parameters.Any() ? parameters : null,
+                Session = session.Any() ? session : null,
             };
         }
 
