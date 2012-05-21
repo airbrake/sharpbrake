@@ -63,10 +63,10 @@ namespace SharpBrake.Serialization
         public AirbrakeServerEnvironment ServerEnvironment { get; set; }
 
         /// <summary>
-        /// Required. The version of the API being used. Should be set to "2.1".
+        /// Required. The version of the API being used. Should be set to "2.2".
         /// </summary>
         /// <value>
-        /// The version of the API being used. Should be set to "2.1".
+        /// The version of the API being used. Should be set to "2.2".
         /// </value>
         [XmlAttribute("version")]
         public string Version { get; set; }
