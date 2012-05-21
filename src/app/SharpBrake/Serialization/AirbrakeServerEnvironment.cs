@@ -49,6 +49,14 @@ namespace SharpBrake.Serialization
         public string ProjectRoot { get; set; }
 
 
+        /// <summary>
+        /// Optional. The version of the application that this error came from.
+        /// If the App Version is set on the project, then errors older than the project's app version will be ignored.
+        /// This version field uses "Semantic Versioning" style versioning.
+        /// </summary>
+        /// <value>
+        /// The app version.
+        /// </value>
         [XmlElement("app-version", Order = 2)]
         public string AppVersion { get; set; }
 

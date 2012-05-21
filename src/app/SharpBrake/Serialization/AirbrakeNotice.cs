@@ -10,6 +10,7 @@ namespace SharpBrake.Serialization
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="AirbrakeNotice"/> class.
+        /// For API Version 2.2
         /// </summary>
         public AirbrakeNotice()
         {
