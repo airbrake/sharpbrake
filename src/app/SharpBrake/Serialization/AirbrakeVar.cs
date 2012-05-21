@@ -63,10 +63,10 @@ namespace SharpBrake.Serialization
         {
             AirbrakeVar other = obj as AirbrakeVar;
 
-            if (obj == null)
+            if (other == null)
                 return false;
 
-            return GetHashCode() == obj.GetHashCode();
+            return GetHashCode() == other.GetHashCode();
         }
 
 
