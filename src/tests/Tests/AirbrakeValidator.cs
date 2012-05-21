@@ -13,25 +13,18 @@ namespace SharpBrake.Tests
         {
             var schema = GetXmlSchema();
 
-            XmlReaderSettings settings = new XmlReaderSettings
-            {
-                ValidationType = ValidationType.Schema,
-            };
+            XmlReaderSettings settings = new XmlReaderSettings();
+            settings.ValidationType = ValidationType.Schema;
+            settings.ValidationFlags |= XmlSchemaValidationFlags.ProcessInlineSchema;
+            settings.ValidationFlags |= XmlSchemaValidationFlags.ProcessSchemaLocation;
+            settings.ValidationFlags |= XmlSchemaValidationFlags.ReportValidationWarnings;
 
             settings.Schemas.Add(schema);
 
             using (var reader = new StringReader(xml))
-            {
-                using (var xmlReader = new XmlTextReader(reader))
-                {
-                    using (var validator = XmlReader.Create(xmlReader, settings))
-                    {
-                        while (validator.Read())
-                        {
-                        }
-                    }
-                }
-            }
+            using (var xmlReader = new XmlTextReader(reader))
+            using (var validator = XmlReader.Create(xmlReader, settings))
+            while (validator.Read());
         }
 
 
