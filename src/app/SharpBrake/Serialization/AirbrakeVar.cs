@@ -23,10 +23,12 @@ namespace SharpBrake.Serialization
         /// </summary>
         /// <param name="key">The key.</param>
         /// <param name="value">The value.</param>
-        public AirbrakeVar(string key, string value)
+        public AirbrakeVar(string key, object value)
         {
             Key = key;
-            Value = value;
+            Value = value == null
+                        ? null
+                        : value.ToString();
         }
 
 
