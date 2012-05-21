@@ -47,5 +47,12 @@ namespace SharpBrake.Serialization
         /// </value>
         [XmlElement("project-root", Order = 0)]
         public string ProjectRoot { get; set; }
+
+
+        [XmlElement("app-version", Order = 2)]
+        public string AppVersion { get; set; }
+
+        [XmlElement("hostname", Order = 3)]
+        public string Hostname { get; set; }
     }
 }

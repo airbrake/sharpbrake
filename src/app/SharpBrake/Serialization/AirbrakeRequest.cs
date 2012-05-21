@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Xml.Serialization;
 
 namespace SharpBrake.Serialization
@@ -9,6 +10,11 @@ namespace SharpBrake.Serialization
     [XmlInclude(typeof(AirbrakeVar))]
     public class AirbrakeRequest
     {
+        private AirbrakeVar[] cgiData;
+        private AirbrakeVar[] parameters;
+        private AirbrakeVar[] session;
+
+
         /// <summary>
         /// Initializes a new instance of the <see cref="AirbrakeRequest"/> class.
         /// </summary>
@@ -59,7 +65,11 @@ namespace SharpBrake.Serialization
         /// </value>
         [XmlArray("cgi-data")]
         [XmlArrayItem("var")]
-        public AirbrakeVar[] CgiData { get; set; }
+        public AirbrakeVar[] CgiData
+        {
+            get { return this.cgiData != null && this.cgiData.Any() ? this.cgiData : null; }
+            set { this.cgiData = value; }
+        }
 
         /// <summary>
         /// Required only if there is a request element. The component in which the error occurred. In model-view-controller frameworks like Rails, this should be set to the controller. Otherwise, this can be set to a route or other request category.
@@ -78,7 +88,11 @@ namespace SharpBrake.Serialization
         /// </value>
         [XmlArray("params")]
         [XmlArrayItem("var")]
-        public AirbrakeVar[] Params { get; set; }
+        public AirbrakeVar[] Params
+        {
+            get { return this.parameters != null && this.parameters.Any() ? this.parameters : null; }
+            set { this.parameters = value; }
+        }
 
         /// <summary>
         /// Optional. A list of var elements describing session variables from the request.
@@ -88,7 +102,11 @@ namespace SharpBrake.Serialization
         /// </value>
         [XmlArray("session")]
         [XmlArrayItem("var")]
-        public AirbrakeVar[] Session { get; set; }
+        public AirbrakeVar[] Session
+        {
+            get { return this.session != null && this.session.Any() ? this.session : null; }
+            set { this.session = value; }
+        }
 
         /// <summary>
         /// Required only if there is a request element. The URL at which the error occurred.

@@ -97,6 +97,44 @@ namespace SharpBrake.Tests
 
 
         [Test]
+        public void Minimal_notice_with_request_generates_valid_XML()
+        {
+            var error = Activator.CreateInstance<AirbrakeError>();
+            error.Class = "TestError";
+            error.Message = "something blew up";
+            error.Backtrace = new[]
+            {
+                new AirbrakeTraceLine("unknown.cs", 0) { Method = "unknown" }
+            };
+
+            var notice = new AirbrakeNotice
+            {
+                ApiKey = "123456",
+                Error = error,
+                Request = new AirbrakeRequest(new Uri("http://example.com/"), GetType().FullName)
+                {
+                    Session = new AirbrakeVar[0]
+                },
+                Notifier = new AirbrakeNotifier
+                {
+                    Name = "hopsharp",
+                    Version = "2.0",
+                    Url = "http://github.com/krobertson/hopsharp"
+                },
+                ServerEnvironment = new AirbrakeServerEnvironment("staging")
+                {
+                    ProjectRoot = "/test",
+                },
+            };
+
+            var serializer = new CleanXmlSerializer<AirbrakeNotice>();
+            string xml = serializer.ToXml(notice);
+
+            AirbrakeValidator.ValidateSchema(xml);
+        }
+
+
+        [Test]
         public void Notice_missing_error_fails_validation()
         {
             var notice = new AirbrakeNotice
@@ -123,6 +161,7 @@ namespace SharpBrake.Tests
 
             TestDelegate throwing = () => AirbrakeValidator.ValidateSchema(xml);
             XmlSchemaValidationException exception = Assert.Throws<XmlSchemaValidationException>(throwing);
+            Console.WriteLine(exception);
 
             Assert.That(exception.Message, Is.StringContaining("notice"));
             Assert.That(exception.Message, Is.StringContaining("error"));
