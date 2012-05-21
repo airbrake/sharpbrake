@@ -136,7 +136,7 @@ namespace SharpBrake
                                             ? error.CatchingMethod
                                             : null;
 
-            AddInfoFromHttpContext(notice, catchingMethod);
+            AddContextualInformation(notice, catchingMethod);
 
             return notice;
         }
@@ -162,17 +162,10 @@ namespace SharpBrake
         }
 
 
-        private static void AddInfoFromHttpContext(AirbrakeNotice notice, MethodBase catchingMethod)
+        private static void AddContextualInformation(AirbrakeNotice notice, MethodBase catchingMethod)
         {
-            HttpContext httpContext = HttpContext.Current;
-
-            if (httpContext == null)
-                return;
-
-            HttpRequest request = httpContext.Request;
-
-            string component = String.Empty;
-            string action = String.Empty;
+            var component = String.Empty;
+            var action = String.Empty;
 
             if (catchingMethod != null)
             {
@@ -182,17 +175,67 @@ namespace SharpBrake
                     component = catchingMethod.DeclaringType.FullName;
             }
 
-            AirbrakeVar[] cgiData = BuildVars(request.Headers).ToArray();
-            AirbrakeVar[] parameters = BuildVars(request.Params).ToArray();
-            AirbrakeVar[] session = BuildVars(httpContext.Session).ToArray();
-
-            notice.Request = new AirbrakeRequest(request.Url, component)
+            var request = new AirbrakeRequest("http://example.com/", component)
             {
-                Action = action,
-                CgiData = cgiData.Any() ? cgiData : null,
-                Params = parameters.Any() ? parameters : null,
-                Session = session.Any() ? session : null,
+                Action = action
             };
+
+            var cgiData = new List<AirbrakeVar>
+            {
+                new AirbrakeVar("Environment.MachineName", Environment.MachineName),
+                new AirbrakeVar("Environment.OSversion", Environment.OSVersion),
+                new AirbrakeVar("Environment.Version", Environment.Version)
+            };
+
+            var parameters = new List<AirbrakeVar>();
+            var session = new List<AirbrakeVar>();
+            var httpContext = HttpContext.Current;
+
+            if (httpContext != null)
+            {
+                var httpRequest = httpContext.Request;
+                request.Url = httpRequest.Url.ToString();
+
+                cgiData.AddRange(BuildVars(httpRequest.Headers));
+                cgiData.AddRange(BuildVars(httpRequest.Cookies));
+                parameters.AddRange(BuildVars(httpRequest.Params));
+                session.AddRange(BuildVars(httpContext.Session));
+
+                if (httpContext.User != null)
+                    cgiData.Add(new AirbrakeVar("User.Identity.Name", httpContext.User.Identity.Name));
+
+                var browser = httpRequest.Browser;
+
+                if (browser != null)
+                {
+                    cgiData.Add(new AirbrakeVar("Browser.Browser", browser.Browser));
+                    cgiData.Add(new AirbrakeVar("Browser.ClrVersion", browser.ClrVersion));
+                    cgiData.Add(new AirbrakeVar("Browser.Cookies", browser.Cookies));
+                    cgiData.Add(new AirbrakeVar("Browser.Crawler", browser.Crawler));
+                    cgiData.Add(new AirbrakeVar("Browser.EcmaScriptVersion", browser.EcmaScriptVersion));
+                    cgiData.Add(new AirbrakeVar("Browser.JavaApplets", browser.JavaApplets));
+                    cgiData.Add(new AirbrakeVar("Browser.MajorVersion", browser.MajorVersion));
+                    cgiData.Add(new AirbrakeVar("Browser.MinorVersion", browser.MinorVersion));
+                    cgiData.Add(new AirbrakeVar("Browser.Platform", browser.Platform));
+                    cgiData.Add(new AirbrakeVar("Browser.W3CDomVersion", browser.W3CDomVersion));
+                }
+            }
+
+            request.CgiData = cgiData.ToArray();
+            request.Params = parameters.Any() ? parameters.ToArray() : null;
+            request.Session = session.Any() ? session.ToArray() : null;
+            notice.Request = request;
+        }
+
+
+        private static IEnumerable<AirbrakeVar> BuildVars(HttpCookieCollection cookies)
+        {
+            return from key in cookies.Keys.Cast<string>()
+                   where !String.IsNullOrEmpty(key)
+                   let v = cookies[key]
+                   let value = v != null ? v.ToString() : null
+                   where !String.IsNullOrEmpty(value)
+                   select new AirbrakeVar(key, value);
         }
 
 
@@ -206,11 +249,11 @@ namespace SharpBrake
         }
 
 
-        private static IEnumerable<AirbrakeVar> BuildVars(HttpSessionState httpSessionState)
+        private static IEnumerable<AirbrakeVar> BuildVars(HttpSessionState session)
         {
-            return from key in httpSessionState.Keys.Cast<string>()
+            return from key in session.Keys.Cast<string>()
                    where !String.IsNullOrEmpty(key)
-                   let v = httpSessionState[key]
+                   let v = session[key]
                    let value = v != null ? v.ToString() : null
                    where !String.IsNullOrEmpty(value)
                    select new AirbrakeVar(key, value);
