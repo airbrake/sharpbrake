@@ -45,9 +45,9 @@ namespace SharpBrake.Tests
                 },
                 Notifier = new AirbrakeNotifier
                 {
-                    Name = "hopsharp",
-                    Version = "2.0",
-                    Url = "http://github.com/krobertson/hopsharp",
+                    Name = "sharpbrake",
+                    Version = "2.2",
+                    Url = "http://github.com/asbjornu/SharpBrake",
                 },
                 ServerEnvironment = new AirbrakeServerEnvironment("staging")
                 {
@@ -79,9 +79,9 @@ namespace SharpBrake.Tests
                 Error = error,
                 Notifier = new AirbrakeNotifier
                 {
-                    Name = "hopsharp",
-                    Version = "2.0",
-                    Url = "http://github.com/krobertson/hopsharp"
+                    Name = "sharpbrake",
+                    Version = "2.2",
+                    Url = "http://github.com/asbjornu/SharpBrake"
                 },
                 ServerEnvironment = new AirbrakeServerEnvironment("staging")
                 {
@@ -117,9 +117,9 @@ namespace SharpBrake.Tests
                 },
                 Notifier = new AirbrakeNotifier
                 {
-                    Name = "hopsharp",
-                    Version = "2.0",
-                    Url = "http://github.com/krobertson/hopsharp"
+                    Name = "sharpbrake",
+                    Version = "2.2",
+                    Url = "http://github.com/asbjornu/SharpBrake"
                 },
                 ServerEnvironment = new AirbrakeServerEnvironment("staging")
                 {
@@ -146,9 +146,9 @@ namespace SharpBrake.Tests
                 },
                 Notifier = new AirbrakeNotifier
                 {
-                    Name = "hopsharp",
-                    Version = "2.0",
-                    Url = "http://github.com/krobertson/hopsharp"
+                    Name = "sharpbrake",
+                    Version = "2.2",
+                    Url = "http://github.com/asbjornu/SharpBrake"
                 },
                 ServerEnvironment = new AirbrakeServerEnvironment("staging")
                 {
@@ -161,11 +161,12 @@ namespace SharpBrake.Tests
 
             TestDelegate throwing = () => AirbrakeValidator.ValidateSchema(xml);
             XmlSchemaValidationException exception = Assert.Throws<XmlSchemaValidationException>(throwing);
+
             Console.WriteLine(exception);
 
             Assert.That(exception.Message, Is.StringContaining("notice"));
             Assert.That(exception.Message, Is.StringContaining("error"));
-            Assert.That(exception.LineNumber, Is.EqualTo(17));
+            Assert.That(exception.LineNumber, Is.EqualTo(18));
             Assert.That(exception.LinePosition, Is.EqualTo(3));
         }
     }
