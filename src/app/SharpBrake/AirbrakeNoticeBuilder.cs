@@ -81,7 +81,8 @@ namespace SharpBrake
                 string env = this.configuration.EnvironmentName;
                 return this.environment ?? (this.environment = new AirbrakeServerEnvironment(env)
                 {
-                    ProjectRoot = this.configuration.ProjectRoot
+                    ProjectRoot = this.configuration.ProjectRoot,
+                    AppVersion = this.configuration.AppVersion,
                 });
             }
         }
