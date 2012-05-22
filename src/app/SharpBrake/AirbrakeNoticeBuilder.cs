@@ -81,7 +81,8 @@ namespace SharpBrake
                 string env = this.configuration.EnvironmentName;
                 return this.environment ?? (this.environment = new AirbrakeServerEnvironment(env)
                 {
-                    ProjectRoot = this.configuration.ProjectRoot
+                    ProjectRoot = this.configuration.ProjectRoot,
+                    AppVersion = this.configuration.AppVersion,
                 });
             }
         }
@@ -154,7 +155,7 @@ namespace SharpBrake
             if (exception == null)
                 throw new ArgumentNullException("exception");
 
-            this.log.Debug(f => f("{0}.Notice({1})", GetType(), exception.GetType()), exception);
+            this.log.Info(f => f("{0}.Notice({1})", GetType(), exception.GetType()), exception);
 
             AirbrakeError error = ErrorFromException(exception);
 

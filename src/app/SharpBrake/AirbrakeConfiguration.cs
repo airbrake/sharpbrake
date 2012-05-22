@@ -1,5 +1,7 @@
 using System;
 using System.Configuration;
+using System.Linq;
+using System.Reflection;
 using System.Web;
 
 namespace SharpBrake
@@ -20,8 +22,22 @@ namespace SharpBrake
             ProjectRoot = HttpContext.Current != null
                               ? HttpContext.Current.Request.ApplicationPath
                               : Environment.CurrentDirectory;
+
+            string[] values = ConfigurationManager.AppSettings.GetValues("Airbrake.AppVersion");
+            if (values != null)
+            {
+                this.AppVersion = values.FirstOrDefault();
+            }
         }
 
+
+        /// <summary>
+        /// Gets or sets the app version.
+        /// </summary>
+        /// <value>
+        /// The app version.
+        /// </value>
+        public string AppVersion { get; set; }
 
         /// <summary>
         /// Gets or sets the API key.
