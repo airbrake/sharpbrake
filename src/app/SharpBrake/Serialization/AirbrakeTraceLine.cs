@@ -62,5 +62,17 @@ namespace SharpBrake.Serialization
         /// </value>
         [XmlAttribute("method")]
         public string Method { get; set; }
+
+
+        /// <summary>
+        /// Returns a <see cref="System.String"/> that represents this instance.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="System.String"/> that represents this instance.
+        /// </returns>
+        public override string ToString()
+        {
+            return String.Format("{0} [{1}]: {2}", Method, File, LineNumber);
+        }
     }
 }
