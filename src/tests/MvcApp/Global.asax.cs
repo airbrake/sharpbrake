@@ -25,6 +25,7 @@ namespace SharpBrake.MvcApp
         {
             Exception lastError = Server.GetLastError();
             lastError.SendToAirbrake();
+            Server.ClearError();
         }
     }
 }

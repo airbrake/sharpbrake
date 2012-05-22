@@ -28,7 +28,7 @@ namespace SharpBrake.Serialization
         /// Initializes a new instance of the <see cref="AirbrakeRequest"/> class.
         /// </summary>
         /// <param name="url">The URL.</param>
-        /// <param name="component">The component.</param>
+        /// <param name="component">The component in which the error occurred. In model-view-controller frameworks like Rails, this should be set to the controller. Otherwise, this can be set to a route or other request category.</param>
         public AirbrakeRequest(string url, string component)
         {
             Url = url;
@@ -40,7 +40,7 @@ namespace SharpBrake.Serialization
         /// Initializes a new instance of the <see cref="AirbrakeRequest"/> class.
         /// </summary>
         /// <param name="url">The URL.</param>
-        /// <param name="component">The component.</param>
+        /// <param name="component">The component in which the error occurred. In model-view-controller frameworks like Rails, this should be set to the controller. Otherwise, this can be set to a route or other request category.</param>
         public AirbrakeRequest(Uri url, string component)
         {
             Url = url == null ? null : url.ToString();

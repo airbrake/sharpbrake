@@ -8,6 +8,7 @@ namespace SharpBrake.MvcApp.Controllers
     {
         public ActionResult Index()
         {
+            Session.Add("SessionKey", "SessionValue");
             throw new Exception("Test sharpbrake from MVC");
         }
     }
