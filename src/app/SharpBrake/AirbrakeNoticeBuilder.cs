@@ -163,12 +163,19 @@ namespace SharpBrake
         }
 
 
-        private static void AddContextualInformation(AirbrakeNotice notice, MethodBase catchingMethod)
+        private void AddContextualInformation(AirbrakeNotice notice, MethodBase catchingMethod)
         {
             var component = String.Empty;
             var action = String.Empty;
 
-            if (catchingMethod != null)
+            if ((notice.Error != null) && (notice.Error.Backtrace != null) && notice.Error.Backtrace.Any())
+            {
+                // TODO: We should perhaps check whether the topmost back trace is in fact a Controller+Action by performing some sort of heuristic (searching for "Controller" etc.). @asbjornu
+                var backtrace = notice.Error.Backtrace.First();
+                action = backtrace.Method;
+                component = backtrace.File;
+            }
+            else if (catchingMethod != null)
             {
                 action = catchingMethod.Name;
 
@@ -226,38 +233,6 @@ namespace SharpBrake
             request.Params = parameters.Any() ? parameters.ToArray() : null;
             request.Session = session.Any() ? session.ToArray() : null;
             notice.Request = request;
-        }
-
-
-        private static IEnumerable<AirbrakeVar> BuildVars(HttpCookieCollection cookies)
-        {
-            return from key in cookies.Keys.Cast<string>()
-                   where !String.IsNullOrEmpty(key)
-                   let v = cookies[key]
-                   let value = v != null ? v.ToString() : null
-                   where !String.IsNullOrEmpty(value)
-                   select new AirbrakeVar(key, value);
-        }
-
-
-        private static IEnumerable<AirbrakeVar> BuildVars(NameValueCollection formData)
-        {
-            return from key in formData.AllKeys
-                   where !String.IsNullOrEmpty(key)
-                   let value = formData[key]
-                   where !String.IsNullOrEmpty(value)
-                   select new AirbrakeVar(key, value);
-        }
-
-
-        private static IEnumerable<AirbrakeVar> BuildVars(HttpSessionState session)
-        {
-            return from key in session.Keys.Cast<string>()
-                   where !String.IsNullOrEmpty(key)
-                   let v = session[key]
-                   let value = v != null ? v.ToString() : null
-                   where !String.IsNullOrEmpty(value)
-                   select new AirbrakeVar(key, value);
         }
 
 
@@ -321,6 +296,56 @@ namespace SharpBrake
             }
 
             return lines.ToArray();
+        }
+
+
+        private IEnumerable<AirbrakeVar> BuildVars(HttpCookieCollection cookies)
+        {
+            if ((cookies == null) || (cookies.Count == 0))
+            {
+                this.log.Debug(f => f("No cookies to build vars from."));
+                return new AirbrakeVar[0];
+            }
+
+            return from key in cookies.Keys.Cast<string>()
+                   where !String.IsNullOrEmpty(key)
+                   let v = cookies[key]
+                   let value = v != null ? v.ToString() : null
+                   where !String.IsNullOrEmpty(value)
+                   select new AirbrakeVar(key, value);
+        }
+
+
+        private IEnumerable<AirbrakeVar> BuildVars(NameValueCollection formData)
+        {
+            if ((formData == null) || (formData.Count == 0))
+            {
+                this.log.Debug(f => f("No form data to build vars from."));
+                return new AirbrakeVar[0];
+            }
+
+            return from key in formData.AllKeys
+                   where !String.IsNullOrEmpty(key)
+                   let value = formData[key]
+                   where !String.IsNullOrEmpty(value)
+                   select new AirbrakeVar(key, value);
+        }
+
+
+        private IEnumerable<AirbrakeVar> BuildVars(HttpSessionState session)
+        {
+            if ((session == null) || (session.Count == 0))
+            {
+                this.log.Debug(f => f("No session to build vars from."));
+                return new AirbrakeVar[0];
+            }
+
+            return from key in session.Keys.Cast<string>()
+                   where !String.IsNullOrEmpty(key)
+                   let v = session[key]
+                   let value = v != null ? v.ToString() : null
+                   where !String.IsNullOrEmpty(value)
+                   select new AirbrakeVar(key, value);
         }
     }
 }
