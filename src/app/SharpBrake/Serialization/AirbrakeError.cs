@@ -10,7 +10,10 @@ namespace SharpBrake.Serialization
     [XmlInclude(typeof(AirbrakeTraceLine))]
     public class AirbrakeError
     {
-        [Obsolete("", true)]
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AirbrakeError"/> class.
+        /// </summary>
+        [Obsolete("Don't use, only for serialization.", true)]
         public AirbrakeError()
         {
         }
