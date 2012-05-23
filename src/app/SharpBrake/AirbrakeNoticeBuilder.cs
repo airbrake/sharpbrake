@@ -309,8 +309,8 @@ namespace SharpBrake
 
             return from key in cookies.Keys.Cast<string>()
                    where !String.IsNullOrEmpty(key)
-                   let v = cookies[key]
-                   let value = v != null ? v.ToString() : null
+                   let cookie = cookies[key]
+                   let value = cookie != null ? cookie.Value : null
                    where !String.IsNullOrEmpty(value)
                    select new AirbrakeVar(key, value);
         }
