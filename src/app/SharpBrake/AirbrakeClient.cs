@@ -107,6 +107,12 @@ namespace SharpBrake
 
         private void OnRequestEnd(WebRequest request, WebResponse response)
         {
+            if (response == null)
+            {
+                this.log.Fatal(f => f("No response received!"));
+                return;
+            }
+
             string responseBody;
 
             using (var responseStream = response.GetResponseStream())
