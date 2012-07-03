@@ -93,8 +93,8 @@ namespace SharpBrake.Tests
             // since it requires HttpSimulator which in turn requires .NET 4.0, which in turn requires Visual Studio 2010.
             Assert.That(notice.Request, Is.Not.Null);
             Assert.That(notice.Request.Url, Is.EqualTo(url));
-            Assert.That(notice.Request.Component, Is.EqualTo(GetType().FullName));
-            Assert.That(notice.Request.Action, Is.EqualTo("Notice_contains_Request"));
+            Assert.That(notice.Request.Component, Is.EqualTo(typeof(Thrower).FullName));
+            Assert.That(notice.Request.Action, Is.EqualTo("Throw"));
 
             Assert.That(notice.Request.CgiData,
                         Contains.Item(new AirbrakeVar("Content-Type", "application/x-www-form-urlencoded")));
@@ -163,7 +163,9 @@ namespace SharpBrake.Tests
                 exception = testException;
             }
 
-            this.builder.ErrorFromException(exception);
+            AirbrakeError error = this.builder.ErrorFromException(exception);
+
+            Assert.That(error, Is.Not.Null);
         }
     }
 }
