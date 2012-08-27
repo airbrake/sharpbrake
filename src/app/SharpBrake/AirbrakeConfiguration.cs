@@ -1,7 +1,6 @@
 using System;
 using System.Configuration;
 using System.Linq;
-using System.Reflection;
 using System.Web;
 
 namespace SharpBrake
@@ -18,6 +17,7 @@ namespace SharpBrake
         {
             ApiKey = ConfigurationManager.AppSettings["Airbrake.ApiKey"];
             EnvironmentName = ConfigurationManager.AppSettings["Airbrake.Environment"];
+            ServerUri = ConfigurationManager.AppSettings["Airbrake.ServerUri"];
 
             ProjectRoot = HttpContext.Current != null
                               ? HttpContext.Current.Request.ApplicationPath
@@ -46,6 +46,11 @@ namespace SharpBrake
         /// The API key.
         /// </value>
         public string ApiKey { get; set; }
+
+        /// <summary>
+        /// Gets or sets the AirBrake server location.
+        /// </summary>
+        public string ServerUri { get; set; }
 
         /// <summary>
         /// Gets or sets the name of the environment.
