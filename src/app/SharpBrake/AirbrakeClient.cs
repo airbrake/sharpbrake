@@ -15,17 +15,22 @@ namespace SharpBrake
     /// </summary>
     public class AirbrakeClient
     {
-        private const string airbrakeUri = "https://api.airbrake.io/notifier_api/v2/notices";
+        private readonly AirbrakeConfiguration configuration;
         private readonly AirbrakeNoticeBuilder builder;
         private readonly ILog log;
 
+        public AirbrakeClient()
+            : this(new AirbrakeConfiguration())
+        {            
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AirbrakeClient"/> class.
         /// </summary>
-        public AirbrakeClient()
+        public AirbrakeClient(AirbrakeConfiguration configuration)
         {
-            this.builder = new AirbrakeNoticeBuilder();
+            this.configuration = configuration;
+            this.builder = new AirbrakeNoticeBuilder(configuration);
             this.log = LogManager.GetLogger(GetType());
         }
 
@@ -76,11 +81,11 @@ namespace SharpBrake
                 }
 
                 // Create the web request
-                var request = WebRequest.Create(airbrakeUri) as HttpWebRequest;
+                var request = WebRequest.Create(this.configuration.ServerUri) as HttpWebRequest;
 
                 if (request == null)
                 {
-                    this.log.Fatal(f => f("Couldn't create a request to '{0}'.", airbrakeUri));
+                    this.log.Fatal(f => f("Couldn't create a request to '{0}'.", this.configuration.ServerUri));
                     return;
                 }
 
