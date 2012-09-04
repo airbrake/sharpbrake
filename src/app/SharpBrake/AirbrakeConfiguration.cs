@@ -28,6 +28,8 @@ namespace SharpBrake
             {
                 this.AppVersion = values.FirstOrDefault();
             }
+
+            this.ServerUri = ConfigurationManager.AppSettings["Airbrake.ServerUri"] ?? "https://api.airbrake.io/notifier_api/v2/notices";
         }
 
 
@@ -66,5 +68,16 @@ namespace SharpBrake
         /// The project root.
         /// </value>
         public string ProjectRoot { get; set; }
+
+        /// <summary>
+        /// Gets or sets the server Uri. By default set to https://api.airbrake.io/notifier_api/v2/notices
+        /// </summary>
+        /// <remarks>
+        /// Only set this if you need to override the default project root.
+        /// </remarks>
+        /// <value>
+        /// The Airbrake server Uri.
+        /// </value>
+        public string ServerUri { get; set; }
     }
 }

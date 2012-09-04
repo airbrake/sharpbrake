@@ -15,7 +15,6 @@ namespace SharpBrake
     /// </summary>
     public class AirbrakeClient
     {
-        private const string airbrakeUri = "https://api.airbrake.io/notifier_api/v2/notices";
         private readonly AirbrakeNoticeBuilder builder;
         private readonly ILog log;
 
@@ -43,6 +42,7 @@ namespace SharpBrake
         public void Send(Exception exception)
         {
             AirbrakeNotice notice = this.builder.Notice(exception);
+            
 
             //TODO: set up request, session and server headers
             // Why would that be necessary, it's set in Send(AirbrakeNotice), isn't it? - @asbjornu
@@ -76,11 +76,11 @@ namespace SharpBrake
                 }
 
                 // Create the web request
-                var request = WebRequest.Create(airbrakeUri) as HttpWebRequest;
+                var request = WebRequest.Create(this.builder.Configuration.ServerUri) as HttpWebRequest;
 
                 if (request == null)
                 {
-                    this.log.Fatal(f => f("Couldn't create a request to '{0}'.", airbrakeUri));
+                    this.log.Fatal(f => f("Couldn't create a request to '{0}'.", this.builder.Configuration.ServerUri));
                     return;
                 }
 

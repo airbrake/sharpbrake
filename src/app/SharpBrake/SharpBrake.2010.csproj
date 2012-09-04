@@ -41,7 +41,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Common.Logging">
-      <HintPath>..\..\packages\Common.Logging.2.0.0\lib\2.0\Common.Logging.dll</HintPath>
+      <HintPath>..\..\..\..\..\src\packages\Common.Logging.2.1.1\lib\net35\Common.Logging.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
