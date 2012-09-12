@@ -74,7 +74,7 @@ namespace SharpBrake.Tests
             {
                 try
                 {
-                    throw new Exception("Halp!");
+                    Thrower.Throw(new Exception("Halp!"));
                 }
                 catch (Exception exception)
                 {
