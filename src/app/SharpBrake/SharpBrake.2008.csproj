@@ -69,7 +69,9 @@
     <Compile Include="Serialization\CleanXmlSerializer`1.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="hoptoad_2_1.xsd" />
+    <None Include="airbrake_2_2.xsd" />
+    <None Include="packages.config" />
+    <None Include="SharpBrake.2010.nuspec" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
