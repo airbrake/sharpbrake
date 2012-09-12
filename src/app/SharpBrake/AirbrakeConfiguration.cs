@@ -17,17 +17,17 @@ namespace SharpBrake
         {
             ApiKey = ConfigurationManager.AppSettings["Airbrake.ApiKey"];
             EnvironmentName = ConfigurationManager.AppSettings["Airbrake.Environment"];
-            ServerUri = ConfigurationManager.AppSettings["Airbrake.ServerUri"];
+            ServerUri = ConfigurationManager.AppSettings["Airbrake.ServerUri"]
+                        ?? "https://api.airbrake.io/notifier_api/v2/notices";
 
             ProjectRoot = HttpContext.Current != null
                               ? HttpContext.Current.Request.ApplicationPath
                               : Environment.CurrentDirectory;
 
             string[] values = ConfigurationManager.AppSettings.GetValues("Airbrake.AppVersion");
+            
             if (values != null)
-            {
-                this.AppVersion = values.FirstOrDefault();
-            }
+                AppVersion = values.FirstOrDefault();
         }
 
 
