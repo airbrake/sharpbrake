@@ -135,7 +135,7 @@ namespace SharpBrake.Tests
             AirbrakeNotifier notifier = this.builder.Notifier;
             Assert.That(notifier.Name, Is.EqualTo("SharpBrake"));
             Assert.That(notifier.Url, Is.EqualTo("https://github.com/asbjornu/SharpBrake"));
-            Assert.That(notifier.Version, Is.EqualTo("2.2.0.0"));
+            Assert.That(notifier.Version, Is.EqualTo("2.2.1.0"));
         }
 
 
