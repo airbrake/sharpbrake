@@ -15,20 +15,29 @@ namespace SharpBrake
     /// </summary>
     public class AirbrakeClient
     {
-        private readonly AirbrakeConfiguration configuration;
         private readonly AirbrakeNoticeBuilder builder;
+        private readonly AirbrakeConfiguration configuration;
         private readonly ILog log;
 
-        public AirbrakeClient()
-            : this(new AirbrakeConfiguration())
-        {            
-        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AirbrakeClient"/> class.
         /// </summary>
+        public AirbrakeClient()
+            : this(new AirbrakeConfiguration())
+        {
+        }
+
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AirbrakeClient"/> class.
+        /// </summary>
+        /// <param name="configuration">The configuration.</param>
         public AirbrakeClient(AirbrakeConfiguration configuration)
         {
+            if (configuration == null)
+                throw new ArgumentNullException("configuration");
+
             this.configuration = configuration;
             this.builder = new AirbrakeNoticeBuilder(configuration);
             this.log = LogManager.GetLogger(GetType());
@@ -149,9 +158,11 @@ namespace SharpBrake
 
             if (request == null)
             {
-                this.log.Fatal(f => f("{0}.AsyncState was null or not of type {1}.",
-                                      typeof(IAsyncResult),
-                                      typeof(HttpWebRequest)));
+                this.log.Fatal(
+                    f => f(
+                        "{0}.AsyncState was null or not of type {1}.",
+                        typeof(IAsyncResult),
+                        typeof(HttpWebRequest)));
                 return;
             }
 
