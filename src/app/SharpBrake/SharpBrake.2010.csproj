@@ -56,7 +56,10 @@
     <Compile Include="AirbrakeConfiguration.cs" />
     <Compile Include="AirbrakeNoticeBuilder.cs" />
     <Compile Include="AirbrakeResponse.cs" />
+    <Compile Include="Backtrace.cs" />
+    <Compile Include="BacktraceBuilder.cs" />
     <Compile Include="Extensions.cs" />
+    <Compile Include="IBuilder.cs" />
     <Compile Include="RequestEndEventArgs.cs" />
     <Compile Include="RequestEndEventHandler.cs" />
     <Compile Include="NotifierHttpModule.cs" />

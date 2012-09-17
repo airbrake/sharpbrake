@@ -19,6 +19,7 @@ namespace SharpBrake
     public class AirbrakeNoticeBuilder
     {
         private readonly AirbrakeConfiguration configuration;
+        private readonly IBuilder<Exception, Backtrace> _backtraceBuilder;
         private readonly ILog log;
         private AirbrakeServerEnvironment environment;
         private AirbrakeNotifier notifier;
@@ -28,7 +29,7 @@ namespace SharpBrake
         /// Initializes a new instance of the <see cref="AirbrakeNoticeBuilder"/> class.
         /// </summary>
         public AirbrakeNoticeBuilder()
-            : this(new AirbrakeConfiguration())
+            : this(new AirbrakeConfiguration(), new BacktraceBuilder(LogManager.GetLogger<BacktraceBuilder>()))
         {
         }
 
@@ -37,12 +38,14 @@ namespace SharpBrake
         /// Initializes a new instance of the <see cref="AirbrakeNoticeBuilder"/> class.
         /// </summary>
         /// <param name="configuration">The configuration.</param>
-        public AirbrakeNoticeBuilder(AirbrakeConfiguration configuration)
+        /// <param name="backtraceBuilder">Builder used for building backtrace data </param>
+        public AirbrakeNoticeBuilder(AirbrakeConfiguration configuration, IBuilder<Exception, Backtrace> backtraceBuilder)
         {
             if (configuration == null)
                 throw new ArgumentNullException("configuration");
 
             this.configuration = configuration;
+            _backtraceBuilder = backtraceBuilder;
             this.log = LogManager.GetLogger(GetType());
         }
 
@@ -102,15 +105,13 @@ namespace SharpBrake
 
             this.log.Debug(f => f("{0}.Notice({1})", GetType(), exception.GetType()), exception);
 
-            MethodBase catchingMethod;
-            var backtrace = BuildBacktrace(exception, out catchingMethod);
+            var backtrace = _backtraceBuilder.Build(exception);
 
             var error = Activator.CreateInstance<AirbrakeError>();
-
-            error.CatchingMethod = catchingMethod;
+            error.CatchingMethod = backtrace.CatchingMethod;
             error.Class = exception.GetType().FullName;
-            error.Message = exception.GetType().Name + ": " + exception.Message;
-            error.Backtrace = backtrace;
+            error.Message = backtrace.Message;
+            error.Backtrace = backtrace.Trace.ToArray();
 
             return error;
         }
@@ -234,70 +235,6 @@ namespace SharpBrake
             request.Session = session.Any() ? session.ToArray() : null;
             notice.Request = request;
         }
-
-
-        private AirbrakeTraceLine[] BuildBacktrace(Exception exception, out MethodBase catchingMethod)
-        {
-            Assembly assembly = Assembly.GetExecutingAssembly();
-
-            if (assembly.EntryPoint == null)
-                assembly = Assembly.GetCallingAssembly();
-
-            if (assembly.EntryPoint == null)
-                assembly = Assembly.GetEntryAssembly();
-
-            catchingMethod = assembly == null
-                                 ? null
-                                 : assembly.EntryPoint;
-
-            List<AirbrakeTraceLine> lines = new List<AirbrakeTraceLine>();
-            var stackTrace = new StackTrace(exception);
-            StackFrame[] frames = stackTrace.GetFrames();
-
-            if (frames == null || frames.Length == 0)
-            {
-                // Airbrake requires that at least one line is present in the XML.
-                AirbrakeTraceLine line = new AirbrakeTraceLine("none", 0);
-                lines.Add(line);
-                return lines.ToArray();
-            }
-
-            foreach (StackFrame frame in frames)
-            {
-                MethodBase method = frame.GetMethod();
-
-                catchingMethod = method;
-
-                int lineNumber = frame.GetFileLineNumber();
-
-                if (lineNumber == 0)
-                {
-                    this.log.Debug(f => f("No line number found in {0}, using IL offset instead.", method));
-                    lineNumber = frame.GetILOffset();
-                }
-
-                string file = frame.GetFileName();
-
-                if (String.IsNullOrEmpty(file))
-                {
-                    // ReSharper disable ConditionIsAlwaysTrueOrFalse
-                    file = method.ReflectedType != null
-                               ? method.ReflectedType.FullName
-                               : "(unknown)";
-                    // ReSharper restore ConditionIsAlwaysTrueOrFalse
-                }
-
-                AirbrakeTraceLine line = new AirbrakeTraceLine(file, lineNumber)
-                {
-                    Method = method.Name
-                };
-
-                lines.Add(line);
-            }
-
-            return lines.ToArray();
-        }
-
 
         private IEnumerable<AirbrakeVar> BuildVars(HttpCookieCollection cookies)
         {
