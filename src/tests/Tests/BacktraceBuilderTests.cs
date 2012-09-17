@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using Common.Logging;
 using NUnit.Framework;
 
@@ -15,7 +13,7 @@ namespace SharpBrake.Tests
             // Arrange
             var log = new Moq.Mock<ILog>();
 
-            var exception = GetException();
+            var exception = GetDeepException();
 
             var builder = new BacktraceBuilder(log.Object);
 
@@ -32,7 +30,7 @@ namespace SharpBrake.Tests
             // Arrange
             var log = new Moq.Mock<ILog>();
 
-            var exception = GetException();
+            var exception = GetDeepException();
 
             var builder = new BacktraceBuilder(log.Object);
 
@@ -50,7 +48,7 @@ namespace SharpBrake.Tests
             // Arrange
             var log = new Moq.Mock<ILog>();
 
-            var exception = GetException();
+            var exception = GetDeepException();
 
             var builder = new BacktraceBuilder(log.Object);
 
@@ -61,7 +59,7 @@ namespace SharpBrake.Tests
             Assert.That(response.CatchingMethod, Is.Not.Null);
         } 
 
-        private Exception GetException()
+        private Exception GetDeepException()
         {
             try
             {
