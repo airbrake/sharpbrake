@@ -293,6 +293,8 @@ namespace SharpBrake
                 };
 
                 lines.Add(line);
+                if (exception.InnerException != null)
+                    lines.AddRange(BuildBacktrace(exception.InnerException, out catchingMethod));
             }
 
             return lines.ToArray();
