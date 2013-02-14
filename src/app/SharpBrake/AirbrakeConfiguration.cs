@@ -20,9 +20,7 @@ namespace SharpBrake
             ServerUri = ConfigurationManager.AppSettings["Airbrake.ServerUri"]
                         ?? "https://api.airbrake.io/notifier_api/v2/notices";
 
-            ProjectRoot = HttpContext.Current != null
-                              ? HttpContext.Current.Request.ApplicationPath
-                              : Environment.CurrentDirectory;
+            ProjectRoot = HttpRuntime.AppDomainAppVirtualPath ?? Environment.CurrentDirectory;
 
             string[] values = ConfigurationManager.AppSettings.GetValues("Airbrake.AppVersion");
             
