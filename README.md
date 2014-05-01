@@ -1,4 +1,7 @@
 # SharpBrake
+
+<img src="http://f.cl.ly/items/0L0G1z0E2A1P3H2O042F/dotnet%2009.19.32.jpg" width=800px>
+
 SharpBrake is a .NET library for use with the [Airbrake](http://www.airbrakeapp.com/) exception reporting service by [Thoughtbot](http://www.thoughtbot.com/).  Airbrake allows you to easily track and get notification about exceptions that occur on your site.
 
 The SharpBrake library can be used in two ways:
