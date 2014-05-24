@@ -1,5 +1,5 @@
 using System;
-
+using Common.Logging;
 using NUnit.Framework;
 
 using SharpBrake.Serialization;
@@ -42,7 +42,7 @@ namespace SharpBrake.Tests
                 EnvironmentName = "test",
             };
 
-            var builder = new AirbrakeNoticeBuilder(configuration);
+            var builder = new AirbrakeNoticeBuilder(configuration, new BacktraceBuilder(LogManager.GetLogger<BacktraceBuilder>()));
 
             AirbrakeNotice notice = builder.Notice(new Exception("Test"));
 

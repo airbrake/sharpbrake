@@ -24,7 +24,7 @@ namespace SharpBrake
         /// Initializes a new instance of the <see cref="AirbrakeClient"/> class.
         /// </summary>
         public AirbrakeClient()
-            : this(new AirbrakeConfiguration())
+            : this(new AirbrakeConfiguration(), new BacktraceBuilder(LogManager.GetLogger<BacktraceBuilder>()))
         {
         }
 
@@ -33,13 +33,18 @@ namespace SharpBrake
         /// Initializes a new instance of the <see cref="AirbrakeClient"/> class.
         /// </summary>
         /// <param name="configuration">The configuration.</param>
-        public AirbrakeClient(AirbrakeConfiguration configuration)
+        /// <param name="backtraceBuilder"> </param>
+        public AirbrakeClient(AirbrakeConfiguration configuration, IBuilder<Exception, Backtrace> backtraceBuilder = null)
         {
             if (configuration == null)
                 throw new ArgumentNullException("configuration");
 
             this.configuration = configuration;
-            this.builder = new AirbrakeNoticeBuilder(configuration);
+
+            if (backtraceBuilder == null)
+                backtraceBuilder = new BacktraceBuilder(LogManager.GetLogger<BacktraceBuilder>());
+            this.builder = new AirbrakeNoticeBuilder(configuration,backtraceBuilder);
+
             this.log = LogManager.GetLogger(GetType());
         }
 

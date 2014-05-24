@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 using System.Linq.Expressions;
-
+using Common.Logging;
 using NUnit.Framework;
 
 using SharpBrake.Serialization;
@@ -23,7 +23,7 @@ namespace SharpBrake.Tests
                 ApiKey = "123456",
                 EnvironmentName = "test"
             };
-            this.builder = new AirbrakeNoticeBuilder(this.config);
+            this.builder = new AirbrakeNoticeBuilder(this.config,new BacktraceBuilder(LogManager.GetLogger<BacktraceBuilder>()));
         }
 
         #endregion
