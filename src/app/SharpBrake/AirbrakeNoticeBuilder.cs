@@ -251,7 +251,7 @@ namespace SharpBrake
                                  : assembly.EntryPoint;
 
             List<AirbrakeTraceLine> lines = new List<AirbrakeTraceLine>();
-            var stackTrace = new StackTrace(exception);
+            var stackTrace = new StackTrace(exception, true);
             StackFrame[] frames = stackTrace.GetFrames();
 
             if (frames == null || frames.Length == 0)
