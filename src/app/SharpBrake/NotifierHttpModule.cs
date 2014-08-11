@@ -40,8 +40,12 @@ namespace SharpBrake
 
             Exception exception = application.Server.GetLastError();
 
-            if (!(exception is HttpException) || ((HttpException)exception).GetHttpCode() != 404)
+            if (!(exception is HttpException) || ((HttpException)exception).GetHttpCode() != 404) {
+                if ((exception is HttpUnhandledException) && (exception.InnerException != null)) {
+                    exception = exception.InnerException;
+                }
                 exception.SendToAirbrake();
+            }
         }
     }
 }
