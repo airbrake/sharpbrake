@@ -15,10 +15,11 @@ namespace SharpBrake
         /// Sends the <paramref name="exception"/> to Airbrake.
         /// </summary>
         /// <param name="exception">The exception to send to Airbrake.</param>
-        public static void SendToAirbrake(this Exception exception)
+        /// <param name="info"> Additional info to send to Airbrake.</param>
+        public static void SendToAirbrake(this Exception exception, Dictionary<string, string> info = null)
         {
             var client = new AirbrakeClient();
-            client.Send(exception);
+            client.Send(exception, info);
         }
 
 

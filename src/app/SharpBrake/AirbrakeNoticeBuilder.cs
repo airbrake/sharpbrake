@@ -120,8 +120,9 @@ namespace SharpBrake
         /// Creates a <see cref="AirbrakeNotice"/> from the the specified error.
         /// </summary>
         /// <param name="error">The error.</param>
+        /// <param name="info"> Additional info to send to Airbrake.</param>
         /// <returns></returns>
-        public AirbrakeNotice Notice(AirbrakeError error)
+        public AirbrakeNotice Notice(AirbrakeError error, Dictionary<string, string> info = null)
         {
             this.log.Debug(f => f("{0}.Notice({1})", GetType(), error));
 
@@ -137,7 +138,7 @@ namespace SharpBrake
                                             ? error.CatchingMethod
                                             : null;
 
-            AddContextualInformation(notice, catchingMethod);
+            AddContextualInformation(notice, catchingMethod, info);
 
             return notice;
         }
@@ -147,10 +148,11 @@ namespace SharpBrake
         /// Creates a <see cref="AirbrakeNotice"/> from the the specified exception.
         /// </summary>
         /// <param name="exception">The exception.</param>
+        /// <param name="info"> Additional info to send to Airbrake.</param>
         /// <returns>
         /// A <see cref="AirbrakeNotice"/>, created from the the specified exception.
         /// </returns>
-        public AirbrakeNotice Notice(Exception exception)
+        public AirbrakeNotice Notice(Exception exception, Dictionary<string, string> info = null)
         {
             if (exception == null)
                 throw new ArgumentNullException("exception");
@@ -159,11 +161,11 @@ namespace SharpBrake
 
             AirbrakeError error = ErrorFromException(exception);
 
-            return Notice(error);
+            return Notice(error, info);
         }
 
 
-        private void AddContextualInformation(AirbrakeNotice notice, MethodBase catchingMethod)
+        private void AddContextualInformation(AirbrakeNotice notice, MethodBase catchingMethod, Dictionary<string, string> info = null)
         {
             var component = String.Empty;
             var action = String.Empty;
@@ -226,6 +228,25 @@ namespace SharpBrake
                     cgiData.Add(new AirbrakeVar("Browser.MinorVersion", browser.MinorVersion));
                     cgiData.Add(new AirbrakeVar("Browser.Platform", browser.Platform));
                     cgiData.Add(new AirbrakeVar("Browser.W3CDomVersion", browser.W3CDomVersion));
+                }
+            }
+
+            if (info != null)
+            {
+                foreach (var item in info)
+                {
+                    if (item.Key.ToLower().StartsWith("environment"))
+                    {
+                        cgiData.Add(new AirbrakeVar(item.Key, item.Value));
+                    }
+                    else if (item.Key.ToLower().StartsWith("session"))
+                    {
+                        session.Add(new AirbrakeVar(item.Key, item.Value));
+                    }
+                    else
+                    {
+                        parameters.Add(new AirbrakeVar(item.Key, item.Value));
+                    }
                 }
             }
 
