@@ -28,7 +28,7 @@ namespace SharpBrake.Tests
         {
             bool requestEndInvoked = false;
             AirbrakeResponseError[] errors = null;
-            int i = 0;
+            //int i = 0;
 
             this.client.RequestEnd += (sender, e) =>
             {
