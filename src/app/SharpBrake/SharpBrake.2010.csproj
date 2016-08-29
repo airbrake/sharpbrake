@@ -40,8 +40,9 @@
     <DocumentationFile>bin\Release\SharpBrake.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Common.Logging">
-      <HintPath>..\..\packages\Common.Logging.2.0.0\lib\2.0\Common.Logging.dll</HintPath>
+    <Reference Include="log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\log4net.2.0.3\lib\net35-full\log4net.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -54,9 +55,11 @@
   <ItemGroup>
     <Compile Include="AirbrakeClient.cs" />
     <Compile Include="AirbrakeConfiguration.cs" />
+    <Compile Include="AirbrakeMsgException.cs" />
     <Compile Include="AirbrakeNoticeBuilder.cs" />
     <Compile Include="AirbrakeResponse.cs" />
     <Compile Include="Extensions.cs" />
+    <Compile Include="Log4NetAirbrakeAppender.cs" />
     <Compile Include="RequestEndEventArgs.cs" />
     <Compile Include="RequestEndEventHandler.cs" />
     <Compile Include="NotifierHttpModule.cs" />

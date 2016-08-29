@@ -3,10 +3,10 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Xml;
-
-using Common.Logging;
+//using Common.Logging;
 
 using SharpBrake.Serialization;
+using log4net;
 
 namespace SharpBrake
 {
@@ -55,9 +55,7 @@ namespace SharpBrake
             }
             catch (Exception exception)
             {
-                this.log.Fatal(f => f(
-                    "An error occurred while deserializing the following content:\n{0}", content),
-                               exception);
+                this.log.FatalFormat("An error occurred while deserializing the following content:\n{0}: {1}", content, exception);
             }
         }
 

@@ -6,10 +6,10 @@ using System.Linq;
 using System.Reflection;
 using System.Web;
 using System.Web.SessionState;
-
-using Common.Logging;
+//using Common.Logging;
 
 using SharpBrake.Serialization;
+using log4net;
 
 namespace SharpBrake
 {
@@ -100,7 +100,7 @@ namespace SharpBrake
             if (exception == null)
                 throw new ArgumentNullException("exception");
 
-            this.log.Debug(f => f("{0}.Notice({1})", GetType(), exception.GetType()), exception);
+            this.log.DebugFormat("{0}.Notice({1}): {2}", GetType(), exception.GetType(), exception);
 
             MethodBase catchingMethod;
             var backtrace = BuildBacktrace(exception, out catchingMethod);
@@ -123,7 +123,7 @@ namespace SharpBrake
         /// <returns></returns>
         public AirbrakeNotice Notice(AirbrakeError error)
         {
-            this.log.Debug(f => f("{0}.Notice({1})", GetType(), error));
+            this.log.DebugFormat("{0}.Notice({1})", GetType(), error);
 
             var notice = new AirbrakeNotice
             {
@@ -155,7 +155,7 @@ namespace SharpBrake
             if (exception == null)
                 throw new ArgumentNullException("exception");
 
-            this.log.Info(f => f("{0}.Notice({1})", GetType(), exception.GetType()), exception);
+            this.log.InfoFormat("{0}.Notice({1}): {2}", GetType(), exception.GetType(), exception);
 
             AirbrakeError error = ErrorFromException(exception);
 
@@ -272,7 +272,7 @@ namespace SharpBrake
 
                 if (lineNumber == 0)
                 {
-                    this.log.Debug(f => f("No line number found in {0}, using IL offset instead.", method));
+                    this.log.DebugFormat("No line number found in {0}, using IL offset instead.", method);
                     lineNumber = frame.GetILOffset();
                 }
 
@@ -303,7 +303,7 @@ namespace SharpBrake
         {
             if ((cookies == null) || (cookies.Count == 0))
             {
-                this.log.Debug(f => f("No cookies to build vars from."));
+                this.log.Debug("No cookies to build vars from.");
                 return new AirbrakeVar[0];
             }
 
@@ -320,7 +320,7 @@ namespace SharpBrake
         {
             if ((formData == null) || (formData.Count == 0))
             {
-                this.log.Debug(f => f("No form data to build vars from."));
+                this.log.Debug("No form data to build vars from.");
                 return new AirbrakeVar[0];
             }
 
@@ -336,7 +336,7 @@ namespace SharpBrake
         {
             if ((session == null) || (session.Count == 0))
             {
-                this.log.Debug(f => f("No session to build vars from."));
+                this.log.Debug("No session to build vars from.");
                 return new AirbrakeVar[0];
             }
 
