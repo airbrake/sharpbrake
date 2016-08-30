@@ -1,5 +1,0 @@
-<appSettings>
-  <add key="Airbrake.ServerUri" value="https://api.airbrake.io/notifier_api/v2/notices" />
-	<add key="Airbrake.ApiKey" value="CHANGE ME!" />
-	<add key="Airbrake.Environment" value="dev" />
-</appSettings>

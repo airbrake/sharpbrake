@@ -11,3 +11,4 @@ Hoptoad.config
 /src/packages/
 *.nupkg
 /src/.vs
+Airbrake.config

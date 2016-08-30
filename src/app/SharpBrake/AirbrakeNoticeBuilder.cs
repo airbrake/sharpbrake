@@ -10,6 +10,7 @@ using System.Web.SessionState;
 
 using SharpBrake.Serialization;
 using log4net;
+using SharpBrake.Properties;
 
 namespace SharpBrake
 {
@@ -22,15 +23,13 @@ namespace SharpBrake
         private readonly ILog log;
         private AirbrakeServerEnvironment environment;
         private AirbrakeNotifier notifier;
+		private static string m_sCurrentAssemblyName = null;
 
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="AirbrakeNoticeBuilder"/> class.
-        /// </summary>
-        public AirbrakeNoticeBuilder()
-            : this(new AirbrakeConfiguration())
-        {
-        }
+		/// <summary>
+		/// Initializes a new instance of the <see cref="AirbrakeNoticeBuilder"/> class.
+		/// </summary>
+		public AirbrakeNoticeBuilder()
+			: this(new AirbrakeConfiguration()) { }
 
 
         /// <summary>
@@ -46,11 +45,21 @@ namespace SharpBrake
             this.log = LogManager.GetLogger(GetType());
         }
 
+		private static string CurrentAssemblyName() {
+			if (null == m_sCurrentAssemblyName) {
+				var assmbly = Assembly.GetExecutingAssembly();
+				if (null == assmbly) return null;
+				var assmblyName = assmbly.GetName();
+				if (null == assmblyName) return null;
+				m_sCurrentAssemblyName = assmblyName.Name;
+			}
+			return m_sCurrentAssemblyName;
+		}
 
-        /// <summary>
-        /// Gets the configuration.
-        /// </summary>
-        public AirbrakeConfiguration Configuration
+		/// <summary>
+		/// Gets the configuration.
+		/// </summary>
+		public AirbrakeConfiguration Configuration
         {
             get { return this.configuration; }
         }
@@ -236,67 +245,64 @@ namespace SharpBrake
         }
 
 
-        private AirbrakeTraceLine[] BuildBacktrace(Exception exception, out MethodBase catchingMethod)
-        {
-            Assembly assembly = Assembly.GetExecutingAssembly();
+		private AirbrakeTraceLine[] BuildBacktrace(Exception exception, out MethodBase catchingMethod) {
+			Assembly assembly = Assembly.GetExecutingAssembly();
 
-            if (assembly.EntryPoint == null)
-                assembly = Assembly.GetCallingAssembly();
+			if (assembly.EntryPoint == null) assembly = Assembly.GetCallingAssembly();
 
-            if (assembly.EntryPoint == null)
-                assembly = Assembly.GetEntryAssembly();
+			if (assembly.EntryPoint == null) assembly = Assembly.GetEntryAssembly();
 
-            catchingMethod = assembly == null
-                                 ? null
-                                 : assembly.EntryPoint;
+			catchingMethod = (assembly == null) ? null : assembly.EntryPoint;
 
-            List<AirbrakeTraceLine> lines = new List<AirbrakeTraceLine>();
-            var stackTrace = new StackTrace(exception, true);
-            StackFrame[] frames = stackTrace.GetFrames();
+			bool bIsMessageOnly = exception is AirbrakeMsgException;
+			List<AirbrakeTraceLine> lines = new List<AirbrakeTraceLine>();
+			var stackTrace = bIsMessageOnly ? new StackTrace(true) : new StackTrace(exception, true);
+			StackFrame[] frames = stackTrace.GetFrames();
+			if (frames == null || frames.Length == 0) {
+				// Airbrake requires that at least one line is present in the XML.
+				AirbrakeTraceLine line = new AirbrakeTraceLine("none", 0);
+				lines.Add(line);
+				return lines.ToArray();
+			}
 
-            if (frames == null || frames.Length == 0)
-            {
-                // Airbrake requires that at least one line is present in the XML.
-                AirbrakeTraceLine line = new AirbrakeTraceLine("none", 0);
-                lines.Add(line);
-                return lines.ToArray();
-            }
+			foreach (StackFrame frame in frames) {
+				MethodBase method = frame.GetMethod();
+				catchingMethod = method;
 
-            foreach (StackFrame frame in frames)
-            {
-                MethodBase method = frame.GetMethod();
+				if (bIsMessageOnly) {
+					//skipping frames that are internal for logging itself
+					if (null == method || null == method.ReflectedType || null == method.ReflectedType.Assembly) continue;
+					var assemblyName = method.ReflectedType.Assembly.GetName();
+					if (null == assemblyName || null == assemblyName.Name) continue;
+					if (assemblyName.Name == CurrentAssemblyName()
+						|| Settings.Default.StackTraceSkipAssemblies.Contains(assemblyName.Name.ToLower())) continue;
+				}
 
-                catchingMethod = method;
+				int lineNumber = frame.GetFileLineNumber();
+				if (lineNumber == 0) {
+					this.log.DebugFormat("No line number found in {0}, using IL offset instead.", method);
+					lineNumber = frame.GetILOffset();
+				}
 
-                int lineNumber = frame.GetFileLineNumber();
+				string file = frame.GetFileName();
 
-                if (lineNumber == 0)
-                {
-                    this.log.DebugFormat("No line number found in {0}, using IL offset instead.", method);
-                    lineNumber = frame.GetILOffset();
-                }
+				if (String.IsNullOrEmpty(file)) {
+					// ReSharper disable ConditionIsAlwaysTrueOrFalse
+					file = method.ReflectedType != null
+							   ? method.ReflectedType.FullName
+							   : "(unknown)";
+					// ReSharper restore ConditionIsAlwaysTrueOrFalse
+				}
 
-                string file = frame.GetFileName();
+				AirbrakeTraceLine line = new AirbrakeTraceLine(file, lineNumber) {
+					Method = method.Name
+				};
 
-                if (String.IsNullOrEmpty(file))
-                {
-                    // ReSharper disable ConditionIsAlwaysTrueOrFalse
-                    file = method.ReflectedType != null
-                               ? method.ReflectedType.FullName
-                               : "(unknown)";
-                    // ReSharper restore ConditionIsAlwaysTrueOrFalse
-                }
+				lines.Add(line);
+			}
 
-                AirbrakeTraceLine line = new AirbrakeTraceLine(file, lineNumber)
-                {
-                    Method = method.Name
-                };
-
-                lines.Add(line);
-            }
-
-            return lines.ToArray();
-        }
+			return lines.ToArray();
+		}
 
 
         private IEnumerable<AirbrakeVar> BuildVars(HttpCookieCollection cookies)
