@@ -20,7 +20,7 @@
     <RestorePackages>true</RestorePackages>
     <MvcProjectUpgradeChecked>true</MvcProjectUpgradeChecked>
     <FileUpgradeFlags>40</FileUpgradeFlags>
-    <UpgradeBackupLocation>C:\projects\cs\SharpBrakeFork\src\Backup2\</UpgradeBackupLocation>
+    <UpgradeBackupLocation>C:\projects\cs\SharpBrakeFork\src\Backup\</UpgradeBackupLocation>
     <OldToolsVersion>14.0</OldToolsVersion>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />

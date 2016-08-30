@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+    <metadata>
+        <id>ZBit.SharpBrake</id>
+        <version>2.3.0</version>
+        <title>ZBit SharpBrake</title>
+        <authors>gzinger</authors>
+        <owners>gzinger</owners>
+        <licenseUrl>https://github.com/gzinger/SharpBrake/blob/master/MIT-LICENSE</licenseUrl>
+        <projectUrl>https://github.com/gzinger/SharpBrake</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>SharpBrake library fork.
+- Supports log4net appender so no code changes are needed to send messages to AirBrake - only configuration.
+- Fixes bugs in the original code where line-numbers were not reported correctly.
+- Allows to send information messages - not necessarily exceptions.
+- Removes Common.Logging dependency.
+- Compiles in VS2015.</description>
+        <summary>SharpBrake library that supports log4net appender; fixes bugs in the original code, allows to send messages (not only errors); removes Common.Logging dependency; compiles in VS2015</summary>
+        <releaseNotes>Initial Release.</releaseNotes>
+        <copyright>Copyright 2016 gzinger</copyright>
+        <tags>SharpBrake AirBrake log4net</tags>
+        <dependencies>
+            <dependency id="log4net" version="2.0.3" />
+        </dependencies>
+    </metadata>
+    <files>
+        <file src="SharpBrake\bin\Release\SharpBrake.dll" target="lib\net35\SharpBrake.dll" />
+        <file src="SharpBrake\bin\Release\SharpBrake.dll.config" target="lib\net35\SharpBrake.dll.config" />
+        <file src="SharpBrake\bin\Release\SharpBrake.pdb" target="lib\net35\SharpBrake.pdb" />
+    </files>
+</package>
