@@ -3,10 +3,10 @@ using System.Configuration;
 using System.IO;
 using System.Net;
 using System.Text;
-
-using Common.Logging;
+//using Common.Logging;
 
 using SharpBrake.Serialization;
+using log4net;
 
 namespace SharpBrake
 {
@@ -72,7 +72,7 @@ namespace SharpBrake
         /// <param name="notice">The notice.</param>
         public void Send(AirbrakeNotice notice)
         {
-            this.log.Debug(f => f("{0}.Send({1})", GetType(), notice));
+            this.log.DebugFormat("{0}.Send({1})", GetType(), notice);
 
             try
             {
@@ -94,7 +94,7 @@ namespace SharpBrake
 
                 if (request == null)
                 {
-                    this.log.Fatal(f => f("Couldn't create a request to '{0}'.", this.configuration.ServerUri));
+                    this.log.FatalFormat("Couldn't create a request to '{0}'.", this.configuration.ServerUri);
                     return;
                 }
 
@@ -123,7 +123,7 @@ namespace SharpBrake
         {
             if (response == null)
             {
-                this.log.Fatal(f => f("No response received!"));
+                this.log.Fatal("No response received!");
                 return;
             }
 
@@ -137,7 +137,7 @@ namespace SharpBrake
                 using (var sr = new StreamReader(responseStream))
                 {
                     responseBody = sr.ReadToEnd();
-                    this.log.Debug(f => f("Received from Airbrake.\n{0}", responseBody));
+                    this.log.DebugFormat("Received from Airbrake.\n{0}", responseBody);
                 }
             }
 
@@ -151,18 +151,14 @@ namespace SharpBrake
 
         private void RequestCallback(IAsyncResult result)
         {
-            this.log.Debug(f => f("{0}.RequestCallback({1})", GetType(), result));
+            this.log.DebugFormat("{0}.RequestCallback({1})", GetType(), result);
 
             // Get it back
             var request = result.AsyncState as HttpWebRequest;
 
             if (request == null)
             {
-                this.log.Fatal(
-                    f => f(
-                        "{0}.AsyncState was null or not of type {1}.",
-                        typeof(IAsyncResult),
-                        typeof(HttpWebRequest)));
+                this.log.FatalFormat("{0}.AsyncState was null or not of type {1}.", typeof(IAsyncResult), typeof(HttpWebRequest));
                 return;
             }
 
@@ -189,7 +185,7 @@ namespace SharpBrake
             var serializer = new CleanXmlSerializer<AirbrakeNotice>();
             string xml = serializer.ToXml(notice);
 
-            this.log.Debug(f => f("Sending the following to '{0}':\n{1}", request.RequestUri, xml));
+            this.log.DebugFormat("Sending the following to '{0}':\n{1}", request.RequestUri, xml);
 
             byte[] payload = Encoding.UTF8.GetBytes(xml);
             request.ContentLength = payload.Length;
