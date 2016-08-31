@@ -14,13 +14,14 @@ First, you need to get the library down from the internets and onto your local h
 
 If you want to build the library yourself, you can [fork or clone](http://help.github.com/fork-a-repo/) it and build it with Visual Studio (2008 or 2010; both are supported). Drop the files *SharpBrake.dll* and *Common.Logging.dll* into your application's bin directory and you're almost good to go.
 
-Once SharpBrake is downloaded, built, installed or otherwise resides in your application's bin directory, you'll need to edit your application's .config file to include your API key for Airbrake as well as an environment name and optionally the Airbrake server Url (default value is set to https://api.airbrake.io/notifier_api/v2/notices)
+Once SharpBrake is downloaded, built, installed or otherwise resides in your application's bin directory, you'll need to edit your application's .config file to include your API key for Airbrake as well as an environment name and optionally the Airbrake server Url (default value is set to https://api.airbrake.io/notifier_api/v2/notices). You also have the option to switch inner exception logging on or off.
 
 ```xml
 <appSettings>
   <add key="Airbrake.ApiKey" value="1234567890abcdefg" />
   <add key="Airbrake.Environment" value="Whatever" />
   <add key="Airbrake.ServerUri" value="Airbrake server url (optional)" />
+  <add key="Airbrake.LogInnerExceptions" value="true/false (optional: default is false)" />
 </appSettings>
 ```
 
