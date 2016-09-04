@@ -1,15 +1,14 @@
+using Common.Logging;
+using SharpBrake.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Web;
 using System.Web.SessionState;
-
-using Common.Logging;
-
-using SharpBrake.Serialization;
 
 namespace SharpBrake
 {
@@ -23,7 +22,6 @@ namespace SharpBrake
         private AirbrakeServerEnvironment environment;
         private AirbrakeNotifier notifier;
 
-
         /// <summary>
         /// Initializes a new instance of the <see cref="AirbrakeNoticeBuilder"/> class.
         /// </summary>
@@ -31,7 +29,6 @@ namespace SharpBrake
             : this(new AirbrakeConfiguration())
         {
         }
-
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AirbrakeNoticeBuilder"/> class.
@@ -45,7 +42,6 @@ namespace SharpBrake
             this.configuration = configuration;
             this.log = LogManager.GetLogger(GetType());
         }
-
 
         /// <summary>
         /// Gets the configuration.
@@ -87,7 +83,6 @@ namespace SharpBrake
             }
         }
 
-
         /// <summary>
         /// Creates a <see cref="AirbrakeError"/> from the the specified exception.
         /// </summary>
@@ -104,17 +99,17 @@ namespace SharpBrake
 
             MethodBase catchingMethod;
             var backtrace = BuildBacktrace(exception, out catchingMethod);
+            var message = BuildMessage(exception);
 
             var error = Activator.CreateInstance<AirbrakeError>();
 
             error.CatchingMethod = catchingMethod;
             error.Class = exception.GetType().FullName;
-            error.Message = exception.GetType().Name + ": " + exception.Message;
+            error.Message = message;
             error.Backtrace = backtrace;
 
             return error;
         }
-
 
         /// <summary>
         /// Creates a <see cref="AirbrakeNotice"/> from the the specified error.
@@ -142,7 +137,6 @@ namespace SharpBrake
             return notice;
         }
 
-
         /// <summary>
         /// Creates a <see cref="AirbrakeNotice"/> from the the specified exception.
         /// </summary>
@@ -161,7 +155,6 @@ namespace SharpBrake
 
             return Notice(error);
         }
-
 
         private void AddContextualInformation(AirbrakeNotice notice, MethodBase catchingMethod)
         {
@@ -235,7 +228,6 @@ namespace SharpBrake
             notice.Request = request;
         }
 
-
         private AirbrakeTraceLine[] BuildBacktrace(Exception exception, out MethodBase catchingMethod)
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
@@ -295,9 +287,30 @@ namespace SharpBrake
                 lines.Add(line);
             }
 
+            if (Configuration.LogInnerExceptions)
+            {
+                if (exception.InnerException != null)
+                    lines.AddRange(BuildBacktrace(exception.InnerException, out catchingMethod));
+            }
+
             return lines.ToArray();
         }
 
+        private string BuildMessage(Exception exception)
+        {
+            if (!Configuration.LogInnerExceptions)
+                return exception.GetType().Name + ": " + exception.Message;
+
+            StringBuilder message = new StringBuilder();
+
+            while (exception != null)
+            {
+                message.AppendLine("[ " + exception.GetType().Name + ": " + exception.Message + " ]");
+                exception = exception.InnerException;
+            }
+
+            return message.ToString();
+        }
 
         private IEnumerable<AirbrakeVar> BuildVars(HttpCookieCollection cookies)
         {
@@ -315,7 +328,6 @@ namespace SharpBrake
                    select new AirbrakeVar(key, value);
         }
 
-
         private IEnumerable<AirbrakeVar> BuildVars(NameValueCollection formData)
         {
             if ((formData == null) || (formData.Count == 0))
@@ -330,7 +342,6 @@ namespace SharpBrake
                    where !String.IsNullOrEmpty(value)
                    select new AirbrakeVar(key, value);
         }
-
 
         private IEnumerable<AirbrakeVar> BuildVars(HttpSessionState session)
         {

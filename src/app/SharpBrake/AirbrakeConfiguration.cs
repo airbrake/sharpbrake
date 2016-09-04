@@ -19,6 +19,7 @@ namespace SharpBrake
             EnvironmentName = ConfigurationManager.AppSettings["Airbrake.Environment"];
             ServerUri = ConfigurationManager.AppSettings["Airbrake.ServerUri"]
                         ?? "https://api.airbrake.io/notifier_api/v2/notices";
+            LogInnerExceptions = Convert.ToBoolean(ConfigurationManager.AppSettings["Airbrake.LogInnerExceptions"]);
 
             ProjectRoot = HttpRuntime.AppDomainAppVirtualPath ?? Environment.CurrentDirectory;
 
@@ -69,5 +70,10 @@ namespace SharpBrake
         /// The project root.
         /// </value>
         public string ProjectRoot { get; set; }
+
+        /// <summary>
+        /// If set to true, all inner exceptions will be logged. Default is false.
+        /// </summary>
+        public bool LogInnerExceptions { get; set; }
     }
 }
