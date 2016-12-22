@@ -1,4 +1,5 @@
-﻿using System.Xml.Serialization;
+﻿using System.Collections.Generic;
+using System.Xml.Serialization;
 
 namespace SharpBrake.Serialization
 {
@@ -71,5 +72,14 @@ namespace SharpBrake.Serialization
         /// </value>
         [XmlAttribute("version")]
         public string Version { get; set; }
+
+        /// <summary>
+        /// Gets or sets custom parameters.
+        /// </summary>
+        /// <value>
+        /// Custom parameters.
+        /// </value>
+        [XmlElement("params")]
+        public List<AirbrakeVar> Params { get; set; }
     }
 }
