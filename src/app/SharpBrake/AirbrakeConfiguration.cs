@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Web;
+using SharpBrake.Serialization;
 
 namespace SharpBrake
 {
@@ -69,5 +71,11 @@ namespace SharpBrake
         /// The project root.
         /// </value>
         public string ProjectRoot { get; set; }
+
+        /// <summary>
+        /// Gets or sets custom parameters.
+        /// </summary>
+        /// <value>Custom parameters.</value>
+        public List<AirbrakeVar> Params { get; set; }
     }
 }
