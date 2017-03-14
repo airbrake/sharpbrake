@@ -1,0 +1,1 @@
+MSBuild project structure for Coverity Scan Build Tool.

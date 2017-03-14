@@ -1,0 +1,48 @@
+﻿{
+  "title": "Sharpbrake.Client.Tests",
+  "description": "Unit tests for Airbrake .NET Client",
+  "copyright": "Copyright (c) 2017 Airbrake Technologies, Inc.",
+  "version": "1.0.0-*",
+
+  "dependencies": {
+    "Sharpbrake.Client": {
+      "target": "project"
+    }
+  },
+
+  "frameworks": {
+
+    "netcoreapp1.0": {
+      "dependencies": {
+        "Microsoft.NETCore.App": {
+          "type": "platform",
+          "version": "1.0.1"
+        },
+        "xunit": "2.2.0",
+        "dotnet-test-xunit": "2.2.0-preview2-build1029"
+      }
+    },
+
+    "net45": {
+      "dependencies": {
+        "xunit": "2.2.0"
+      },
+      "frameworkAssemblies": {
+        "System.Runtime": {
+          "type": "build"
+        },
+        "System.Threading.Tasks": {
+          "type": "build"
+        }
+      }
+    },
+
+    "net35": {
+      "dependencies": {
+        "xunit.extensions": "1.9.2"
+      }
+    }
+  },
+
+  "testRunner": "xunit"
+}
