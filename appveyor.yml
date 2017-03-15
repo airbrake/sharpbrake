@@ -10,7 +10,7 @@ environment:
 
   NUGET_API_URL: https://www.nuget.org/api/v2/package
   NUGET_API_KEY:
-    secure: 7o7F8BdvUctkkCJOGC0MG+O4spxU/40CDbbuEthgJJNt+zFmipDzB86/Jlior9Jm
+    secure: m90rhPQ6APme1AAJK4kmjuprD5znnDIyLzQ0ez4CQNLIuQiAsOn4dc1USB3I3kE0
 
   CODECOV_TOKEN:
     secure: en+k+6zevr/HyzZacXebARkVoy5Dy0p7pj2LdfYC+eUOveJPoCe6C4LsLbBbaTPY
@@ -19,7 +19,7 @@ environment:
   COVERITY_PROJECT_TOKEN:
     secure: OwB/A40na4tDmHKU8y5LeDl19drugeGF6DXX1cv528s=
   # where email notification on build analysis results will be sent
-  COVERITY_NOTIFICATION_EMAIL: sharpbrake_notifications@airbrake.io
+  COVERITY_NOTIFICATION_EMAIL: sharpbrake@airbrake.io
 
 init:
   - git config --global core.autocrlf true
