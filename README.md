@@ -220,7 +220,7 @@ assumed) and the scheme ("https" will be assumed).
 
 ```csharp
 var config = new AirbrakeConfig {
-    AppVersion = "http://127.0.0.1:8000"
+    Host = "http://127.0.0.1:8000"
 };
 ```
 
