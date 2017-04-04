@@ -48,7 +48,7 @@ namespace Sharpbrake.Client
                 return;
 
             if (notice.Context == null)
-                notice.Context = new Context();
+                notice.Context = new Context { Notifier = new NotifierInfo() };
 
             notice.Context.Hostname = hostName;
             notice.Context.Os = osVersion;
@@ -66,7 +66,7 @@ namespace Sharpbrake.Client
             notice.HttpContext = httpContext;
 
             if (notice.Context == null)
-                notice.Context = new Context();
+                notice.Context = new Context { Notifier = new NotifierInfo() };
 
             notice.Context.Url = httpContext.Url;
             notice.Context.UserAgent = httpContext.UserAgent;
