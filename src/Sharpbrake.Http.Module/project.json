@@ -1,6 +1,6 @@
 {
   "title": "Sharpbrake.Http.Module",
-  "version": "1.0.1-*",
+  "version": "1.0.2-*",
   "description": "ASP.NET HTTP Module",
   "copyright": "Copyright (c) 2017 Airbrake Technologies, Inc.",
   "authors": [
@@ -23,7 +23,7 @@
   },
 
   "dependencies": {
-    "Sharpbrake.Client": "3.0.1"
+    "Sharpbrake.Client": "3.0.2"
   },
 
   "frameworks": {
