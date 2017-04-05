@@ -141,6 +141,7 @@ namespace Sharpbrake.Client
 
                 var noticeBuilder = new NoticeBuilder();
                 noticeBuilder.SetErrorEntries(exception);
+                noticeBuilder.SetConfigurationContext(config);
 
                 if (context != null)
                     noticeBuilder.SetHttpContext(context, config);
@@ -240,6 +241,7 @@ namespace Sharpbrake.Client
 
                 var noticeBuilder = new NoticeBuilder();
                 noticeBuilder.SetErrorEntries(exception);
+                noticeBuilder.SetConfigurationContext(config);
 
                 if (context != null)
                     noticeBuilder.SetHttpContext(context, config);

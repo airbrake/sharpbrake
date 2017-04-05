@@ -16,6 +16,17 @@ namespace Sharpbrake.Client.Tests
     public class NoticeBuilderTests
     {
         [Fact]
+        public void Ctor_ShouldInitializeContextAndNotifierInfo()
+        {
+            var builder = new NoticeBuilder();
+
+            var notice = builder.ToNotice();
+
+            Assert.NotNull(notice.Context);
+            Assert.NotNull(notice.Context.Notifier);
+        }
+
+        [Fact]
         public void SetErrorEntries_ShouldSetExceptionsInCorrectOrder()
         {
             var ex = new Exception("Main exception",
@@ -92,6 +103,36 @@ namespace Sharpbrake.Client.Tests
             Assert.NotNull(notice.Exception);
         }
 
+        [Fact]
+        public void SetConfigurationContext_ShouldSetEnvironmentNameAndAppVersion()
+        {
+            var builder = new NoticeBuilder();
+            builder.SetConfigurationContext(new AirbrakeConfig
+            {
+                Environment = "local",
+                AppVersion = "1.2.3"
+            });
+
+            var notice = builder.ToNotice();
+
+            Assert.NotNull(notice.Context);
+            Assert.True(notice.Context.EnvironmentName.Equals("local"));
+            Assert.True(notice.Context.AppVersion.Equals("1.2.3"));
+        }
+
+        [Fact]
+        public void SetConfigurationContext_ShouldNotSetEnvironmentNameAndAppVersionIfConfigIsNull()
+        {
+            var builder = new NoticeBuilder();
+            builder.SetConfigurationContext(null);
+
+            var notice = builder.ToNotice();
+
+            Assert.NotNull(notice.Context);
+            Assert.True(string.IsNullOrEmpty(notice.Context.EnvironmentName));
+            Assert.True(string.IsNullOrEmpty(notice.Context.AppVersion));
+        }
+
         [Theory,
          InlineData("", "", ""),
          InlineData("host", "", ""),
@@ -105,10 +146,13 @@ namespace Sharpbrake.Client.Tests
             var notice = builder.ToNotice();
 
             if (string.IsNullOrEmpty(host) && string.IsNullOrEmpty(os) && string.IsNullOrEmpty(lang))
-                Assert.True(notice.Context == null);
+            {
+                Assert.True(string.IsNullOrEmpty(notice.Context.Hostname));
+                Assert.True(string.IsNullOrEmpty(notice.Context.Os));
+                Assert.True(string.IsNullOrEmpty(notice.Context.Language));
+            }
             else
             {
-                Assert.True(notice.Context != null);
                 Assert.True(string.IsNullOrEmpty(host) ? string.IsNullOrEmpty(notice.Context.Hostname) : notice.Context.Hostname.Equals(host));
                 Assert.True(string.IsNullOrEmpty(os) ? string.IsNullOrEmpty(notice.Context.Os) : notice.Context.Os.Equals(os));
                 Assert.True(string.IsNullOrEmpty(lang) ? string.IsNullOrEmpty(notice.Context.Language) : notice.Context.Language.Equals(lang));
@@ -123,7 +167,7 @@ namespace Sharpbrake.Client.Tests
 
             var notice = builder.ToNotice();
 
-            Assert.True(notice.Context == null);
+            Assert.Null(notice.HttpContext);
         }
 
         [Theory,

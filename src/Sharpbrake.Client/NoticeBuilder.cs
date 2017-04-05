@@ -10,7 +10,21 @@ namespace Sharpbrake.Client
     /// </summary>
     public class NoticeBuilder
     {
-        private readonly Notice notice = new Notice();
+        private readonly Notice notice;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NoticeBuilder"/> class.
+        /// </summary>
+        public NoticeBuilder()
+        {
+            notice = new Notice
+            {
+                Context = new Context
+                {
+                    Notifier = new NotifierInfo()
+                }
+            };
+        }
 
         /// <summary>
         /// Sets exception data into notice errors list.
@@ -40,15 +54,24 @@ namespace Sharpbrake.Client
         }
 
         /// <summary>
+        /// Sets configuration context into corresponding properties of notice.
+        /// </summary>
+        public void SetConfigurationContext(AirbrakeConfig config)
+        {
+            if (config == null)
+                return;
+
+            notice.Context.EnvironmentName = config.Environment;
+            notice.Context.AppVersion = config.AppVersion;
+        }
+
+        /// <summary>
         /// Sets environment context (host, OS and C#/.NET info) into corresponding properties of notice.
         /// </summary>
         public void SetEnvironmentContext(string hostName, string osVersion, string langVersion)
         {
             if (string.IsNullOrEmpty(hostName) && string.IsNullOrEmpty(osVersion) && string.IsNullOrEmpty(langVersion))
                 return;
-
-            if (notice.Context == null)
-                notice.Context = new Context { Notifier = new NotifierInfo() };
 
             notice.Context.Hostname = hostName;
             notice.Context.Os = osVersion;
@@ -64,9 +87,6 @@ namespace Sharpbrake.Client
                 return;
 
             notice.HttpContext = httpContext;
-
-            if (notice.Context == null)
-                notice.Context = new Context { Notifier = new NotifierInfo() };
 
             notice.Context.Url = httpContext.Url;
             notice.Context.UserAgent = httpContext.UserAgent;
