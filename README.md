@@ -103,7 +103,7 @@ Airbrake-enabled console app.
 Configuration
 -------------
 
-Before using the library and its notifiers, you must to configure them. In most
+Before using the library and its notifiers, you must configure them. In most
 cases, it is sufficient to configure only one, default, notifier.
 
 ```csharp
@@ -158,7 +158,7 @@ There are multiple ways to set these values:
   {
     "Airbrake": {
       "ProjectId": "127348",
-      "ProjectKey": "e2046ca6e4e9214b24ad252e3c99a0f6",
+      "ProjectKey": "e2046ca6e4e9214b24ad252e3c99a0f6"
     }
   }
   ```
@@ -208,7 +208,7 @@ between multiple versions. It's not set by default.
 
 ```csharp
 var config = new AirbrakeConfig {
-    AppVersion = "production"
+    AppVersion = "1.0.1"
 };
 ```
 
@@ -226,8 +226,8 @@ var config = new AirbrakeConfig {
 
 #### Proxy options
 
-If your server is not able to directly reach Airbrake, you can use built-in
-proxy. By default, Sharpbrake uses direct connection.
+If your server is not able to directly reach Airbrake, you can use a built-in
+proxy. By default, Sharpbrake uses a direct connection.
 
 ##### ProxyUri, ProxyUsername, ProxyPassword
 
@@ -271,7 +271,7 @@ var config = new AirbrakeConfig {
 ```
 
 **Note:** `BlacklistKeys` has higher priority than `WhitelistKeys`. It means
-that If you set the same value into both blacklist and whitelist - that value
+that if you set the same value into both blacklist and whitelist - that value
 will be filtered out.
 
 #### WhitelistKeys
@@ -373,11 +373,11 @@ airbrake.NotifyAsync(ex);
 #### `AddFilter`
 
 A notice can be customized or ignored before it is sent to Airbrake via
-`AddFilter`. The Lambda that is passed to the `AddFilter` method accepts a
-`Notice` that can be processed by your code. The `Notice` object is
+`AddFilter`. A lambda expression that is passed to the `AddFilter` method
+accepts a `Notice` that can be processed by your code. The `Notice` object is
 pre-populated with errors, context and params, so you can freely modify these
-values if you wish. The `Notice` object is not sent to Airbrake if the Lambda
-function returns `null`:
+values if you wish. The `Notice` object is not sent to Airbrake if the lambda
+expression returns `null`:
 
 ```csharp
 airbrake.AddFilter(notice =>
@@ -403,14 +403,14 @@ values that the `Notice` object was built from.
 #### Exception
 
 Used to access additional exception properties. For example, if your exception is
-an HttpException, you can ignore it if `GetHTTPCode()` returns 404:
+an `HttpException`, you can ignore it if `GetHTTPCode()` returns 404:
 
 ```csharp
 airbrake.AddFilter(notice =>
 {
     var exception = notice.Exception as HttpException;
-        if (exception != null && exception.GetHttpCode() == 404)
-            return null;
+    if (exception != null && exception.GetHttpCode() == 404)
+        return null;
 
     return notice;
 });
@@ -493,7 +493,7 @@ ASP.NET Integration
   ```
 
   **Note:** In most cases you want to put `AirbrakeMiddleware` as a topmost
-  middleware component to load it as early as possible. However if you use
+  middleware component to load it as early as possible. However, if you use
   `app.UseDeveloperExceptionPage` and/or `app.UseExceptionHandler`, then
   `AirbrakeMiddleware` must be put after these components.
 
