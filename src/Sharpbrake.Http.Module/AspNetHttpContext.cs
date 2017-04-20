@@ -21,6 +21,9 @@ namespace Sharpbrake.Http.Module
         public string UserEmail { get; set; }
         public string UserName { get; set; }
 
+        public string Action { get; set; }
+        public string Component { get; set; }
+
         public AspNetHttpContext(HttpContext context)
         {
             var request = context.Request;
@@ -53,6 +56,16 @@ namespace Sharpbrake.Http.Module
                 Session = context.Session.Keys.Cast<string>()
                     .ToDictionary(key => key, key => context.Session[key].ToString());
             }
+
+#if !NET35
+            var routeData = request.RequestContext.RouteData;
+
+            if (routeData.Values.ContainsKey("action"))
+                Action = routeData.Values["action"].ToString();
+
+            if (routeData.Values.ContainsKey("controller"))
+                Component = routeData.Values["controller"].ToString();
+#endif
         }
     }
 }

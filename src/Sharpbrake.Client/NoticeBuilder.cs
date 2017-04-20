@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json;
 using Sharpbrake.Client.Model;
 
@@ -51,6 +52,17 @@ namespace Sharpbrake.Client
             }
 
             notice.Errors = errors;
+
+            var error = errors.FirstOrDefault();
+            if (error != null && error.Backtrace != null)
+            {
+                var backtrace = error.Backtrace.FirstOrDefault();
+                if (backtrace != null)
+                {
+                    notice.Context.Action = backtrace.Function;
+                    notice.Context.Component = backtrace.File;
+                }
+            }
         }
 
         /// <summary>
@@ -90,6 +102,12 @@ namespace Sharpbrake.Client
 
             notice.Context.Url = httpContext.Url;
             notice.Context.UserAgent = httpContext.UserAgent;
+
+            if (httpContext.Action != null && httpContext.Component != null)
+            {
+                notice.Context.Action = httpContext.Action;
+                notice.Context.Component = httpContext.Component;
+            }
 
             notice.Context.User = new UserInfo
             {

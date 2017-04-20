@@ -25,6 +25,7 @@
   "dependencies": {
     "Sharpbrake.Client": "3.0.2",
     "Microsoft.AspNetCore.Http.Abstractions": "1.0.0",
+    "Microsoft.AspNetCore.Routing": "1.0.0",
     "Microsoft.Extensions.Configuration": "1.0.0",
     "Microsoft.Extensions.Configuration.Json": "1.0.0"
   },

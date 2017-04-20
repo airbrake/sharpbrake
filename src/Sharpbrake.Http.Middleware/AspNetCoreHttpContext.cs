@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Primitives;
 using Sharpbrake.Client;
 
@@ -23,6 +24,9 @@ namespace Sharpbrake.Http.Middleware
         public string UserId { get; set; }
         public string UserEmail { get; set; }
         public string UserName { get; set; }
+
+        public string Action { get; set; }
+        public string Component { get; set; }
 
         public AspNetCoreHttpContext(HttpContext context)
         {
@@ -65,6 +69,18 @@ namespace Sharpbrake.Http.Middleware
 
             UserName = context.User.Identity.Name;
             Url = context.Request.Path.ToUriComponent();
+
+            var routingFeature = context.Features[typeof(IRoutingFeature)] as IRoutingFeature;
+            if (routingFeature != null)
+            {
+                var routeData = routingFeature.RouteData;
+
+                if (routeData.Values.ContainsKey("action"))
+                    Action = routeData.Values["action"].ToString();
+
+                if (routeData.Values.ContainsKey("controller"))
+                    Component = routeData.Values["controller"].ToString();
+            }
         }
 
         private static T TryGet<T>(Func<T> getter) where T : class
