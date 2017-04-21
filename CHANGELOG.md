@@ -1,6 +1,11 @@
 Sharpbrake Changelog
 ====================
 
+### [v3.0.3][v3.0.3] (April 21, 2017)
+
+* Fixed missing error location info (action and component fields)
+  ([#52](https://github.com/airbrake/sharpbrake/pull/52))
+
 ### [v3.0.2][v3.0.2] (April 5, 2017)
 
 * Fixed missing notifier info, environment and app version
@@ -18,3 +23,4 @@ Sharpbrake Changelog
 [v3.0.0]: https://github.com/airbrake/sharpbrake/releases/tag/v3.0.0
 [v3.0.1]: https://github.com/airbrake/sharpbrake/releases/tag/v3.0.1
 [v3.0.2]: https://github.com/airbrake/sharpbrake/releases/tag/v3.0.2
+[v3.0.3]: https://github.com/airbrake/sharpbrake/releases/tag/v3.0.3
