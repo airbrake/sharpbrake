@@ -1,6 +1,6 @@
 {
   "title": "Sharpbrake.Client",
-  "version": "3.0.2-*",
+  "version": "3.0.3-*",
   "description": "Airbrake C#/.NET Notifier",
   "copyright": "Copyright (c) 2017 Airbrake Technologies, Inc.",
   "authors": [

@@ -1,6 +1,6 @@
 {
   "title": "Sharpbrake.Http.Middleware",
-  "version": "1.0.2-*",
+  "version": "1.0.3-*",
   "description": "ASP.NET Core Middleware",
   "copyright": "Copyright (c) 2017 Airbrake Technologies, Inc.",
   "authors": [
@@ -23,7 +23,7 @@
   },
 
   "dependencies": {
-    "Sharpbrake.Client": "3.0.2",
+    "Sharpbrake.Client": "3.0.3",
     "Microsoft.AspNetCore.Http.Abstractions": "1.0.0",
     "Microsoft.AspNetCore.Routing": "1.0.0",
     "Microsoft.Extensions.Configuration": "1.0.0",
