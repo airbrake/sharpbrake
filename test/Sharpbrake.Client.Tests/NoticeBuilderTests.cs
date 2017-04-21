@@ -104,6 +104,18 @@ namespace Sharpbrake.Client.Tests
         }
 
         [Fact]
+        public void SetErrorEntries_ShouldNotSetActionAndComponentIfNoError()
+        {
+            var builder = new NoticeBuilder();
+            builder.SetErrorEntries(null);
+
+            var notice = builder.ToNotice();
+
+            Assert.True(string.IsNullOrEmpty(notice.Context.Action));
+            Assert.True(string.IsNullOrEmpty(notice.Context.Component));
+        }
+
+        [Fact]
         public void SetConfigurationContext_ShouldSetEnvironmentNameAndAppVersion()
         {
             var builder = new NoticeBuilder();
@@ -269,6 +281,24 @@ namespace Sharpbrake.Client.Tests
             var notice = builder.ToNotice();
 
             Assert.NotNull(notice.HttpContext);
+        }
+
+        [Fact]
+        public void SetHttpContext_ShouldSetActionAndContextIfProvided()
+        {
+            var httpContext = new FakeHttpContext
+            {
+                Action = "Action",
+                Component = "Component"
+            };
+
+            var builder = new NoticeBuilder();
+            builder.SetHttpContext(httpContext, null);
+
+            var notice = builder.ToNotice();
+
+            Assert.True(!string.IsNullOrEmpty(notice.Context.Action));
+            Assert.True(!string.IsNullOrEmpty(notice.Context.Component));
         }
 
         [Fact]

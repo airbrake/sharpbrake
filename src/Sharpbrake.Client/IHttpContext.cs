@@ -46,5 +46,15 @@ namespace Sharpbrake.Client
         /// User's name.
         /// </summary>
         string UserName { get; set; }
+
+        /// <summary>
+        /// The action in which the error occurred.
+        /// </summary>
+        string Action { get; set; }
+
+        /// <summary>
+        /// The component in which the error occurred.
+        /// </summary>
+        string Component { get; set; }
     }
 }
