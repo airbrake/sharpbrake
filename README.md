@@ -429,6 +429,8 @@ airbrake.AddFilter(notice =>
 });
 ```
 
+**Note:** Notice that exceeds 64 KB is truncated before sending.
+
 ASP.NET Integration
 -------------------
 

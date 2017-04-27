@@ -243,6 +243,43 @@ namespace Sharpbrake.Client.Tests
         }
 
         [Fact]
+        public void TruncateParameters_ShouldNotModifyParametersIfInputIsNull()
+        {
+            var result = Utils.TruncateParameters(null, 0);
+            Assert.Null(result);
+        }
+
+        [Fact]
+        public void TruncateParameters_ShouldNotModifyParametersWithinStringLimit()
+        {
+            var parameters = new Dictionary<string, string>
+            {
+                {"email", "john@example.com"},
+                {"account_id", ""}
+            };
+
+            var result = Utils.TruncateParameters(parameters, 16);
+
+            Assert.NotNull(result);
+            Assert.True(result["email"] == "john@example.com");
+        }
+
+        [Fact]
+        public void TruncateParameters_ShouldModifyParametersLongerThanStringLimit()
+        {
+            var parameters = new Dictionary<string, string>
+            {
+                {"email", "john@example.com"},
+                {"account_id", ""}
+            };
+
+            var result = Utils.TruncateParameters(parameters, 4);
+
+            Assert.NotNull(result);
+            Assert.True(result["email"] == "john...");
+        }
+
+        [Fact]
         public void GetBacktrace_ShouldReturnBlankFrameIfStackTraceNotAvailable()
         {
             var backtrace = Utils.GetBacktrace(new Exception());

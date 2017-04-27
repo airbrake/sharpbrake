@@ -97,6 +97,28 @@ namespace Sharpbrake.Client
         }
 
         /// <summary>
+        /// Returns a dictionary of parameters with truncated values.
+        /// </summary>
+        public static IDictionary<string, string> TruncateParameters(IDictionary<string, string> parameters, int stringLimit)
+        {
+            if (parameters == null) return null;
+
+            var outputParameters = new Dictionary<string, string>();
+
+            foreach (var key in parameters.Keys)
+            {
+                var value = parameters[key];
+
+                if (!string.IsNullOrEmpty(value) && value.Length > stringLimit)
+                    value = value.Substring(0, stringLimit) + "...";
+
+                outputParameters.Add(key, value);
+            }
+
+            return outputParameters;
+        }
+
+        /// <summary>
         /// Gets list of <see cref="Frame"/> (backtrace) for exception.
         /// </summary>
         public static IList<Frame> GetBacktrace(Exception exception)
