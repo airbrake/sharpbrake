@@ -142,15 +142,39 @@ namespace Sharpbrake.Client
         }
 
         /// <summary>
-        /// Gets JSON string for the current instance of <see cref="Notice"/>.
+        /// Gets JSON string for the instance of <see cref="Notice"/>.
         /// </summary>
+        /// <remarks>
+        /// Notice that exceeds 64 KB is truncated.
+        /// </remarks>
         public static string ToJsonString(Notice notice)
         {
-            return JsonConvert.SerializeObject(notice, new JsonSerializerSettings
+            const int noticeLengthMax = 64000;
+            const int stringLengthMax = 1024;
+
+            var jsonSerializerSettings = new JsonSerializerSettings
             {
                 NullValueHandling = NullValueHandling.Ignore,
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-            });
+            };
+
+            var json = JsonConvert.SerializeObject(notice, jsonSerializerSettings);
+            var level = 0;
+
+            while (json.Length > noticeLengthMax && level < 8)
+            {
+                // each level reduces the string limit by a half
+                var stringLimit = stringLengthMax / (int)Math.Pow(2, level);
+
+                notice.EnvironmentVars = Utils.TruncateParameters(notice.EnvironmentVars, stringLimit);
+                notice.Params = Utils.TruncateParameters(notice.Params, stringLimit);
+                notice.Session = Utils.TruncateParameters(notice.Session, stringLimit);
+
+                json = JsonConvert.SerializeObject(notice, jsonSerializerSettings);
+                level++;
+            }
+
+            return json;
         }
 
         /// <summary>

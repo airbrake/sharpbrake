@@ -335,6 +335,27 @@ namespace Sharpbrake.Client.Tests
         }
 
         [Fact]
+        public void ToJsonString_ShouldTruncateNoticeBigger64KB()
+        {
+            var httpContext = new FakeHttpContext
+            {
+                Parameters = new Dictionary<string, string>
+                {
+                    {"long_param", new string('x', 64001)}
+                }
+            };
+
+            var builder = new NoticeBuilder();
+            builder.SetHttpContext(httpContext, null);
+
+            var notice = builder.ToNotice();
+            var json = NoticeBuilder.ToJsonString(notice);
+
+            Assert.NotNull(json);
+            Assert.True(json.Length <= 64000);
+        }
+
+        [Fact]
         public void FromJsonString()
         {
             const string json = "{\"errors\":[{\"type\":\"System.Exception\",\"message\":\"Exception: Exception of type 'System.Exception' was thrown.\"}]}";
