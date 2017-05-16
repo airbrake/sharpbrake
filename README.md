@@ -39,6 +39,7 @@ Key features
 * Filters support (filter out sensitive or unwanted data that shouldn't be sent
   to our servers)<sup>[[link](#blacklistkeys)]</sup>
 * Ability to ignore errors from specified environments<sup>[[link](#ignoreenvironments)]</sup>
+* Severity support<sup>[[link](#setting-severity)]</sup>
 
 The library comes with the following integrations:
 
@@ -431,6 +432,18 @@ airbrake.AddFilter(notice =>
 
 **Note:** Notice that exceeds 64 KB is truncated before sending.
 
+#### Setting severity
+
+[Severity][what-is-severity] allows categorizing how severe an error is. By
+default, it's set to `error`. To redefine severity, simply set the `Severity`
+option of an `HttpContext` object. For example:
+
+```csharp
+airbrake.NotifyAsync(ex, {
+    Severity = 'critical'
+}).Result;
+```
+
 ASP.NET Integration
 -------------------
 
@@ -518,3 +531,4 @@ License
 The project uses the MIT License. See [LICENSE.md](LICENSE.md) for details.
 
 [dotnet-core-console]: https://github.com/airbrake/sharpbrake/blob/master/docs/dotnet-core-console.md
+[what-is-severity]: https://airbrake.io/docs/airbrake-faq/what-is-severity/

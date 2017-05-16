@@ -143,8 +143,10 @@ namespace Sharpbrake.Client
                 noticeBuilder.SetErrorEntries(exception);
                 noticeBuilder.SetConfigurationContext(config);
 
-                if (context != null)
+                if (context != null) {
                     noticeBuilder.SetHttpContext(context, config);
+                    noticeBuilder.SetSeverityContext(context.Severity);
+                }
 
                 noticeBuilder.SetEnvironmentContext(Dns.GetHostName(), Environment.OSVersion.VersionString, "C#/NET35");
 
@@ -243,8 +245,10 @@ namespace Sharpbrake.Client
                 noticeBuilder.SetErrorEntries(exception);
                 noticeBuilder.SetConfigurationContext(config);
 
-                if (context != null)
+                if (context != null) {
                     noticeBuilder.SetHttpContext(context, config);
+                    noticeBuilder.SetSeverityContext(context.Severity);
+                }
 
 #if NET45
                 noticeBuilder.SetEnvironmentContext(Dns.GetHostName(), Environment.OSVersion.VersionString, "C#/NET45");

@@ -3,7 +3,7 @@
 namespace Sharpbrake.Client.Model
 {
     /// <summary>
-    /// An object describing additional context info about OS, 
+    /// An object describing additional context info about OS,
     /// notifier, environment and others, for this error.
     /// </summary>
     public class Context
@@ -27,7 +27,7 @@ namespace Sharpbrake.Client.Model
         public string Hostname { get; set; }
 
         /// <summary>
-        /// Describe the language on which 
+        /// Describe the language on which
         /// the error occurred, e.g. "Ruby 2.1.1".
         /// </summary>
         [JsonProperty("language")]
@@ -40,17 +40,17 @@ namespace Sharpbrake.Client.Model
         public string EnvironmentName { get; set; }
 
         /// <summary>
-        /// The action in which the error occurred. 
+        /// The action in which the error occurred.
         /// If each request is routed to a controller action,
-        /// this should be set here. Otherwise, 
+        /// this should be set here. Otherwise,
         /// this can be set to a method or other request subcategory.
         /// </summary>
         [JsonProperty("action")]
         public string Action { get; set; }
 
         /// <summary>
-        /// The component or module in which the error occurred. 
-        /// In MVC frameworks like Rails,  this should be set to the controller. 
+        /// The component or module in which the error occurred.
+        /// In MVC frameworks like Rails,  this should be set to the controller.
         /// Otherwise, this can be set to a route or other request category.
         /// </summary>
         [JsonProperty("component")]
@@ -85,5 +85,11 @@ namespace Sharpbrake.Client.Model
         /// </summary>
         [JsonProperty("user")]
         public UserInfo User { get; set; }
+
+        /// <summary>
+        /// Error severity.
+        /// </summary>
+        [JsonProperty("severity")]
+        public string Severity { get; set; }
     }
 }

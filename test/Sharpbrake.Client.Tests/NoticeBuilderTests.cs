@@ -302,6 +302,29 @@ namespace Sharpbrake.Client.Tests
         }
 
         [Fact]
+        public void SetSeverityContext_ShouldSetDefaultSeverityWhenNotProvided()
+        {
+            var builder = new NoticeBuilder();
+            builder.SetSeverityContext(null);
+
+            var notice = builder.ToNotice();
+
+            Assert.True(notice.Context.Severity.Equals("error"));
+        }
+
+        [Fact]
+        public void SetSeverityContext_ShouldSetSeverityIfProvided()
+        {
+            var customSeverity = "critical";
+            var builder = new NoticeBuilder();
+            builder.SetSeverityContext(customSeverity);
+
+            var notice = builder.ToNotice();
+
+            Assert.True(notice.Context.Severity.Equals(customSeverity));
+        }
+
+        [Fact]
         public void ToJsonString()
         {
             var builder = new NoticeBuilder();

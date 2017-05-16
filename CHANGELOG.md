@@ -1,6 +1,11 @@
 Sharpbrake Changelog
 ====================
 
+### master
+
+* Started sending error severity (defaults to `error`)
+  ([#55](https://github.com/airbrake/sharpbrake/pull/55))
+
 ### [v3.0.3][v3.0.3] (April 21, 2017)
 
 * Fixed missing error location info (action and component fields)

@@ -28,6 +28,8 @@ namespace Sharpbrake.Http.Middleware
         public string Action { get; set; }
         public string Component { get; set; }
 
+        public string Severity { get; set; }
+
         public AspNetCoreHttpContext(HttpContext context)
         {
             if (TryGet(() => context.Session) != null && context.Session.Keys.Any())

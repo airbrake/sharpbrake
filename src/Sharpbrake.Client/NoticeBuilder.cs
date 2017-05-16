@@ -91,6 +91,22 @@ namespace Sharpbrake.Client
         }
 
         /// <summary>
+        /// Sets error severity.
+        /// </summary>
+        public void SetSeverityContext(string severity)
+        {
+            if (string.IsNullOrEmpty(severity))
+            {
+                const string defaultSeverity = "error";
+                notice.Context.Severity = defaultSeverity;
+            }
+            else
+            {
+                notice.Context.Severity = severity;
+            }
+        }
+
+        /// <summary>
         /// Sets the current Http context properties into corresponding properties of notice.
         /// </summary>
         public void SetHttpContext(IHttpContext httpContext, AirbrakeConfig config)

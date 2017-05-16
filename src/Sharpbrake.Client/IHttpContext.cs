@@ -56,5 +56,10 @@ namespace Sharpbrake.Client
         /// The component in which the error occurred.
         /// </summary>
         string Component { get; set; }
+
+        /// <summary>
+        /// Error severity.
+        /// </summary>
+        string Severity { get; set; }
     }
 }
