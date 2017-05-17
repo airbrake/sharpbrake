@@ -70,7 +70,7 @@ namespace Sharpbrake.Client
         /// Call to Airbrake is made asynchronously. Logging is deferred and occurs only if constructor has been
         /// provided with logger implementation or config contains non-empty value for "LogFile" property.
         /// </remarks>
-        public void Notify(Exception exception, IHttpContext context = null)
+        public void Notify(Exception exception, IHttpContext context = null, Severity severity = Severity.Error)
         {
 #if NET35
             if (logger != null)
@@ -86,7 +86,7 @@ namespace Sharpbrake.Client
 
             NotifyAsync(exception, context);
 #else
-            var notifyTask = NotifyAsync(exception, context);
+            var notifyTask = NotifyAsync(exception, context, severity);
             if (logger != null)
             {
                 notifyTask.ContinueWith(response =>
@@ -121,7 +121,7 @@ namespace Sharpbrake.Client
         /// Notifies Airbrake on error in your app using asynchronous call.
         /// </summary>
 #if NET35
-        public void NotifyAsync(Exception exception, IHttpContext context = null)
+        public void NotifyAsync(Exception exception, IHttpContext context = null, Severity severity = Severity.Error)
         {
             if (string.IsNullOrEmpty(config.ProjectId))
                 throw new Exception("Project Id is required");
@@ -142,11 +142,10 @@ namespace Sharpbrake.Client
                 var noticeBuilder = new NoticeBuilder();
                 noticeBuilder.SetErrorEntries(exception);
                 noticeBuilder.SetConfigurationContext(config);
+                noticeBuilder.SetSeverity(severity);
 
-                if (context != null) {
+                if (context != null)
                     noticeBuilder.SetHttpContext(context, config);
-                    noticeBuilder.SetSeverityContext(context.Severity);
-                }
 
                 noticeBuilder.SetEnvironmentContext(Dns.GetHostName(), Environment.OSVersion.VersionString, "C#/NET35");
 
@@ -222,7 +221,7 @@ namespace Sharpbrake.Client
             }
         }
 #else
-        public Task<AirbrakeResponse> NotifyAsync(Exception exception, IHttpContext context = null)
+        public Task<AirbrakeResponse> NotifyAsync(Exception exception, IHttpContext context = null, Severity severity = Severity.Error)
         {
             if (string.IsNullOrEmpty(config.ProjectId))
                 throw new Exception("Project Id is required");
@@ -244,11 +243,10 @@ namespace Sharpbrake.Client
                 var noticeBuilder = new NoticeBuilder();
                 noticeBuilder.SetErrorEntries(exception);
                 noticeBuilder.SetConfigurationContext(config);
+                noticeBuilder.SetSeverity(severity);
 
-                if (context != null) {
+                if (context != null)
                     noticeBuilder.SetHttpContext(context, config);
-                    noticeBuilder.SetSeverityContext(context.Severity);
-                }
 
 #if NET45
                 noticeBuilder.SetEnvironmentContext(Dns.GetHostName(), Environment.OSVersion.VersionString, "C#/NET45");

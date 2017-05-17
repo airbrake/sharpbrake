@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using Sharpbrake.Client.Model;
 using Sharpbrake.Client.Tests.Mocks;
 using Xunit;
 #if NET35
@@ -302,26 +303,14 @@ namespace Sharpbrake.Client.Tests
         }
 
         [Fact]
-        public void SetSeverityContext_ShouldSetDefaultSeverityWhenNotProvided()
+        public void SetSeverity_ShouldSetSeverityLowercase()
         {
             var builder = new NoticeBuilder();
-            builder.SetSeverityContext(null);
+            builder.SetSeverity(Severity.Critical);
 
             var notice = builder.ToNotice();
 
-            Assert.True(notice.Context.Severity.Equals("error"));
-        }
-
-        [Fact]
-        public void SetSeverityContext_ShouldSetSeverityIfProvided()
-        {
-            var customSeverity = "critical";
-            var builder = new NoticeBuilder();
-            builder.SetSeverityContext(customSeverity);
-
-            var notice = builder.ToNotice();
-
-            Assert.True(notice.Context.Severity.Equals(customSeverity));
+            Assert.True(notice.Context.Severity.Equals("critical"));
         }
 
         [Fact]

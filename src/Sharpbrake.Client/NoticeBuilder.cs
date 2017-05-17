@@ -93,17 +93,9 @@ namespace Sharpbrake.Client
         /// <summary>
         /// Sets error severity.
         /// </summary>
-        public void SetSeverityContext(string severity)
+        public void SetSeverity(Severity severity)
         {
-            if (string.IsNullOrEmpty(severity))
-            {
-                const string defaultSeverity = "error";
-                notice.Context.Severity = defaultSeverity;
-            }
-            else
-            {
-                notice.Context.Severity = severity;
-            }
+            notice.Context.Severity = severity.ToString().ToLowerInvariant();
         }
 
         /// <summary>

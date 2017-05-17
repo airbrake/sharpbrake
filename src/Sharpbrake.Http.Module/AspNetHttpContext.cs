@@ -24,8 +24,6 @@ namespace Sharpbrake.Http.Module
         public string Action { get; set; }
         public string Component { get; set; }
 
-        public string Severity { get; set; }
-
         public AspNetHttpContext(HttpContext context)
         {
             var request = context.Request;

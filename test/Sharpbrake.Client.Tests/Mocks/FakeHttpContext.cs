@@ -17,6 +17,5 @@ namespace Sharpbrake.Client.Tests.Mocks
         public string UserName { get; set; }
         public string Action { get; set; }
         public string Component { get; set; }
-        public string Severity { get; set; }
     }
 }

@@ -439,9 +439,9 @@ default, it's set to `error`. To redefine severity, simply set the `Severity`
 option of an `HttpContext` object. For example:
 
 ```csharp
-airbrake.NotifyAsync(ex, {
-    Severity = 'critical'
-}).Result;
+airbrake.NotifyAsync(ex, null,
+    Severity.Critical
+).Result;
 ```
 
 ASP.NET Integration

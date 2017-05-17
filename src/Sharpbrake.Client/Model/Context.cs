@@ -92,4 +92,21 @@ namespace Sharpbrake.Client.Model
         [JsonProperty("severity")]
         public string Severity { get; set; }
     }
+
+    /// <summary>
+    /// Severity allows to control the importance of every single error the notifier sends.
+    /// Errors with a severity of debug, info, notice, or warning will not trigger error
+    /// emails or integration notifications.
+    /// </summary>
+    public enum Severity
+    {
+        Debug,
+        Info,
+        Notice,
+        Warning,
+        Error,
+        Critical,
+        Alert,
+        Emergency
+    }
 }
