@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using Sharpbrake.Client.Model;
 using Sharpbrake.Client.Tests.Mocks;
 using Xunit;
 #if NET35
@@ -299,6 +300,17 @@ namespace Sharpbrake.Client.Tests
 
             Assert.True(!string.IsNullOrEmpty(notice.Context.Action));
             Assert.True(!string.IsNullOrEmpty(notice.Context.Component));
+        }
+
+        [Fact]
+        public void SetSeverity_ShouldSetSeverityLowercase()
+        {
+            var builder = new NoticeBuilder();
+            builder.SetSeverity(Severity.Critical);
+
+            var notice = builder.ToNotice();
+
+            Assert.True(notice.Context.Severity.Equals("critical"));
         }
 
         [Fact]
