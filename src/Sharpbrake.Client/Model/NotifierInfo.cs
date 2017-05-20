@@ -23,7 +23,7 @@ namespace Sharpbrake.Client.Model
         [JsonProperty("version")]
         public string Version
         {
-            get { return "3.0.3"; }
+            get { return "3.1.0"; }
         }
 
         /// <summary>
