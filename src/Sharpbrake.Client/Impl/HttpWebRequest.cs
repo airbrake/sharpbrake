@@ -1,9 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Net;
-#if !NET35
 using System.Threading.Tasks;
-#endif
 
 namespace Sharpbrake.Client.Impl
 {
@@ -81,39 +79,6 @@ namespace Sharpbrake.Client.Impl
             set { request.Proxy = value; }
         }
 
-#if NET35
-        /// <summary>
-        /// Gets BeginGetRequestStream implementation of the underlying HttpWebRequest class.
-        /// </summary>
-        public IAsyncResult BeginGetRequestStream(AsyncCallback callback, object state)
-        {
-            return request.BeginGetRequestStream(callback, state);
-        }
-
-        /// <summary>
-        /// Gets EndGetRequestStream implementation of the underlying HttpWebRequest class.
-        /// </summary>
-        public Stream EndGetRequestStream(IAsyncResult asyncResult)
-        {
-            return request.EndGetRequestStream(asyncResult);
-        }
-
-        /// <summary>
-        /// Gets BeginGetResponse implementation of the underlying HttpWebRequest class.
-        /// </summary>
-        public IAsyncResult BeginGetResponse(AsyncCallback callback, object state)
-        {
-            return request.BeginGetResponse(callback, state);
-        }
-
-        /// <summary>
-        /// Gets EndGetResponse implementation of the underlying HttpWebRequest class.
-        /// </summary>
-        public IHttpResponse EndGetResponse(IAsyncResult asyncResult)
-        {
-            return new HttpWebResponse((System.Net.HttpWebResponse)request.EndGetResponse(asyncResult));
-        }
-#else
         /// <summary>
         /// Gets the GetRequestStreamAsync implementation of underlying HttpWebRequest class.
         /// </summary>
@@ -143,11 +108,10 @@ namespace Sharpbrake.Client.Impl
                 else
                 {
                     var response = responseTask.Result;
-                    tcs.SetResult(new HttpWebResponse((System.Net.HttpWebResponse) response));
+                    tcs.SetResult(new HttpWebResponse((System.Net.HttpWebResponse)response));
                 }
             });
             return tcs.Task;
         }
-#endif
     }
 }

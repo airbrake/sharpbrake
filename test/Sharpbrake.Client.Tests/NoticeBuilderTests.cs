@@ -5,9 +5,6 @@ using Newtonsoft.Json;
 using Sharpbrake.Client.Model;
 using Sharpbrake.Client.Tests.Mocks;
 using Xunit;
-#if NET35
-using Xunit.Extensions;
-#endif
 
 namespace Sharpbrake.Client.Tests
 {
