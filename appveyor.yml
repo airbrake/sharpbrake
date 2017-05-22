@@ -1,0 +1,41 @@
+environment:
+  CONFIGURATION: Release
+  TARGET: Default
+  SKIP_GITVERSION: false
+  SKIP_COVERAGE: false
+
+  MYGET_API_URL: https://www.myget.org/F/sharpbrake/auth/c3009dbd-a96b-48ce-87cf-70a096e745b0/api/v2
+  MYGET_API_KEY:
+    secure: QSawa50S2XVsV3f0xzpSoaZuqZP6pOVfeGiZZy7vWDrRwZ+xeCBDyaITRNn8HbKm
+
+  NUGET_API_URL: https://www.nuget.org/api/v2/package
+  NUGET_API_KEY:
+    secure: m90rhPQ6APme1AAJK4kmjuprD5znnDIyLzQ0ez4CQNLIuQiAsOn4dc1USB3I3kE0
+
+  CODECOV_TOKEN:
+    secure: en+k+6zevr/HyzZacXebARkVoy5Dy0p7pj2LdfYC+eUOveJPoCe6C4LsLbBbaTPY
+
+  # Coverity project token is used for automated build submission
+  COVERITY_PROJECT_TOKEN:
+    secure: OwB/A40na4tDmHKU8y5LeDl19drugeGF6DXX1cv528s=
+  # where email notification on build analysis results will be sent
+  COVERITY_NOTIFICATION_EMAIL: sharpbrake@airbrake.io
+
+init:
+  - git config --global core.autocrlf true
+
+before_build:
+  - ps: gitversion $env:APPVEYOR_BUILD_FOLDER /l console /output buildserver /nofetch /b $env:APPVEYOR_REPO_BRANCH
+
+build_script:
+  - ps: .\build.ps1 -target $env:TARGET -configuration $env:CONFIGURATION
+
+# tests are run by build script
+test: off
+
+branches:
+  only:
+    - master
+
+cache:
+- tools -> build.cake
