@@ -3,6 +3,11 @@ Sharpbrake Changelog
 
 ### master
 
+### [v3.1.1][v3.1.1] (May 22, 2017)
+
+* Fixed ignored severity in the `Notify` method for .NET 3.5
+  ([#57](https://github.com/airbrake/sharpbrake/pull/57))
+
 ### [v3.1.0][v3.1.0] (May 20, 2017)
 
 * Started sending error severity (defaults to `error`)
@@ -34,3 +39,4 @@ Sharpbrake Changelog
 [v3.0.2]: https://github.com/airbrake/sharpbrake/releases/tag/v3.0.2
 [v3.0.3]: https://github.com/airbrake/sharpbrake/releases/tag/v3.0.3
 [v3.1.0]: https://github.com/airbrake/sharpbrake/releases/tag/v3.1.0
+[v3.1.1]: https://github.com/airbrake/sharpbrake/releases/tag/v3.1.1

@@ -435,8 +435,8 @@ airbrake.AddFilter(notice =>
 #### Setting severity
 
 [Severity][what-is-severity] allows categorizing how severe an error is. By
-default, it's set to `error`. To redefine severity, simply set the `Severity`
-option of an `HttpContext` object. For example:
+default, it's set to `error`. To redefine severity, simply pass the `Severity`
+as a parameter to the `NotifyAsync` (or `Notify`) method. For example:
 
 ```csharp
 airbrake.NotifyAsync(ex, null,
