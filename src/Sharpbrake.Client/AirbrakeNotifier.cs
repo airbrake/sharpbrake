@@ -84,7 +84,7 @@ namespace Sharpbrake.Client
                 };
             }
 
-            NotifyAsync(exception, context);
+            NotifyAsync(exception, context, severity);
 #else
             var notifyTask = NotifyAsync(exception, context, severity);
             if (logger != null)
