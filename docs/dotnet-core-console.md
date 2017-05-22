@@ -56,7 +56,7 @@ If you see `dotnet: command not found`, then follow the steps described in https
       </PropertyGroup>
 
       <ItemGroup>
-        <PackageReference Include="Sharpbrake.Client" Version="3.1.0" />
+        <PackageReference Include="Sharpbrake.Client" Version="3.1.1" />
       </ItemGroup>
 
     </Project>
