@@ -11,7 +11,7 @@
     <RepositoryUrl>https://github.com/airbrake/sharpbrake</RepositoryUrl>
     <TargetFrameworks>netstandard1.4;net452</TargetFrameworks>
     <Title>Airbrake ASP.NET Core Middleware</Title>
-    <Version>1.1.0</Version>
+    <Version>1.1.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
