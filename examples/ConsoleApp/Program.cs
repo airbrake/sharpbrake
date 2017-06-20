@@ -4,11 +4,11 @@ using System.Configuration;
 using System.Linq;
 using Sharpbrake.Client;
 
-namespace ConsoleApp.Net45
+namespace ConsoleApp
 {
     class Program
     {
-        static void Main()
+        static void Main(string[] args)
         {
             // use "ConfigurationManager" to get settings from "App.config" file
             var settings = ConfigurationManager.AppSettings.AllKeys
@@ -27,6 +27,9 @@ namespace ConsoleApp.Net45
             Console.ReadKey();
         }
 
+        /// <summary>
+        /// Uses Notify method that sends asynchronously an exception and logs a response.
+        /// </summary>
         static void Case1(IDictionary<string, string> settings)
         {
             var config = AirbrakeConfig.Load(settings);

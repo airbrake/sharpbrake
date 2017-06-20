@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
@@ -7,9 +6,12 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 [assembly: AssemblyTitle("WebApp.Module")]
 [assembly: AssemblyDescription("")]
+[assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Airbrake Technologies, Inc.")]
 [assembly: AssemblyProduct("WebApp.Module")]
 [assembly: AssemblyCopyright("Copyright (c) 2017 Airbrake Technologies, Inc.")]
+[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
@@ -17,7 +19,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("9d650e79-b366-4aa3-8ebb-db291359d085")]
+[assembly: Guid("18e22bff-53ce-42fd-8b22-08f429c8945f")]
 
 // Version information for an assembly consists of the following four values:
 //

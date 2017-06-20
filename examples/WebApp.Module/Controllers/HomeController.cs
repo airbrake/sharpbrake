@@ -12,7 +12,7 @@ namespace WebApp.Module.Controllers
 
         public ActionResult Throw()
         {
-            throw new Exception("Exception from ASP.NET MVC catched by Http module");
+            throw new Exception("Exception from ASP.NET MVC catched by HTTP module");
         }
     }
 }

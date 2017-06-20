@@ -24,9 +24,6 @@ environment:
 init:
   - git config --global core.autocrlf true
 
-before_build:
-  - ps: gitversion $env:APPVEYOR_BUILD_FOLDER /l console /output buildserver /nofetch /b $env:APPVEYOR_REPO_BRANCH
-
 build_script:
   - ps: .\build.ps1 -target $env:TARGET -configuration $env:CONFIGURATION
 
