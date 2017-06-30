@@ -357,7 +357,7 @@ Console.WriteLine(response.Url);
 
 A notice can be customized or ignored before it is sent to Airbrake via
 `AddFilter`. A lambda expression that is passed to the `AddFilter` method
-accepts `Notice` that can be processed by your code. The `Notice` object is
+accepts a `Notice` that can be processed by your code. The `Notice` object is
 pre-populated with errors, context and params, so you can freely modify these
 values if you wish. The `Notice` object is not sent to Airbrake if the lambda
 expression returns `null`:
