@@ -26,10 +26,10 @@ namespace Sharpbrake.Client
         public static string GetRequestUri(string projectId, string projectKey, string host = null)
         {
             if (string.IsNullOrEmpty(projectId))
-                throw new ArgumentNullException("projectId");
+                throw new ArgumentNullException(nameof(projectId));
 
             if (string.IsNullOrEmpty(projectKey))
-                throw new ArgumentNullException("projectKey");
+                throw new ArgumentNullException(nameof(projectKey));
 
             if (string.IsNullOrEmpty(host))
                 host = "https://airbrake.io";
@@ -201,9 +201,7 @@ namespace Sharpbrake.Client
         /// </summary>
         public static IList<Regex> CompileRegex(IList<string> stringPatterns)
         {
-            return stringPatterns == null
-                ? null
-                : stringPatterns.Select(pattern => new Regex(pattern, RegexOptions.Compiled | RegexOptions.IgnoreCase)).ToList();
+            return stringPatterns?.Select(pattern => new Regex(pattern, RegexOptions.Compiled | RegexOptions.IgnoreCase)).ToList();
         }
 
         private static int IndexOfRegex(IList<Regex> regexList, string key)

@@ -373,7 +373,7 @@ namespace Sharpbrake.Client.Tests
 
             Assert.NotNull(notice);
             Assert.NotNull(notice.Errors);
-            Assert.NotNull(notice.Errors.Count);
+            Assert.True(notice.Errors.Count > 0);
         }
     }
 }

@@ -22,10 +22,10 @@ namespace Sharpbrake.Http.Middleware
         public AirbrakeMiddleware(RequestDelegate next, IConfiguration config)
         {
             if (next == null)
-                throw new ArgumentNullException("next");
+                throw new ArgumentNullException(nameof(next));
 
             if (config == null)
-                throw new ArgumentNullException("config");
+                throw new ArgumentNullException(nameof(config));
 
             var settings = config.GetChildren()
                 .ToDictionary(setting => setting.Key, setting => setting.Value);
@@ -41,14 +41,8 @@ namespace Sharpbrake.Http.Middleware
         /// </summary>
         public AirbrakeMiddleware(RequestDelegate next, AirbrakeNotifier notifier)
         {
-            if (next == null)
-                throw new ArgumentNullException("next");
-
-            if (notifier == null)
-                throw new ArgumentNullException("notifier");
-
-            this.notifier = notifier;
-            nextHandler = next;
+            this.notifier = notifier ?? throw new ArgumentNullException(nameof(notifier));
+            nextHandler = next ?? throw new ArgumentNullException(nameof(next));
         }
 
         /// <summary>

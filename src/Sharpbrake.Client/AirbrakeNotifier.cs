@@ -36,10 +36,7 @@ namespace Sharpbrake.Client
         /// <param name="httpRequestHandler">The <see cref="IHttpRequestHandler"/> implementation to use.</param>
         public AirbrakeNotifier(AirbrakeConfig config, ILogger logger = null, IHttpRequestHandler httpRequestHandler = null)
         {
-            if (config == null)
-                throw new ArgumentNullException("config");
-
-            this.config = config;
+            this.config = config ?? throw new ArgumentNullException(nameof(config));
 
             // use default FileLogger if no custom implementation has been provided
             // but config contains non-empty value for "LogFile" property
@@ -189,8 +186,7 @@ namespace Sharpbrake.Client
                                 finally
                                 {
                                     var disposableResponse = httpResponse as IDisposable;
-                                    if (disposableResponse != null)
-                                        disposableResponse.Dispose();
+                                    disposableResponse?.Dispose();
                                 }
                             }
                         });

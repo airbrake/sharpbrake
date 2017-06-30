@@ -18,10 +18,7 @@ namespace Sharpbrake.Client.Impl
         /// <param name="request">The underlying <see cref="System.Net.HttpWebRequest"/> that the current <see cref="HttpWebRequest"/> is based on.</param>
         public HttpWebRequest(System.Net.HttpWebRequest request)
         {
-            if (request == null)
-                throw new ArgumentNullException("request");
-
-            this.request = request;
+            this.request = request ?? throw new ArgumentNullException(nameof(request));
         }
 
         /// <summary>
@@ -30,26 +27,23 @@ namespace Sharpbrake.Client.Impl
         public static HttpWebRequest Create(string endpoint)
         {
             if (string.IsNullOrEmpty(endpoint))
-                throw new ArgumentNullException("endpoint");
+                throw new ArgumentNullException(nameof(endpoint));
 
-            return new HttpWebRequest((System.Net.HttpWebRequest)WebRequest.Create(endpoint));
+            return new HttpWebRequest((System.Net.HttpWebRequest) WebRequest.Create(endpoint));
         }
 
         /// <summary>
         /// Gets URI of the request (endpoint).
         /// </summary>
-        public Uri RequestUri
-        {
-            get { return request.RequestUri; }
-        }
+        public Uri RequestUri => request.RequestUri;
 
         /// <summary>
         /// Gets or sets the value of Content-Type HTTP header.
         /// </summary>
         public string ContentType
         {
-            get { return request.ContentType; }
-            set { request.ContentType = value; }
+            get => request.ContentType;
+            set => request.ContentType = value;
         }
 
         /// <summary>
@@ -57,8 +51,8 @@ namespace Sharpbrake.Client.Impl
         /// </summary>
         public string Accept
         {
-            get { return request.Accept; }
-            set { request.Accept = value; }
+            get => request.Accept;
+            set => request.Accept = value;
         }
 
         /// <summary>
@@ -66,8 +60,8 @@ namespace Sharpbrake.Client.Impl
         /// </summary>
         public string Method
         {
-            get { return request.Method; }
-            set { request.Method = value; }
+            get => request.Method;
+            set => request.Method = value;
         }
 
         /// <summary>
@@ -75,8 +69,8 @@ namespace Sharpbrake.Client.Impl
         /// </summary>
         public IWebProxy Proxy
         {
-            get { return request.Proxy; }
-            set { request.Proxy = value; }
+            get => request.Proxy;
+            set => request.Proxy = value;
         }
 
         /// <summary>

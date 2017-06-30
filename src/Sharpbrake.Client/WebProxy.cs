@@ -18,10 +18,7 @@ namespace Sharpbrake.Client
 
         public WebProxy(Uri uri, bool bypassOnLocal)
         {
-            if (uri == null)
-                throw new ArgumentNullException("uri");
-
-            this.uri = uri;
+            this.uri = uri ?? throw new ArgumentNullException(nameof(uri));
             this.bypassOnLocal = bypassOnLocal;
         }
 

@@ -16,19 +16,13 @@ namespace Sharpbrake.Client.Impl
         /// </summary>
         public HttpWebResponse(System.Net.HttpWebResponse response)
         {
-            if (response == null)
-                throw new ArgumentNullException("response");
-
-            this.response = response;
+            this.response = response ?? throw new ArgumentNullException(nameof(response));
         }
 
         /// <summary>
         /// Gets the status of HTTP response.
         /// </summary>
-        public HttpStatusCode StatusCode
-        {
-            get { return response.StatusCode; }
-        }
+        public HttpStatusCode StatusCode => response.StatusCode;
 
         /// <summary>
         /// Gets the <see cref="Stream"/> for reading content from the server.
@@ -48,8 +42,7 @@ namespace Sharpbrake.Client.Impl
         {
             if (disposing)
             {
-                if (response != null)
-                    ((IDisposable)response).Dispose();
+                ((IDisposable) response)?.Dispose();
             }
         }
     }

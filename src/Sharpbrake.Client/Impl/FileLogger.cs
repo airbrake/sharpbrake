@@ -32,10 +32,7 @@ namespace Sharpbrake.Client.Impl
         /// <summary>
         /// Gets the path to the log file.
         /// </summary>
-        public string LogFile
-        {
-            get { return logFile; }
-        }
+        public string LogFile => logFile;
 
         /// <summary>
         /// Logs response from the Airbrake endpoint.
