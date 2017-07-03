@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Authors>Airbrake Technologies, Inc. and contributors</Authors>
+    <Company>Airbrake Technologies, Inc.</Company>
+    <Copyright>Copyright (c) 2017 Airbrake Technologies, Inc.</Copyright>
+    <Description>Airbrake HTTP module for ASP.NET request pipeline</Description>
+    <PackageId>Sharpbrake.Http.Module</PackageId>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/airbrake/sharpbrake/master/LICENSE.md</PackageLicenseUrl>
+    <PackageTags>Airbrake;Sharpbrake;ASP.NET HTTP Module</PackageTags>
+    <RepositoryUrl>https://github.com/airbrake/sharpbrake</RepositoryUrl>
+    <TargetFrameworks>net452</TargetFrameworks>
+    <Title>Airbrake ASP.NET HTTP Module</Title>
+    <Version>1.1.1</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Sharpbrake.Client\Sharpbrake.Client.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web" />
+  </ItemGroup>
+
+</Project>

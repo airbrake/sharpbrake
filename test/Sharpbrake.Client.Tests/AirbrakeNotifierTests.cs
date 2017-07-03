@@ -4,10 +4,7 @@ using System.IO;
 using System.Net;
 using System.Threading;
 using Sharpbrake.Client.Tests.Mocks;
-#if NET35
-using System.Reflection;
-using Xunit.Extensions;
-#elif NET45
+#if NET452
 using System.Reflection;
 using System.Threading.Tasks;
 #else
@@ -43,7 +40,7 @@ namespace Sharpbrake.Client.Tests
             };
 
             var logFile =
-#if NET35 || NET45
+#if NET452
                 Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location ?? string.Empty), config.LogFile);
 #else
                 Path.Combine(AppContext.BaseDirectory, config.LogFile);
@@ -61,11 +58,8 @@ namespace Sharpbrake.Client.Tests
                 while (!resetEvent.WaitOne(2000))
                     if (File.Exists(logFile))
                         resetEvent.Set();
-#if NET35
-                resetEvent.Close();
-#else
+
                 resetEvent.Dispose();
-#endif
             }
 
             Assert.True(File.Exists(logFile));
@@ -86,14 +80,11 @@ namespace Sharpbrake.Client.Tests
             using (var requestHandler = new FakeHttpRequestHandler())
             {
                 var notifier = new AirbrakeNotifier(config, new FakeLogger(), requestHandler);
-#if NET35
-                var exception = Record.Exception(() => notifier.NotifyAsync(new Exception()));
-#else
                 var exceptionTask = Record.ExceptionAsync(() => Task.Run(() => notifier.NotifyAsync(new Exception())));
 
                 Assert.NotNull(exceptionTask);
                 var exception = exceptionTask.Result;
-#endif
+
                 Assert.IsType<Exception>(exception);
                 Assert.True(exception.Message.Equals("Project " + (string.IsNullOrEmpty(projectId) ? "Id" : "Key") + " is required"));
             }
@@ -113,22 +104,8 @@ namespace Sharpbrake.Client.Tests
             using (var requestHandler = new FakeHttpRequestHandler())
             {
                 var notifier = new AirbrakeNotifier(config, new FakeLogger(), requestHandler);
-#if NET35
-                var resetEvent = new AutoResetEvent(false);
-                AirbrakeResponse airbrakeResponse = null;
-                notifier.NotifyCompleted += (sender, eventArgs) =>
-                {
-                    airbrakeResponse = eventArgs.Result;
-                    resetEvent.Set();
-                };
-
-                notifier.NotifyAsync(new Exception());
-
-                Assert.Equal(resetEvent.WaitOne(2000), true);
-                resetEvent.Close();
-#else
                 var airbrakeResponse = notifier.NotifyAsync(new Exception()).Result;
-#endif
+
                 Assert.True(airbrakeResponse.Status == RequestStatus.Ignored);
             }
         }
@@ -155,22 +132,7 @@ namespace Sharpbrake.Client.Tests
                 if (isHttpContextProvided)
                     context = new FakeHttpContext { UserAgent = "test" };
 
-#if NET35
-                var resetEvent = new AutoResetEvent(false);
-                AirbrakeResponse airbrakeResponse = null;
-                notifier.NotifyCompleted += (sender, eventArgs) =>
-                {
-                    airbrakeResponse = eventArgs.Result;
-                    resetEvent.Set();
-                };
-
-                notifier.NotifyAsync(new Exception(), context);
-
-                Assert.Equal(resetEvent.WaitOne(2000), true);
-                resetEvent.Close();
-#else
                 var airbrakeResponse = notifier.NotifyAsync(new Exception(), context).Result;
-#endif
                 var notice = NoticeBuilder.FromJsonString(requestHandler.HttpRequest.GetRequestStreamContent());
 
                 Assert.True(airbrakeResponse.Status == RequestStatus.Success);
@@ -202,27 +164,12 @@ namespace Sharpbrake.Client.Tests
                 requestHandler.HttpRequest.IsFaultedGetResponse = faultedTask == "GetResponse";
 
                 var notifier = new AirbrakeNotifier(config, new FakeLogger(), requestHandler);
-#if NET35
-                Exception exception = null;
-                var resetEvent = new AutoResetEvent(false);
-                notifier.NotifyCompleted += (sender, eventArgs) =>
-                {
-                    exception = eventArgs.Error;
-                    resetEvent.Set();
-                };
-
-                notifier.NotifyAsync(new Exception());
-
-                Assert.Equal(resetEvent.WaitOne(), true);
-                resetEvent.Close();
-#else
                 var notifyTask = notifier.NotifyAsync(new Exception());
                 var exceptionTask = Record.ExceptionAsync(() => notifyTask);
 
                 Assert.NotNull(exceptionTask);
                 var exception = exceptionTask.Result;
                 Assert.True(notifyTask.IsFaulted);
-#endif
                 Assert.IsType<Exception>(exception);
             }
         }
@@ -247,8 +194,6 @@ namespace Sharpbrake.Client.Tests
                 requestHandler.HttpRequest.IsCanceledGetResponse = canceledTask == "GetResponse";
 
                 var notifier = new AirbrakeNotifier(config, new FakeLogger(), requestHandler);
-#if NET35
-#else
                 var notifyTask = notifier.NotifyAsync(new Exception());
                 var exceptionTask = Record.ExceptionAsync(() => notifyTask);
 
@@ -256,7 +201,6 @@ namespace Sharpbrake.Client.Tests
                 var exception = exceptionTask.Result;
                 Assert.True(notifyTask.IsCanceled);
                 Assert.IsType<TaskCanceledException>(exception);
-#endif
             }
         }
 
@@ -279,22 +223,8 @@ namespace Sharpbrake.Client.Tests
                 requestHandler.HttpResponse.ResponseJson = "{\"Id\":\"12345\",\"Url\":\"https://airbrake.io/\"}";
 
                 var notifier = new AirbrakeNotifier(config, new FakeLogger(), requestHandler);
-#if NET35
-                var resetEvent = new AutoResetEvent(false);
-                AirbrakeResponse airbrakeResponse = null;
-                notifier.NotifyCompleted += (sender, eventArgs) =>
-                {
-                    airbrakeResponse = eventArgs.Result;
-                    resetEvent.Set();
-                };
-
-                notifier.NotifyAsync(new Exception());
-
-                Assert.Equal(resetEvent.WaitOne(2000), true);
-                resetEvent.Close();
-#else
                 var airbrakeResponse = notifier.NotifyAsync(new Exception()).Result;
-#endif
+
                 if (isStatusCodeCreated)
                     Assert.True(airbrakeResponse.Status == RequestStatus.Success);
                 else
@@ -323,22 +253,8 @@ namespace Sharpbrake.Client.Tests
                     notice.Context.Action = "modified action";
                     return notice;
                 });
-#if NET35
-                var resetEvent = new AutoResetEvent(false);
-                AirbrakeResponse airbrakeResponse = null;
-                notifier.NotifyCompleted += (sender, eventArgs) =>
-                {
-                    airbrakeResponse = eventArgs.Result;
-                    resetEvent.Set();
-                };
 
-                notifier.NotifyAsync(new Exception());
-
-                Assert.Equal(resetEvent.WaitOne(2000), true);
-                resetEvent.Close();
-#else
                 var airbrakeResponse = notifier.NotifyAsync(new Exception()).Result;
-#endif
                 var actualNotice = NoticeBuilder.FromJsonString(requestHandler.HttpRequest.GetRequestStreamContent());
 
                 Assert.True(airbrakeResponse.Status == RequestStatus.Success);
@@ -360,22 +276,9 @@ namespace Sharpbrake.Client.Tests
             {
                 var notifier = new AirbrakeNotifier(config, new FakeLogger(), requestHandler);
                 notifier.AddFilter(notice => null);
-#if NET35
-                var resetEvent = new AutoResetEvent(false);
-                AirbrakeResponse airbrakeResponse = null;
-                notifier.NotifyCompleted += (sender, eventArgs) =>
-                {
-                    airbrakeResponse = eventArgs.Result;
-                    resetEvent.Set();
-                };
 
-                notifier.NotifyAsync(new Exception());
-
-                Assert.Equal(resetEvent.WaitOne(2000), true);
-                resetEvent.Close();
-#else
                 var airbrakeResponse = notifier.NotifyAsync(new Exception()).Result;
-#endif
+
                 Assert.True(airbrakeResponse.Status == RequestStatus.Ignored);
             }
         }
@@ -403,11 +306,8 @@ namespace Sharpbrake.Client.Tests
                 while (!resetEvent.WaitOne(2000))
                     if (logger.LoggedResponses.Count > 0)
                         resetEvent.Set();
-#if NET35
-                resetEvent.Close();
-#else
+
                 resetEvent.Dispose();
-#endif
             }
 
             Assert.True(logger.LoggedResponses.Count > 0);
@@ -435,11 +335,8 @@ namespace Sharpbrake.Client.Tests
                 while (!resetEvent.WaitOne(2000))
                     if (logger.LoggedExceptions.Count > 0)
                         resetEvent.Set();
-#if NET35
-                resetEvent.Close();
-#else
+
                 resetEvent.Dispose();
-#endif
             }
 
             Assert.True(logger.LoggedExceptions.Count > 0);

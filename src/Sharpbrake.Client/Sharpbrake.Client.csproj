@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Authors>Airbrake Technologies, Inc. and contributors</Authors>
+    <Company>Airbrake Technologies, Inc.</Company>
+    <Copyright>Copyright (c) 2017 Airbrake Technologies, Inc.</Copyright>
+    <Description>Airbrake C#/.NET client (notifier)</Description>
+    <PackageId>Sharpbrake.Client</PackageId>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/airbrake/sharpbrake/master/LICENSE.md</PackageLicenseUrl>
+    <PackageTags>Airbrake;Sharpbrake;C# Notifier</PackageTags>
+    <RepositoryUrl>https://github.com/airbrake/sharpbrake</RepositoryUrl>
+    <TargetFrameworks>netstandard1.4;net452</TargetFrameworks>
+    <Title>Airbrake C#/.NET Notifier</Title>
+    <Version>3.1.1</Version>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.4'">
+    <PackageReference Include="System.Diagnostics.StackTrace" Version="4.3.0" />
+    <PackageReference Include="System.Net.Requests" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net452'">
+    <Reference Include="System.Web" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+  </ItemGroup>
+
+</Project>

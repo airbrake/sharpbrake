@@ -20,11 +20,12 @@ namespace WebApp.Middleware
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
                 .AddEnvironmentVariables();
+
             Configuration = builder.Build();
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        // For more information on how to configure your application, visit http://go.microsoft.com/fwlink/?LinkID=398940
+        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
         }
@@ -44,7 +45,7 @@ namespace WebApp.Middleware
             app.Run(async context =>
             {
                 if (context.Request.Path.Value.EndsWith("throw"))
-                    throw new Exception("Exception from ASP.NET Core catched by Http middleware");
+                    throw new Exception("Exception from ASP.NET Core catched by HTTP middleware");
                 await context.Response.WriteAsync(
                     "<!doctype html><html><head><title>Middleware</title></head><body><a href=\"/throw\">Throw Exception</a></body></html>");
             });

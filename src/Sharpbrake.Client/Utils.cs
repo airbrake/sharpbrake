@@ -17,7 +17,7 @@ namespace Sharpbrake.Client
         {
             return string.IsNullOrEmpty(value)
                 ? null
-                : value.Replace(" ", "").Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries);
+                : value.Replace(" ", "").Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
         }
 
         /// <summary>
@@ -26,10 +26,10 @@ namespace Sharpbrake.Client
         public static string GetRequestUri(string projectId, string projectKey, string host = null)
         {
             if (string.IsNullOrEmpty(projectId))
-                throw new ArgumentNullException("projectId");
+                throw new ArgumentNullException(nameof(projectId));
 
             if (string.IsNullOrEmpty(projectKey))
-                throw new ArgumentNullException("projectKey");
+                throw new ArgumentNullException(nameof(projectKey));
 
             if (string.IsNullOrEmpty(host))
                 host = "https://airbrake.io";
@@ -61,7 +61,7 @@ namespace Sharpbrake.Client
         public static bool IsIgnoredEnvironment(string environment, IList<string> ignoredEnvironments)
         {
             return ignoredEnvironments != null && ignoredEnvironments.Any(env =>
-                string.Equals(env, environment, StringComparison.OrdinalIgnoreCase));
+                       string.Equals(env, environment, StringComparison.OrdinalIgnoreCase));
         }
 
         /// <summary>
@@ -128,7 +128,7 @@ namespace Sharpbrake.Client
             // Airbrake requires at least one frame to be present in notice, so
             // in case of error or any other issue when stack frames become unavailable
             // this "blank" frame will be used
-            var blankFrame = new Frame {File = "none", Column = 0, Line = 0};
+            var blankFrame = new Frame { File = "none", Column = 0, Line = 0 };
 
             // It seems that obtaining stack frames may be dangerous operation and may even
             // throw "NotImplementedException" exception under some platforms.
@@ -201,9 +201,7 @@ namespace Sharpbrake.Client
         /// </summary>
         public static IList<Regex> CompileRegex(IList<string> stringPatterns)
         {
-            return stringPatterns == null
-                ? null
-                : stringPatterns.Select(pattern => new Regex(pattern, RegexOptions.Compiled | RegexOptions.IgnoreCase)).ToList();
+            return stringPatterns?.Select(pattern => new Regex(pattern, RegexOptions.Compiled | RegexOptions.IgnoreCase)).ToList();
         }
 
         private static int IndexOfRegex(IList<Regex> regexList, string key)

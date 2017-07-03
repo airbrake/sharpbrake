@@ -2,10 +2,7 @@
 using System.IO;
 using System.Net;
 using System.Text;
-#if NET35
-#else
 using System.Threading.Tasks;
-#endif
 
 namespace Sharpbrake.Client.Tests.Mocks
 {
@@ -43,35 +40,7 @@ namespace Sharpbrake.Client.Tests.Mocks
             requestStream = new CapturedMemoryStream(contentBuilder);
             requestUri = new Uri("https://airbrake.io");
         }
-#if NET35
-        public IAsyncResult BeginGetRequestStream(AsyncCallback callback, object state)
-        {
-            if (IsFaultedGetRequestStream)
-                throw new Exception();
 
-            Func<FakeHttpRequest> requestFunc = () => this;
-            return requestFunc.BeginInvoke(callback, state);
-        }
-
-        public Stream EndGetRequestStream(IAsyncResult asyncResult)
-        {
-            return ((FakeHttpRequest)asyncResult.AsyncState).requestStream;
-        }
-
-        public IAsyncResult BeginGetResponse(AsyncCallback callback, object state)
-        {
-            if (IsFaultedGetResponse)
-                throw new Exception();
-
-            Func<FakeHttpRequest> requestFunc = () => this;
-            return requestFunc.BeginInvoke(callback, state);
-        }
-
-        public IHttpResponse EndGetResponse(IAsyncResult asyncResult)
-        {
-            return ((FakeHttpRequest)asyncResult.AsyncState).httpResponse;
-        }
-#else
         public Task<Stream> GetRequestStreamAsync()
         {
             var tcs = new TaskCompletionSource<Stream>();
@@ -95,7 +64,7 @@ namespace Sharpbrake.Client.Tests.Mocks
                 tcs.SetResult(httpResponse);
             return tcs.Task;
         }
-#endif
+
         public string GetRequestStreamContent()
         {
             return contentBuilder.ToString();

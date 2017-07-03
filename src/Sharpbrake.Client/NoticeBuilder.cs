@@ -54,14 +54,11 @@ namespace Sharpbrake.Client
             notice.Errors = errors;
 
             var error = errors.FirstOrDefault();
-            if (error != null && error.Backtrace != null)
+            var backtrace = error?.Backtrace?.FirstOrDefault();
+            if (backtrace != null)
             {
-                var backtrace = error.Backtrace.FirstOrDefault();
-                if (backtrace != null)
-                {
-                    notice.Context.Action = backtrace.Function;
-                    notice.Context.Component = backtrace.File;
-                }
+                notice.Context.Action = backtrace.Function;
+                notice.Context.Component = backtrace.File;
             }
         }
 

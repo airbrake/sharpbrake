@@ -29,7 +29,8 @@ Key features
 * Uses the new Airbrake JSON
   (v3)<sup>[[link](https://airbrake.io/docs/#create-notice-v3)]</sup>
 * SSL support (all communication with Airbrake is encrypted by default)
-* Support for .NET 3.5 and above (including the latest .NET Core platforms)
+* Support for .NET 4.5.2 and above (including the latest .NET Core platforms)
+  <sup>[[net35](#net-35-support)]</sup>
 * Asynchronous exception reporting<sup>[[link](#notify)]</sup>
 * Logging support<sup>[[link](#logfile)]</sup>
 * Flexible configuration options (configure as many Airbrake notifiers in one
@@ -54,7 +55,7 @@ Installation
 
 Package                    | Description                                            | NuGet link
 ---------------------------|--------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------
-Sharpbrake.Client          | C# client with support for .NET 3.5, 4.5 and .NET Core | [![NuGet](https://img.shields.io/nuget/v/Sharpbrake.Client.svg)](https://www.nuget.org/packages/Sharpbrake.Client)
+Sharpbrake.Client          | C# client with support for .NET 4.5.2 and above        | [![NuGet](https://img.shields.io/nuget/v/Sharpbrake.Client.svg)](https://www.nuget.org/packages/Sharpbrake.Client)
 Sharpbrake.Http.Module     | HTTP module for ASP.NET request pipeline               | [![NuGet](https://img.shields.io/nuget/v/Sharpbrake.Http.Module.svg)](https://www.nuget.org/packages/Sharpbrake.Http.Module)
 Sharpbrake.Http.Middleware | Middleware component for new ASP.NET Core pipeline     | [![NuGet](https://img.shields.io/nuget/v/Sharpbrake.Http.Middleware.svg)](https://www.nuget.org/packages/Sharpbrake.Http.Middleware)
 
@@ -336,11 +337,7 @@ catch(Exception ex)
 #### NotifyAsync
 
 `NotifyAsync` is similar to [`Notify`](#notify), however it is much more
-powerful because it provides control over the response object from Airbrake. The
-API is different for .NET 3.5 and .NET 4.5 (clarified below):
-
-##### .NET 4.5
-
+powerful because it provides control over the response object from Airbrake.
 In .NET 4.5 and above you can use task-based programming model. Example of using
 a continuation, which prints URL to the error in the Airbrake dashboard:
 
@@ -354,21 +351,6 @@ The method also supports `async/await`:
 ```csharp
 var response = await airbrake.NotifyAsync(ex);
 Console.WriteLine(response.Url);
-```
-
-##### .NET 3.5
-
-In .NET 3.5 you can subscribe to the `NotifyCompleted` event and define your
-custom logic in an event handler:
-
-```csharp
-airbrake.NotifyCompleted += (sender, eventArgs) =>
-{
-    airbrakeResponse = eventArgs.Result;
-    Console.WriteLine(airbrakeResponse.Url);
-};
-
-airbrake.NotifyAsync(ex);
 ```
 
 #### `AddFilter`
@@ -519,6 +501,12 @@ ASP.NET Integration
   var airbrake = HttpContext.Features.Get<IAirbrakeFeature>().GetNotifier();
   ```
 
+.NET 3.5 Support
+----------------
+
+Please refer to [Sharpbrake for .NET 3.5][sharpbrake-net35] if your app uses
+.NET Framework before 4.5.2.
+
 Contributing
 ------------
 
@@ -532,3 +520,4 @@ The project uses the MIT License. See [LICENSE.md](LICENSE.md) for details.
 
 [dotnet-core-console]: https://github.com/airbrake/sharpbrake/blob/master/docs/dotnet-core-console.md
 [what-is-severity]: https://airbrake.io/docs/airbrake-faq/what-is-severity/
+[sharpbrake-net35]: https://github.com/airbrake/sharpbrake-net35

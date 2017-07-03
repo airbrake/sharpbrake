@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-#if NET35 || NET45
+#if NET452
 using System.Reflection;
 #endif
 using System.Text;
@@ -22,7 +22,7 @@ namespace Sharpbrake.Client.Impl
         public FileLogger(string logFilePath)
         {
             logFile = Path.IsPathRooted(logFilePath) ? logFilePath
-#if NET35 || NET45
+#if NET452
                 : Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location ?? string.Empty), logFilePath);
 #else
                 : Path.Combine(AppContext.BaseDirectory, logFilePath);
@@ -32,10 +32,7 @@ namespace Sharpbrake.Client.Impl
         /// <summary>
         /// Gets the path to the log file.
         /// </summary>
-        public string LogFile
-        {
-            get { return logFile; }
-        }
+        public string LogFile => logFile;
 
         /// <summary>
         /// Logs response from the Airbrake endpoint.

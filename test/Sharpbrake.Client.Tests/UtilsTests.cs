@@ -2,9 +2,6 @@
 using System.Collections.Generic;
 using Sharpbrake.Client.Model;
 using Xunit;
-#if NET35
-using Xunit.Extensions;
-#endif
 
 namespace Sharpbrake.Client.Tests
 {

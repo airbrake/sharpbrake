@@ -5,9 +5,6 @@ using Newtonsoft.Json;
 using Sharpbrake.Client.Model;
 using Sharpbrake.Client.Tests.Mocks;
 using Xunit;
-#if NET35
-using Xunit.Extensions;
-#endif
 
 namespace Sharpbrake.Client.Tests
 {
@@ -376,7 +373,7 @@ namespace Sharpbrake.Client.Tests
 
             Assert.NotNull(notice);
             Assert.NotNull(notice.Errors);
-            Assert.NotNull(notice.Errors.Count);
+            Assert.True(notice.Errors.Count > 0);
         }
     }
 }

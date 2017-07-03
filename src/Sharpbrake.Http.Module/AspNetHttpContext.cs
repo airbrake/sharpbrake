@@ -57,7 +57,6 @@ namespace Sharpbrake.Http.Module
                     .ToDictionary(key => key, key => context.Session[key].ToString());
             }
 
-#if !NET35
             var routeData = request.RequestContext.RouteData;
 
             if (routeData.Values.ContainsKey("action"))
@@ -65,7 +64,6 @@ namespace Sharpbrake.Http.Module
 
             if (routeData.Values.ContainsKey("controller"))
                 Component = routeData.Values["controller"].ToString();
-#endif
         }
     }
 }
