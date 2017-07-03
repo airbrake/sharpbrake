@@ -10,7 +10,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.0.0" />
     <PackageReference Include="Microsoft.AspNetCore" Version="1.1.2" />
-    <PackageReference Include="Sharpbrake.Http.Middleware" Version="1.1.1" />
+    <PackageReference Include="Sharpbrake.Http.Middleware" Version="2.0.0" />
   </ItemGroup>
   <ItemGroup>
     <Content Update="appsettings.json">
