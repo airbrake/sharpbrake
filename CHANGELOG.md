@@ -3,6 +3,13 @@ Sharpbrake Changelog
 
 ### master
 
+### [v4.0.0][v4.0.0] (July 3, 2017)
+
+* Switched to the new csproj format. Only .NET Framework 4.5.2+
+  is going to be supported onward. Refer to [sharpbrake-net35](https://github.com/airbrake/sharpbrake-net35)
+  to get support for the older .NET versions
+  ([#59](https://github.com/airbrake/sharpbrake/pull/59))
+
 ### [v3.1.1][v3.1.1] (May 22, 2017)
 
 * Fixed ignored severity in the `Notify` method for .NET 3.5
@@ -40,3 +47,4 @@ Sharpbrake Changelog
 [v3.0.3]: https://github.com/airbrake/sharpbrake/releases/tag/v3.0.3
 [v3.1.0]: https://github.com/airbrake/sharpbrake/releases/tag/v3.1.0
 [v3.1.1]: https://github.com/airbrake/sharpbrake/releases/tag/v3.1.1
+[v4.0.0]: https://github.com/airbrake/sharpbrake/releases/tag/v4.0.0
