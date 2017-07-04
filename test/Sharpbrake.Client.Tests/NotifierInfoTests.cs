@@ -17,11 +17,11 @@ namespace Sharpbrake.Client.Tests
         }
 
         [Fact]
-        public void Version_ShouldReturnThreeZeroZero()
+        public void Version_ShouldReturnVersionSpecifiedInCsproj()
         {
             var notifierInfo = new NotifierInfo();
 
-            Assert.True(notifierInfo.Version.Equals("3.1.1"));
+            Assert.True(notifierInfo.Version.Equals("4.0.0"));
         }
 
         [Fact]
