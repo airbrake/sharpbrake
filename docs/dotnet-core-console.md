@@ -22,7 +22,7 @@ If you see `dotnet: command not found`, then follow the steps described in https
 2. Install the .NET Core SDK
 
     ```sh
-    $ sudo apt-get install dotnet-dev-1.0.1
+    $ sudo apt-get install dotnet-dev-1.0.4
     ```
 
 ## Create a sample .NET Core console app
@@ -56,7 +56,7 @@ If you see `dotnet: command not found`, then follow the steps described in https
       </PropertyGroup>
 
       <ItemGroup>
-        <PackageReference Include="Sharpbrake.Client" Version="4.0.0" />
+        <PackageReference Include="Sharpbrake.Client" Version="4.0.1" />
       </ItemGroup>
 
     </Project>

@@ -3,6 +3,11 @@ Sharpbrake Changelog
 
 ### master
 
+### [v4.0.1][v4.0.1] (July 5, 2017)
+
+* Fixed version in the notifier info
+  ([#61](https://github.com/airbrake/sharpbrake/pull/61))
+
 ### [v4.0.0][v4.0.0] (July 3, 2017)
 
 * Switched to the new csproj format. Only .NET Framework 4.5.2+
@@ -48,3 +53,4 @@ Sharpbrake Changelog
 [v3.1.0]: https://github.com/airbrake/sharpbrake/releases/tag/v3.1.0
 [v3.1.1]: https://github.com/airbrake/sharpbrake/releases/tag/v3.1.1
 [v4.0.0]: https://github.com/airbrake/sharpbrake/releases/tag/v4.0.0
+[v4.0.1]: https://github.com/airbrake/sharpbrake/releases/tag/v4.0.1
