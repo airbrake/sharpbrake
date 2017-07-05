@@ -46,14 +46,14 @@
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.3\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="Sharpbrake.Client, Version=3.1.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Sharpbrake.Client.3.1.1\lib\net45\Sharpbrake.Client.dll</HintPath>
+    <Reference Include="Sharpbrake.Client, Version=4.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Sharpbrake.Client.4.0.1\lib\net452\Sharpbrake.Client.dll</HintPath>
     </Reference>
-    <Reference Include="Sharpbrake.Http.Module, Version=1.1.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Sharpbrake.Http.Module.1.1.1\lib\net45\Sharpbrake.Http.Module.dll</HintPath>
+    <Reference Include="Sharpbrake.Http.Module, Version=2.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Sharpbrake.Http.Module.2.0.1\lib\net452\Sharpbrake.Http.Module.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
