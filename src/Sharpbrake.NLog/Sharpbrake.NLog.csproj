@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Authors>Airbrake Technologies, Inc. and contributors</Authors>
+    <Company>Airbrake Technologies, Inc.</Company>
+    <Copyright>Copyright (c) 2017 Airbrake Technologies, Inc.</Copyright>
+    <Description>Sharpbrake NLog target</Description>
+    <PackageId>Sharpbrake.NLog</PackageId>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/airbrake/sharpbrake/master/LICENSE.md</PackageLicenseUrl>
+    <PackageTags>Airbrake;Sharpbrake;NLog</PackageTags>
+    <RepositoryUrl>https://github.com/airbrake/sharpbrake</RepositoryUrl>
+    <TargetFrameworks>netstandard1.4;net452</TargetFrameworks>
+    <Title>Sharpbrake NLog</Title>
+    <Version>1.0.0</Version>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.4'">
+    <PackageReference Include="NLog" Version="5.0.0-beta09" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net452'">
+    <PackageReference Include="NLog" Version="4.4.11" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Sharpbrake.Client\Sharpbrake.Client.csproj" />
+  </ItemGroup>
+
+</Project>
