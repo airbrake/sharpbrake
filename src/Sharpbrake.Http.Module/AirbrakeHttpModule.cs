@@ -3,6 +3,7 @@ using System.Configuration;
 using System.Web;
 using System.Linq;
 using Sharpbrake.Client;
+using Sharpbrake.Web;
 
 namespace Sharpbrake.Http.Module
 {

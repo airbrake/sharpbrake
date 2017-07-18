@@ -15,7 +15,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Sharpbrake.Client\Sharpbrake.Client.csproj" />
+    <ProjectReference Include="..\Sharpbrake.Web\Sharpbrake.Web.csproj" />
   </ItemGroup>
 
   <ItemGroup>

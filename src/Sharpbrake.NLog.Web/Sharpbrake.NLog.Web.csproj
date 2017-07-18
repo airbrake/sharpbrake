@@ -1,19 +1,24 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <AssemblyName>Sharpbrake.NLog</AssemblyName>
+    <AssemblyName>Sharpbrake.NLog.Web</AssemblyName>
     <Authors>Airbrake Technologies, Inc. and contributors</Authors>
     <Company>Airbrake Technologies, Inc.</Company>
     <Copyright>Copyright (c) 2017 Airbrake Technologies, Inc.</Copyright>
-    <Description>Airbrake NLog target</Description>
-    <PackageId>Sharpbrake.NLog</PackageId>
+    <Description>Airbrake NLog target for ASP.NET</Description>
+    <PackageId>Sharpbrake.NLog.Web</PackageId>
     <PackageLicenseUrl>https://raw.githubusercontent.com/airbrake/sharpbrake/master/LICENSE.md</PackageLicenseUrl>
-    <PackageTags>Airbrake;Sharpbrake;NLog</PackageTags>
+    <PackageTags>Airbrake;Sharpbrake;NLog;Web</PackageTags>
     <RepositoryUrl>https://github.com/airbrake/sharpbrake</RepositoryUrl>
     <TargetFrameworks>netstandard1.4;net452</TargetFrameworks>
-    <Title>Sharpbrake NLog</Title>
+    <Title>Sharpbrake NLog.Web</Title>
     <Version>1.0.0</Version>
   </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Sharpbrake.NLog\Sharpbrake.NLog.csproj" />
+    <ProjectReference Include="..\Sharpbrake.Web\Sharpbrake.Web.csproj" />
+  </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.4'">
     <PackageReference Include="NLog" Version="5.0.0-beta09" />
@@ -22,10 +27,6 @@
   <ItemGroup Condition="'$(TargetFramework)' == 'net452'">
     <Reference Include="System.Web" />
     <PackageReference Include="NLog" Version="4.4.11" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Sharpbrake.Client\Sharpbrake.Client.csproj" />
   </ItemGroup>
 
 </Project>

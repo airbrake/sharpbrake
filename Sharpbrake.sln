@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.14
+VisualStudioVersion = 15.0.26430.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{08B9A68F-A5A7-4C42-AA22-77E68EC5AB59}"
 EndProject
@@ -15,7 +15,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sharpbrake.Http.Middleware"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sharpbrake.Http.Module", "src\Sharpbrake.Http.Module\Sharpbrake.Http.Module.csproj", "{0B41B1FC-44D5-42F3-8792-B783FCCA8198}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sharpbrake.NLog", "src\Sharpbrake.NLog\Sharpbrake.NLog.csproj", "{F411A561-9ADB-431B-97C9-2B994D11BB8D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sharpbrake.NLog", "src\Sharpbrake.NLog\Sharpbrake.NLog.csproj", "{F411A561-9ADB-431B-97C9-2B994D11BB8D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sharpbrake.Web", "src\Sharpbrake.Web\Sharpbrake.Web.csproj", "{63AC5695-E189-4C1E-A40B-EE4EF977E99B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sharpbrake.NLog.Web", "src\Sharpbrake.NLog.Web\Sharpbrake.NLog.Web.csproj", "{96AA759B-ED52-4DD3-920E-E5B2A46301FD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,6 +47,14 @@ Global
 		{F411A561-9ADB-431B-97C9-2B994D11BB8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F411A561-9ADB-431B-97C9-2B994D11BB8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F411A561-9ADB-431B-97C9-2B994D11BB8D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{63AC5695-E189-4C1E-A40B-EE4EF977E99B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{63AC5695-E189-4C1E-A40B-EE4EF977E99B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{63AC5695-E189-4C1E-A40B-EE4EF977E99B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{63AC5695-E189-4C1E-A40B-EE4EF977E99B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{96AA759B-ED52-4DD3-920E-E5B2A46301FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{96AA759B-ED52-4DD3-920E-E5B2A46301FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{96AA759B-ED52-4DD3-920E-E5B2A46301FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{96AA759B-ED52-4DD3-920E-E5B2A46301FD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -53,5 +65,7 @@ Global
 		{1846CBF6-2DB4-411F-9FB0-291252886A0A} = {08B9A68F-A5A7-4C42-AA22-77E68EC5AB59}
 		{0B41B1FC-44D5-42F3-8792-B783FCCA8198} = {08B9A68F-A5A7-4C42-AA22-77E68EC5AB59}
 		{F411A561-9ADB-431B-97C9-2B994D11BB8D} = {08B9A68F-A5A7-4C42-AA22-77E68EC5AB59}
+		{63AC5695-E189-4C1E-A40B-EE4EF977E99B} = {08B9A68F-A5A7-4C42-AA22-77E68EC5AB59}
+		{96AA759B-ED52-4DD3-920E-E5B2A46301FD} = {08B9A68F-A5A7-4C42-AA22-77E68EC5AB59}
 	EndGlobalSection
 EndGlobal

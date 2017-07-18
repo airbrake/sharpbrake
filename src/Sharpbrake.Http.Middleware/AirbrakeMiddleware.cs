@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Sharpbrake.Client;
+using Sharpbrake.Web;
 
 namespace Sharpbrake.Http.Middleware
 {
