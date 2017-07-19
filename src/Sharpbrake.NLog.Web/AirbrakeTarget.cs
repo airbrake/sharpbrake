@@ -9,11 +9,6 @@ namespace Sharpbrake.NLog.Web
     {
 #if NET452
         /// <summary>
-        /// Initializes a new instance of the <see cref="AirbrakeTarget"/> class.
-        /// </summary>
-        public AirbrakeTarget(AirbrakeNotifier notifier) : base(notifier) {}
-
-        /// <summary>
         /// Gets the current HTTP context.
         /// </summary>
         protected override IHttpContext GetHttpContext()
@@ -22,22 +17,14 @@ namespace Sharpbrake.NLog.Web
             return httpContext == null ? null : new AspNetHttpContext(httpContext);
         }
 #elif NETSTANDARD1_4
-        private readonly Microsoft.AspNetCore.Http.IHttpContextAccessor contextAccessor;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="AirbrakeTarget"/> class.
-        /// </summary>
-        public AirbrakeTarget(AirbrakeNotifier notifier, Microsoft.AspNetCore.Http.IHttpContextAccessor contextAccessor) : base(notifier)
-        {
-            this.contextAccessor = contextAccessor;
-        }
+        public Microsoft.AspNetCore.Http.IHttpContextAccessor ContextAccessor { get; set; }
 
         /// <summary>
         /// Gets the current HTTP context.
         /// </summary>
         protected override IHttpContext GetHttpContext()
         {
-            var httpContext = contextAccessor?.HttpContext;
+            var httpContext = ContextAccessor?.HttpContext;
             return httpContext == null ? null : new AspNetCoreHttpContext(httpContext);
         }
 #endif
