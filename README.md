@@ -47,6 +47,7 @@ The library comes with the following integrations:
 * Web frameworks
   * ASP.NET HTTP Module<sup>[[link](#aspnet-http-module)]</sup>
   * ASP.NET Core Middleware<sup>[[link](#aspnet-core-middleware)]</sup>
+* [NLog](http://nlog-project.org/) logging platform<sup>[[link](#nlog-integration)]</sup>
 
 Installation
 ------------
@@ -58,6 +59,8 @@ Package                    | Description                                        
 Sharpbrake.Client          | C# client with support for .NET 4.5.2 and above        | [![NuGet](https://img.shields.io/nuget/v/Sharpbrake.Client.svg)](https://www.nuget.org/packages/Sharpbrake.Client)
 Sharpbrake.Http.Module     | HTTP module for ASP.NET request pipeline               | [![NuGet](https://img.shields.io/nuget/v/Sharpbrake.Http.Module.svg)](https://www.nuget.org/packages/Sharpbrake.Http.Module)
 Sharpbrake.Http.Middleware | Middleware component for new ASP.NET Core pipeline     | [![NuGet](https://img.shields.io/nuget/v/Sharpbrake.Http.Middleware.svg)](https://www.nuget.org/packages/Sharpbrake.Http.Middleware)
+Sharpbrake.NLog            | Airbrake NLog target                                   | [![NuGet](https://img.shields.io/nuget/v/Sharpbrake.NLog.svg)](https://www.nuget.org/packages/Sharpbrake.NLog)
+Sharpbrake.NLog.Web        | Airbrake NLog target for ASP.NET                       | [![NuGet](https://img.shields.io/nuget/v/Sharpbrake.NLog.Web.svg)](https://www.nuget.org/packages/Sharpbrake.NLog.Web)
 
 Examples
 --------
@@ -501,6 +504,156 @@ ASP.NET Integration
   var airbrake = HttpContext.Features.Get<IAirbrakeFeature>().GetNotifier();
   ```
 
+NLog Integration
+----------------
+
+### Airbrake NLog target
+
+Airbrake NLog target is used to pass an exception from log message to the
+Airbrake dashboard.
+
+1. Install the `Sharpbrake.NLog` package from NuGet (you can use "Package
+   Manager Console" from Visual Studio):
+
+   ```
+   PM> Install-Package Sharpbrake.NLog
+   ```
+
+2. Register the `Sharpbrake.NLog` assembly in the `<extensions />` section
+   of the [nlog.config][nlog-config] file:
+
+   ```xml
+   <extensions>
+     <add assembly="Sharpbrake.NLog"/>
+   </extensions>
+   ```
+
+3. Define the Airbrake target in the `<targets />` section and appropriate
+   routing rules in the `<rules />` section of `nlog.config`:
+
+   ```xml
+   <targets>
+     <target name="airbrake"
+             type="Airbrake"
+             projectId="113743"
+             projectKey="81bbff95d52f8856c770bb39e827f3f6"
+             environment="live"
+             ignoreEnvironments="dev"
+     />
+     <!-- other targets -->
+   </targets>
+   ```
+
+   ```xml
+   <rules>
+     <logger name="*" minlevel="Error" writeTo="airbrake" />
+     <!-- other rules -->
+   </rules>
+   ```
+
+   Note that both `projectId` and `projectKey` are required parameters. You can
+   set any configuration option supported by the Airbrake client in the declarative
+   way ([how to configure](#configuration)).
+
+   When you need to access `Notifier` programmatically (e.g. for setting up filters
+   in your code) you can get it from the `AirbrakeTarget` object:
+
+   ```csharp
+   var airbrakeTarget = (AirbrakeTarget)LogManager.Configuration.AllTargets
+       .FirstOrDefault(t => t.GetType() == typeof(AirbrakeTarget));
+   
+   airbrakeTarget?.Notifier.AddFilter(notice =>
+   {
+       // clear environment variables with "token"-related keys
+       new List<string>(notice.EnvironmentVars.Keys).ForEach(key =>
+       {
+           if (key.ToLowerInvariant().Contains("token"))
+               notice.EnvironmentVars[key] = "[removed]";
+       });
+   
+       return notice;
+   });
+   ```
+
+### Airbrake NLog target for ASP.NET
+
+With Airbrake NLog target for ASP.NET you get, in addition, reporting of HTTP
+context properties in web applications.
+
+1. Install the `Sharpbrake.NLog.Web` package from NuGet (you can use "Package
+   Manager Console" from Visual Studio):
+
+   ```
+   PM> Install-Package Sharpbrake.NLog.Web
+   ```
+
+2. Register the `Sharpbrake.NLog.Web` assembly in the `<extensions />` section
+   of the [nlog.config][nlog-config] file:
+
+   ```xml
+   <extensions>
+     <add assembly="Sharpbrake.NLog.Web"/>
+   </extensions>
+   ```
+
+3. Define the Airbrake target in the `<targets />` section and appropriate
+   routing rules in the `<rules />` section of `nlog.config`. All supported
+   settings are the same as for the regular Airbrake target.
+
+   ```xml
+   <targets>
+     <target name="airbrake"
+             type="Airbrake"
+             projectId="113743"
+             projectKey="81bbff95d52f8856c770bb39e827f3f6"
+             environment="live"
+             ignoreEnvironments="dev"
+     />
+     <!-- other targets -->
+   </targets>
+   ```
+
+   ```xml
+   <rules>
+     <logger name="*" minlevel="Error" writeTo="airbrake" />
+     <!-- other rules -->
+   </rules>
+   ```
+
+4. For ASP.NET Core you need to call the following code in the `Configure` method
+   in `Startup.cs`:
+
+   ```csharp
+   app.ConfigureAirbrakeTarget();
+   ```
+
+   The `Notifier` object can be accessed from here for the additional configuration:
+
+   ```csharp
+   public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+   {
+       // add NLog to ASP.NET Core
+       loggerFactory.AddNLog();
+       // add NLog.Web
+       app.AddNLogWeb();
+       // configure the Airbrake target with HTTP context accessor
+       app.ConfigureAirbrakeTarget();
+       // example of getting access to the Notifier instance
+       var target = LogManager.Configuration.FindTargetByName<AirbrakeTarget>("airbrake");
+       target?.Notifier.AddFilter(notice =>
+       {
+           // clear environment variables with "token"-related keys
+           new List<string>(notice.EnvironmentVars.Keys).ForEach(key =>
+           {
+               if (key.ToLowerInvariant().Contains("token"))
+                   notice.EnvironmentVars[key] = "[removed]";
+           });
+           return notice;
+       });
+       // remaining code...
+   }
+   ```
+
 .NET 3.5 Support
 ----------------
 
@@ -521,3 +674,4 @@ The project uses the MIT License. See [LICENSE.md](LICENSE.md) for details.
 [dotnet-core-console]: https://github.com/airbrake/sharpbrake/blob/master/docs/dotnet-core-console.md
 [what-is-severity]: https://airbrake.io/docs/airbrake-faq/what-is-severity/
 [sharpbrake-net35]: https://github.com/airbrake/sharpbrake-net35
+[nlog-config]: https://github.com/NLog/NLog/wiki/Configuration-file
