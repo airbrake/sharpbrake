@@ -3,6 +3,11 @@ Sharpbrake Changelog
 
 ### master
 
+### [v4.1.0][v4.1.0] (July 28, 2017)
+
+* Added NLog integration
+  ([#65](https://github.com/airbrake/sharpbrake/pull/65))
+
 ### [v4.0.1][v4.0.1] (July 5, 2017)
 
 * Fixed version in the notifier info
@@ -54,3 +59,4 @@ Sharpbrake Changelog
 [v3.1.1]: https://github.com/airbrake/sharpbrake/releases/tag/v3.1.1
 [v4.0.0]: https://github.com/airbrake/sharpbrake/releases/tag/v4.0.0
 [v4.0.1]: https://github.com/airbrake/sharpbrake/releases/tag/v4.0.1
+[v4.1.0]: https://github.com/airbrake/sharpbrake/releases/tag/v4.1.0
