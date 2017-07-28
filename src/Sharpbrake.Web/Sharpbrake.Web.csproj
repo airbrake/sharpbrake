@@ -1,26 +1,31 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <AssemblyName>Sharpbrake.Web</AssemblyName>
     <Authors>Airbrake Technologies, Inc. and contributors</Authors>
     <Company>Airbrake Technologies, Inc.</Company>
     <Copyright>Copyright (c) 2017 Airbrake Technologies, Inc.</Copyright>
-    <Description>Airbrake C#/.NET client (notifier)</Description>
-    <PackageId>Sharpbrake.Client</PackageId>
+    <Description>Sharpbrake Web extensions</Description>
+    <PackageId>Sharpbrake.Web</PackageId>
     <PackageLicenseUrl>https://raw.githubusercontent.com/airbrake/sharpbrake/master/LICENSE.md</PackageLicenseUrl>
-    <PackageTags>Airbrake;Sharpbrake;C# Notifier</PackageTags>
+    <PackageTags>Airbrake;Sharpbrake;Web</PackageTags>
     <RepositoryUrl>https://github.com/airbrake/sharpbrake</RepositoryUrl>
     <TargetFrameworks>netstandard1.4;net452</TargetFrameworks>
-    <Title>Airbrake C#/.NET Notifier</Title>
-    <Version>4.0.1</Version>
+    <Title>Sharpbrake Web</Title>
+    <Version>1.0.0</Version>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.4'">
-    <PackageReference Include="System.Diagnostics.StackTrace" Version="4.3.0" />
-    <PackageReference Include="System.Net.Requests" Version="4.3.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="1.1.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Routing" Version="1.1.2" />
   </ItemGroup>
-
+  
+  <ItemGroup Condition="'$(TargetFramework)' == 'net452'">
+    <Reference Include="System.Web" />
+  </ItemGroup>
+  
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+    <ProjectReference Include="..\Sharpbrake.Client\Sharpbrake.Client.csproj" />
   </ItemGroup>
 
 </Project>

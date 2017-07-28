@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Net;
 using System.Threading.Tasks;
 
 namespace Sharpbrake.Client.Impl
@@ -29,7 +28,7 @@ namespace Sharpbrake.Client.Impl
             if (string.IsNullOrEmpty(endpoint))
                 throw new ArgumentNullException(nameof(endpoint));
 
-            return new HttpWebRequest((System.Net.HttpWebRequest) WebRequest.Create(endpoint));
+            return new HttpWebRequest((System.Net.HttpWebRequest) System.Net.WebRequest.Create(endpoint));
         }
 
         /// <summary>
@@ -67,7 +66,7 @@ namespace Sharpbrake.Client.Impl
         /// <summary>
         /// Gets or sets the proxy to access the network resource.
         /// </summary>
-        public IWebProxy Proxy
+        public System.Net.IWebProxy Proxy
         {
             get => request.Proxy;
             set => request.Proxy = value;

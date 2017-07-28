@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿#if NET452
+using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using Sharpbrake.Client;
 
-namespace Sharpbrake.Http.Module
+namespace Sharpbrake.Web
 {
     /// <summary>
     /// Implementation of <see cref="IHttpContext"/> based on standard ASP.NET HttpContext.
@@ -67,3 +68,4 @@ namespace Sharpbrake.Http.Module
         }
     }
 }
+#endif

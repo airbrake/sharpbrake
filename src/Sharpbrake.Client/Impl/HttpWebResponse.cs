@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Net;
 
 namespace Sharpbrake.Client.Impl
 {
@@ -9,7 +8,7 @@ namespace Sharpbrake.Client.Impl
     /// </summary>
     public class HttpWebResponse : IHttpResponse, IDisposable
     {
-        private System.Net.HttpWebResponse response;
+        private readonly System.Net.HttpWebResponse response;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HttpWebResponse"/> class.
@@ -22,7 +21,7 @@ namespace Sharpbrake.Client.Impl
         /// <summary>
         /// Gets the status of HTTP response.
         /// </summary>
-        public HttpStatusCode StatusCode => response.StatusCode;
+        public System.Net.HttpStatusCode StatusCode => response.StatusCode;
 
         /// <summary>
         /// Gets the <see cref="Stream"/> for reading content from the server.

@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if NETSTANDARD1_4
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,7 +8,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Primitives;
 using Sharpbrake.Client;
 
-namespace Sharpbrake.Http.Middleware
+namespace Sharpbrake.Web
 {
     /// <summary>
     /// Implementation of <see cref="IHttpContext"/> based on ASP.NET Core HttpContext.
@@ -96,3 +97,4 @@ namespace Sharpbrake.Http.Middleware
         }
     }
 }
+#endif
