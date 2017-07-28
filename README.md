@@ -134,8 +134,8 @@ There are multiple ways to set these values:
 
   ```csharp
   var config = new AirbrakeConfig {
-      ProjectId = "127348",
-      ProjectKey = "e2046ca6e4e9214b24ad252e3c99a0f6"
+      ProjectId = "113743",
+      ProjectKey = "81bbff95d52f8856c770bb39e827f3f6"
   };
   ```
 
@@ -143,8 +143,8 @@ There are multiple ways to set these values:
 
   ```xml
   <appSettings>
-      <add key="Airbrake.ProjectId" value="127348" />
-      <add key="Airbrake.ProjectKey" value="e2046ca6e4e9214b24ad252e3c99a0f6" />
+      <add key="Airbrake.ProjectId" value="113743" />
+      <add key="Airbrake.ProjectKey" value="81bbff95d52f8856c770bb39e827f3f6" />
   </appSettings>
   ```
 
@@ -162,8 +162,8 @@ There are multiple ways to set these values:
   ```json
   {
     "Airbrake": {
-      "ProjectId": "127348",
-      "ProjectKey": "e2046ca6e4e9214b24ad252e3c99a0f6"
+      "ProjectId": "113743",
+      "ProjectKey": "81bbff95d52f8856c770bb39e827f3f6"
     }
   }
   ```
@@ -373,9 +373,11 @@ airbrake.AddFilter(notice =>
         return null;
 
     // clear environment variables with "token"-related keys
-    foreach (var key in notice.EnvironmentVars.Keys)
-        if (key.Contains("token"))
+    new List<string>(notice.EnvironmentVars.Keys).ForEach(key =>
+    {
+        if (key.ToLowerInvariant().Contains("token"))
             notice.EnvironmentVars[key] = string.Empty;
+    });
 
     return notice;
 });
@@ -437,29 +439,29 @@ ASP.NET Integration
 1. Install the `Sharpbrake.Http.Module` package from NuGet (you can use "Package
    Manager Console" from Visual Studio):
 
-  ```
-  PM> Install-Package Sharpbrake.Http.Module
-  ```
+   ```
+   PM> Install-Package Sharpbrake.Http.Module
+   ```
 
 2. Configure `appSettings` in `Web.config` ([how to configure](#configuration)):
 
-  ```xml
-  <appSettings>
-      <add key="Airbrake.ProjectId" value="113743"/>
-      <add key="Airbrake.ProjectKey" value="81bbff95d52f8856c770bb39e827f3f6"/>
-  </appSettings>
-  ```
+   ```xml
+   <appSettings>
+       <add key="Airbrake.ProjectId" value="113743"/>
+       <add key="Airbrake.ProjectKey" value="81bbff95d52f8856c770bb39e827f3f6"/>
+   </appSettings>
+   ```
 
 3. Add the `AirbrakeHttpModule` module to your `system.webServer` in
    `Web.config`:
 
-  ```xml
-  <system.webServer>
-      <modules>
-          <add name="Airbrake" type="Sharpbrake.Http.Module.AirbrakeHttpModule, Sharpbrake.Http.Module"/>
-      </modules>
-  </system.webServer>
-  ```
+   ```xml
+   <system.webServer>
+       <modules>
+           <add name="Airbrake" type="Sharpbrake.Http.Module.AirbrakeHttpModule, Sharpbrake.Http.Module"/>
+       </modules>
+   </system.webServer>
+   ```
 
 ### ASP.NET Core Middleware
 
@@ -472,37 +474,37 @@ ASP.NET Integration
 
 2. Configure `appsettings.json`:
 
-  ```json
-  "Airbrake": {
-    "ProjectId": "113743",
-    "ProjectKey": "81bbff95d52f8856c770bb39e827f3f6",
-  }
-  ```
+   ```json
+   "Airbrake": {
+     "ProjectId": "113743",
+     "ProjectKey": "81bbff95d52f8856c770bb39e827f3f6",
+   }
+   ```
 
 3. Add the middleware to your `Startup.cs`:
 
-  ```csharp
-  using Sharpbrake.Http.Middleware;
-  ```
+   ```csharp
+   using Sharpbrake.Http.Middleware;
+   ```
 
-  Then make sure to add `AirbrakeMiddleware` to your pipeline by updating the
-  `Configure` method:
+   Then make sure to add `AirbrakeMiddleware` to your pipeline by updating the
+   `Configure` method:
 
-  ```csharp
-  app.UseAirbrake(Configuration.GetSection("Airbrake"));
-  ```
+   ```csharp
+   app.UseAirbrake(Configuration.GetSection("Airbrake"));
+   ```
 
-  **Note:** In most cases you want to put `AirbrakeMiddleware` as a topmost
-  middleware component to load it as early as possible. However, if you use
-  `app.UseDeveloperExceptionPage` and/or `app.UseExceptionHandler`, then
-  `AirbrakeMiddleware` must be put after these components.
+   **Note:** In most cases you want to put `AirbrakeMiddleware` as a topmost
+   middleware component to load it as early as possible. However, if you use
+   `app.UseDeveloperExceptionPage` and/or `app.UseExceptionHandler`, then
+   `AirbrakeMiddleware` must be put after these components.
 
-  You can use the `IAirbrakeFeature` feature from the `Features` collection of
-  `HttpContext` to access the notifier that was initialized by the middleware:
+   You can use the `IAirbrakeFeature` feature from the `Features` collection of
+   `HttpContext` to access the notifier that was initialized by the middleware:
 
-  ```csharp
-  var airbrake = HttpContext.Features.Get<IAirbrakeFeature>().GetNotifier();
-  ```
+   ```csharp
+   var airbrake = HttpContext.Features.Get<IAirbrakeFeature>().GetNotifier();
+   ```
 
 NLog Integration
 ----------------
