@@ -48,6 +48,7 @@ The library comes with the following integrations:
   * ASP.NET HTTP Module<sup>[[link](#aspnet-http-module)]</sup>
   * ASP.NET Core Middleware<sup>[[link](#aspnet-core-middleware)]</sup>
 * [NLog](http://nlog-project.org/) logging platform<sup>[[link](#nlog-integration)]</sup>
+* [Apache log4net](http://logging.apache.org/log4net/) library<sup>[[link](#log4net-integration)]</sup>
 
 Installation
 ------------
@@ -61,6 +62,8 @@ Sharpbrake.Http.Module     | HTTP module for ASP.NET request pipeline           
 Sharpbrake.Http.Middleware | Middleware component for new ASP.NET Core pipeline     | [![NuGet](https://img.shields.io/nuget/v/Sharpbrake.Http.Middleware.svg)](https://www.nuget.org/packages/Sharpbrake.Http.Middleware)
 Sharpbrake.NLog            | Airbrake NLog target                                   | [![NuGet](https://img.shields.io/nuget/v/Sharpbrake.NLog.svg)](https://www.nuget.org/packages/Sharpbrake.NLog)
 Sharpbrake.NLog.Web        | Airbrake NLog target for ASP.NET                       | [![NuGet](https://img.shields.io/nuget/v/Sharpbrake.NLog.Web.svg)](https://www.nuget.org/packages/Sharpbrake.NLog.Web)
+Sharpbrake.Log4net         | Airbrake log4net appender                              | [![NuGet](https://img.shields.io/nuget/v/Sharpbrake.Log4net.svg)](https://www.nuget.org/packages/Sharpbrake.Log4net)
+Sharpbrake.Log4net.Web     | Airbrake log4net appender for ASP.NET                  | [![NuGet](https://img.shields.io/nuget/v/Sharpbrake.Log4net.Web.svg)](https://www.nuget.org/packages/Sharpbrake.Log4net.Web)
 
 Examples
 --------
@@ -656,6 +659,108 @@ context properties in web applications.
    }
    ```
 
+Log4net Integration
+-------------------
+
+### Airbrake log4net appender
+
+Airbrake log4net appender sends an exception from the logging event to the
+Airbrake dashboard.
+
+1. Install the `Sharpbrake.Log4net` package from NuGet (you can use "Package
+   Manager Console" from Visual Studio):
+
+   ```
+   PM> Install-Package Sharpbrake.Log4net
+   ```
+
+2. Define the `Sharpbrake.Log4net.AirbrakeAppender` appender in the
+   [log4net configuration][log4net-config] file:
+
+   ```xml
+    <appender name="Airbrake" type="Sharpbrake.Log4net.AirbrakeAppender, Sharpbrake.Log4net">
+      <projectId value="113743" />
+      <projectKey value="81bbff95d52f8856c770bb39e827f3f6" />
+    </appender>
+   ```
+
+3. Add Airbrake appender to the root logger:
+
+   ```xml
+    <root>
+      <level value="DEBUG" />
+      <appender-ref ref="Airbrake" />
+      <!-- other appenders... -->
+    </root>
+   ```
+
+   Note that both `projectId` and `projectKey` are required parameters. You can
+   set any configuration option supported by the Airbrake client in the declarative
+   way within `<appender />` section ([how to configure](#configuration)).
+
+### Airbrake log4net appender for ASP.NET
+
+With Airbrake log4net appender for ASP.NET you get, in addition, reporting of HTTP
+context properties in web applications.
+
+1. Install the `Sharpbrake.Log4net.Web` package from NuGet (you can use "Package
+   Manager Console" from Visual Studio):
+
+   ```
+   PM> Install-Package Sharpbrake.Log4net.Web
+   ```
+
+2. Define the `Sharpbrake.Log4net.Web.AirbrakeAppender` appender in the
+   [log4net configuration][log4net-config] file:
+
+   ```xml
+    <appender name="Airbrake" type="Sharpbrake.Log4net.Web.AirbrakeAppender, Sharpbrake.Log4net.Web">
+      <projectId value="113743" />
+      <projectKey value="81bbff95d52f8856c770bb39e827f3f6" />
+    </appender>
+   ```
+
+   Note that you need to use `Sharpbrake.Log4net.Web.AirbrakeAppender` from `Sharpbrake.Log4net.Web`
+   assembly and not plain `Sharpbrake.Log4net.AirbrakeAppender` (without `Web` part) to get support
+   for reporting HTTP context properties.
+
+3. Add Airbrake appender to the root logger:
+
+   ```xml
+    <root>
+      <level value="DEBUG" />
+      <appender-ref ref="Airbrake" />
+      <!-- other appenders... -->
+    </root>
+   ```
+
+4. For ASP.NET Core apps you need to set `ContextAccessor` property in appender so it can
+   access `HttpContext`. You can do that directly or by calling the helper method from the
+   `AspNetCoreExtensions` class:
+
+   4.1. In `Startup.cs` add `using Sharpbrake.Log4net.Web` to get access to the
+        `AspNetCoreExtensions` class.
+
+   4.2. In the `Configure` method (`Startup.cs` file) call the `ConfigureAirbrakeAppender`
+        method after setting up log4net functionality:
+
+    ```csharp
+    public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+    {
+        loggerFactory.AddConsole(Configuration.GetSection("Logging"));
+        loggerFactory.AddDebug();
+
+        var repoAssembly = Assembly.GetEntryAssembly();
+        var loggerRepository = log4net.LogManager.CreateRepository(repoAssembly,
+            typeof(log4net.Repository.Hierarchy.Hierarchy));
+        log4net.Config.XmlConfigurator.Configure(loggerRepository,
+            new FileInfo("log4net.config"));
+
+        app.ConfigureAirbrakeAppender(repoAssembly);
+        // remaining code...
+    }
+    ```
+
 .NET 3.5 Support
 ----------------
 
@@ -677,3 +782,4 @@ The project uses the MIT License. See [LICENSE.md](LICENSE.md) for details.
 [what-is-severity]: https://airbrake.io/docs/airbrake-faq/what-is-severity/
 [sharpbrake-net35]: https://github.com/airbrake/sharpbrake-net35
 [nlog-config]: https://github.com/NLog/NLog/wiki/Configuration-file
+[log4net-config]: https://logging.apache.org/log4net/release/manual/configuration.html
