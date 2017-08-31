@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyName>Sharpbrake.Log4net</AssemblyName>
+    <Authors>Airbrake Technologies, Inc. and contributors</Authors>
+    <Company>Airbrake Technologies, Inc.</Company>
+    <Copyright>Copyright (c) 2017 Airbrake Technologies, Inc.</Copyright>
+    <Description>Airbrake log4net appender</Description>
+    <PackageId>Sharpbrake.Log4net</PackageId>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/airbrake/sharpbrake/master/LICENSE.md</PackageLicenseUrl>
+    <PackageTags>Airbrake;Sharpbrake;log4net</PackageTags>
+    <RepositoryUrl>https://github.com/airbrake/sharpbrake</RepositoryUrl>
+    <TargetFrameworks>netstandard1.4;net452</TargetFrameworks>
+    <Title>Sharpbrake Log4net</Title>
+    <Version>1.0.0</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="log4net" Version="2.0.8" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net452'">
+    <Reference Include="System.Web" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Sharpbrake.Client\Sharpbrake.Client.csproj" />
+  </ItemGroup>
+
+</Project>
