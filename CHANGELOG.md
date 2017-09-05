@@ -3,6 +3,11 @@ Sharpbrake Changelog
 
 ### master
 
+### [v4.2.0][v4.2.0] (September 5, 2017)
+
+* Added log4net integration
+  ([#68](https://github.com/airbrake/sharpbrake/pull/68))
+
 ### [v4.1.0][v4.1.0] (July 28, 2017)
 
 * Added NLog integration
@@ -60,3 +65,4 @@ Sharpbrake Changelog
 [v4.0.0]: https://github.com/airbrake/sharpbrake/releases/tag/v4.0.0
 [v4.0.1]: https://github.com/airbrake/sharpbrake/releases/tag/v4.0.1
 [v4.1.0]: https://github.com/airbrake/sharpbrake/releases/tag/v4.1.0
+[v4.2.0]: https://github.com/airbrake/sharpbrake/releases/tag/v4.2.0
