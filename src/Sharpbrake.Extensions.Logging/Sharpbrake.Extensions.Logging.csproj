@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyName>Sharpbrake.Extensions.Logging</AssemblyName>
+    <Authors>Airbrake Technologies, Inc. and contributors</Authors>
+    <Company>Airbrake Technologies, Inc.</Company>
+    <Copyright>Copyright (c) 2017 Airbrake Technologies, Inc.</Copyright>
+    <Description>Airbrake provider for Microsoft.Extensions.Logging</Description>
+    <PackageId>Sharpbrake.Extensions.Logging</PackageId>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/airbrake/sharpbrake/master/LICENSE.md</PackageLicenseUrl>
+    <PackageTags>Airbrake;Sharpbrake;Microsoft.Extensions.Logging</PackageTags>
+    <RepositoryUrl>https://github.com/airbrake/sharpbrake</RepositoryUrl>
+    <TargetFrameworks>netstandard1.4</TargetFrameworks>
+    <Title>Sharpbrake.Extensions.Logging</Title>
+    <Version>1.0.0</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="1.1.2" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="1.1.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Sharpbrake.Client\Sharpbrake.Client.csproj" />
+    <ProjectReference Include="..\Sharpbrake.Web\Sharpbrake.Web.csproj" />
+  </ItemGroup>
+
+</Project>
