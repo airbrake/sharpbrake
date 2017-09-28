@@ -49,21 +49,23 @@ The library comes with the following integrations:
   * ASP.NET Core Middleware<sup>[[link](#aspnet-core-middleware)]</sup>
 * [NLog](http://nlog-project.org/) logging platform<sup>[[link](#nlog-integration)]</sup>
 * [Apache log4net](http://logging.apache.org/log4net/) library<sup>[[link](#log4net-integration)]</sup>
+* Provider for [Microsoft.Extensions.Logging](https://www.nuget.org/packages/Microsoft.Extensions.Logging) framework<sup>[[link](#microsoftextensionslogging-integration)]</sup>
 
 Installation
 ------------
 
 ### NuGet
 
-Package                    | Description                                            | NuGet link
----------------------------|--------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------
-Sharpbrake.Client          | C# client with support for .NET 4.5.2 and above        | [![NuGet](https://img.shields.io/nuget/v/Sharpbrake.Client.svg)](https://www.nuget.org/packages/Sharpbrake.Client)
-Sharpbrake.Http.Module     | HTTP module for ASP.NET request pipeline               | [![NuGet](https://img.shields.io/nuget/v/Sharpbrake.Http.Module.svg)](https://www.nuget.org/packages/Sharpbrake.Http.Module)
-Sharpbrake.Http.Middleware | Middleware component for new ASP.NET Core pipeline     | [![NuGet](https://img.shields.io/nuget/v/Sharpbrake.Http.Middleware.svg)](https://www.nuget.org/packages/Sharpbrake.Http.Middleware)
-Sharpbrake.NLog            | Airbrake NLog target                                   | [![NuGet](https://img.shields.io/nuget/v/Sharpbrake.NLog.svg)](https://www.nuget.org/packages/Sharpbrake.NLog)
-Sharpbrake.NLog.Web        | Airbrake NLog target for ASP.NET                       | [![NuGet](https://img.shields.io/nuget/v/Sharpbrake.NLog.Web.svg)](https://www.nuget.org/packages/Sharpbrake.NLog.Web)
-Sharpbrake.Log4net         | Airbrake log4net appender                              | [![NuGet](https://img.shields.io/nuget/v/Sharpbrake.Log4net.svg)](https://www.nuget.org/packages/Sharpbrake.Log4net)
-Sharpbrake.Log4net.Web     | Airbrake log4net appender for ASP.NET                  | [![NuGet](https://img.shields.io/nuget/v/Sharpbrake.Log4net.Web.svg)](https://www.nuget.org/packages/Sharpbrake.Log4net.Web)
+Package                       | Description                                            | NuGet link
+------------------------------|--------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------
+Sharpbrake.Client             | C# client with support for .NET 4.5.2 and above        | [![NuGet](https://img.shields.io/nuget/v/Sharpbrake.Client.svg)](https://www.nuget.org/packages/Sharpbrake.Client)
+Sharpbrake.Http.Module        | HTTP module for ASP.NET request pipeline               | [![NuGet](https://img.shields.io/nuget/v/Sharpbrake.Http.Module.svg)](https://www.nuget.org/packages/Sharpbrake.Http.Module)
+Sharpbrake.Http.Middleware    | Middleware component for new ASP.NET Core pipeline     | [![NuGet](https://img.shields.io/nuget/v/Sharpbrake.Http.Middleware.svg)](https://www.nuget.org/packages/Sharpbrake.Http.Middleware)
+Sharpbrake.NLog               | Airbrake NLog target                                   | [![NuGet](https://img.shields.io/nuget/v/Sharpbrake.NLog.svg)](https://www.nuget.org/packages/Sharpbrake.NLog)
+Sharpbrake.NLog.Web           | Airbrake NLog target for ASP.NET                       | [![NuGet](https://img.shields.io/nuget/v/Sharpbrake.NLog.Web.svg)](https://www.nuget.org/packages/Sharpbrake.NLog.Web)
+Sharpbrake.Log4net            | Airbrake log4net appender                              | [![NuGet](https://img.shields.io/nuget/v/Sharpbrake.Log4net.svg)](https://www.nuget.org/packages/Sharpbrake.Log4net)
+Sharpbrake.Log4net.Web        | Airbrake log4net appender for ASP.NET                  | [![NuGet](https://img.shields.io/nuget/v/Sharpbrake.Log4net.Web.svg)](https://www.nuget.org/packages/Sharpbrake.Log4net.Web)
+Sharpbrake.Extensions.Logging | Airbrake provider for Microsoft.Extensions.Logging     | [![NuGet](https://img.shields.io/nuget/v/Sharpbrake.Extensions.Logging.svg)](https://www.nuget.org/packages/Sharpbrake.Extensions.Logging)
 
 Examples
 --------
@@ -760,6 +762,92 @@ context properties in web applications.
         // remaining code...
     }
     ```
+
+Microsoft.Extensions.Logging Integration
+----------------------------------------
+
+Provider notifies the Airbrake dashboard of an exception with the help of
+[Microsoft.Extensions.Logging](https://github.com/aspnet/Logging) methods.
+
+1. Install the `Sharpbrake.Extensions.Logging` package from NuGet (you can use "Package
+   Manager Console" from Visual Studio):
+
+   ```
+   PM> Install-Package Sharpbrake.Extensions.Logging
+   ```
+
+2. Configure the Airbrake provider:
+
+   2.1. In your `Startup.cs` add the import:
+
+   ```csharp
+   using Sharpbrake.Extensions.Logging
+   ```
+
+   2.2. In the `Configure` method (the same `Startup.cs` file) add the Airbrake provider to the logger factory:
+
+   ```csharp
+   loggerFactory.AddAirbrake(Configuration.GetSection("Airbrake"),
+       app.ApplicationServices.GetService<IHttpContextAccessor>());
+   ```
+
+   The code above assumes that the configuration options are defined in the registered configuration
+   file (e.g. `appsettings.json`). Example of such configuration file:
+
+   ```
+   {
+     "Logging": {
+       "IncludeScopes": false,
+       "LogLevel": {
+         "Default": "Warning"
+       }
+     },
+     "Airbrake": {
+       "ProjectId": "113743",
+       "ProjectKey": "81bbff95d52f8856c770bb39e827f3f6"
+     }
+   }
+   ```
+
+   To get access to the HTTP content `app.ApplicationServices.GetService<IHttpContextAccessor>()`
+   is used.
+
+   Minimum log level can be set here to filter exceptions with lower severities
+   (defaults to `LogLevel.Error`):
+
+   ```csharp
+   loggerFactory.AddAirbrake(Configuration.GetSection("Airbrake"),
+       app.ApplicationServices.GetService<IHttpContextAccessor>(),
+       LogLevel.Warning);
+   ```
+
+   More advanced setup can be used to better suit your needs. Here is an example of
+   how to define a notifier with additional filtering rules:
+
+   ```csharp
+   var settings = Configuration.GetSection("Airbrake")
+       .GetChildren()
+       .ToDictionary(setting => setting.Key, setting => setting.Value);
+
+   var airbrakeNotifier = new AirbrakeNotifier(AirbrakeConfig.Load(settings));
+
+   // clear environment variables with "token"-related keys
+   airbrakeNotifier.AddFilter(notice =>
+   {
+       if (notice?.EnvironmentVars != null)
+       {
+         new List<string>(notice.EnvironmentVars.Keys).ForEach(key =>
+         {
+           if (key.ToLowerInvariant().Contains("token"))
+             notice.EnvironmentVars[key] = "[removed]";
+         });
+       }
+       return notice;
+   });
+
+   loggerFactory.AddAirbrake(airbrakeNotifier,
+       app.ApplicationServices.GetService<IHttpContextAccessor>());
+   ```
 
 .NET 3.5 Support
 ----------------

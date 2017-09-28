@@ -21,9 +21,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sharpbrake.Web", "src\Sharp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sharpbrake.NLog.Web", "src\Sharpbrake.NLog.Web\Sharpbrake.NLog.Web.csproj", "{96AA759B-ED52-4DD3-920E-E5B2A46301FD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sharpbrake.Log4net", "src\Sharpbrake.Log4net\Sharpbrake.Log4net.csproj", "{6EE6132C-0C71-4638-AA06-587063050C4E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sharpbrake.Log4net", "src\Sharpbrake.Log4net\Sharpbrake.Log4net.csproj", "{6EE6132C-0C71-4638-AA06-587063050C4E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sharpbrake.Log4net.Web", "src\Sharpbrake.Log4net.Web\Sharpbrake.Log4net.Web.csproj", "{A0D6B39E-CEC9-434E-96CE-AC9409FB9642}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sharpbrake.Log4net.Web", "src\Sharpbrake.Log4net.Web\Sharpbrake.Log4net.Web.csproj", "{A0D6B39E-CEC9-434E-96CE-AC9409FB9642}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sharpbrake.Extensions.Logging", "src\Sharpbrake.Extensions.Logging\Sharpbrake.Extensions.Logging.csproj", "{721B9F3E-CBC4-47E3-A16E-DC3ACC267C00}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -67,6 +69,10 @@ Global
 		{A0D6B39E-CEC9-434E-96CE-AC9409FB9642}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A0D6B39E-CEC9-434E-96CE-AC9409FB9642}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A0D6B39E-CEC9-434E-96CE-AC9409FB9642}.Release|Any CPU.Build.0 = Release|Any CPU
+		{721B9F3E-CBC4-47E3-A16E-DC3ACC267C00}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{721B9F3E-CBC4-47E3-A16E-DC3ACC267C00}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{721B9F3E-CBC4-47E3-A16E-DC3ACC267C00}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{721B9F3E-CBC4-47E3-A16E-DC3ACC267C00}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -81,6 +87,7 @@ Global
 		{96AA759B-ED52-4DD3-920E-E5B2A46301FD} = {08B9A68F-A5A7-4C42-AA22-77E68EC5AB59}
 		{6EE6132C-0C71-4638-AA06-587063050C4E} = {08B9A68F-A5A7-4C42-AA22-77E68EC5AB59}
 		{A0D6B39E-CEC9-434E-96CE-AC9409FB9642} = {08B9A68F-A5A7-4C42-AA22-77E68EC5AB59}
+		{721B9F3E-CBC4-47E3-A16E-DC3ACC267C00} = {08B9A68F-A5A7-4C42-AA22-77E68EC5AB59}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E0BB6039-929E-4FF5-8E6A-BC6D9A6858C5}
