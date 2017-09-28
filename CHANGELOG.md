@@ -3,6 +3,11 @@ Sharpbrake Changelog
 
 ### master
 
+### [v4.3.0][v4.3.0] (September 28, 2017)
+
+* Added Microsoft.Extensions.Logging integration
+  ([#71](https://github.com/airbrake/sharpbrake/pull/71))
+
 ### [v4.2.0][v4.2.0] (September 5, 2017)
 
 * Added log4net integration
@@ -66,3 +71,4 @@ Sharpbrake Changelog
 [v4.0.1]: https://github.com/airbrake/sharpbrake/releases/tag/v4.0.1
 [v4.1.0]: https://github.com/airbrake/sharpbrake/releases/tag/v4.1.0
 [v4.2.0]: https://github.com/airbrake/sharpbrake/releases/tag/v4.2.0
+[v4.3.0]: https://github.com/airbrake/sharpbrake/releases/tag/v4.3.0
