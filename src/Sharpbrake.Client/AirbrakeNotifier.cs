@@ -7,7 +7,7 @@ using Sharpbrake.Client.Impl;
 using Sharpbrake.Client.Model;
 #if NET452
 using System.Threading.Tasks;
-#elif NETSTANDARD1_4
+#elif NETSTANDARD1_4 || NETSTANDARD2_0
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 #endif
@@ -115,6 +115,8 @@ namespace Sharpbrake.Client
 #elif NETSTANDARD1_4
                 // TODO: check https://github.com/dotnet/corefx/issues/4306 for "Environment.MachineName"
                 noticeBuilder.SetEnvironmentContext("", RuntimeInformation.OSDescription, "C#/NETCORE");
+#elif NETSTANDARD2_0
+                noticeBuilder.SetEnvironmentContext(Dns.GetHostName(), RuntimeInformation.OSDescription, "C#/NETCORE2");
 #endif
                 var notice = noticeBuilder.ToNotice();
 
