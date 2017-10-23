@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net;
-using System.Threading;
-using Sharpbrake.Client.Tests.Mocks;
-#if NET452
 using System.Reflection;
+using System.Threading;
+using Sharpbrake.Client.Impl;
+using Sharpbrake.Client.Tests.Mocks;
 using System.Threading.Tasks;
-#else
-using System.Threading.Tasks;
-#endif
 using Xunit;
 
 namespace Sharpbrake.Client.Tests
@@ -26,11 +22,11 @@ namespace Sharpbrake.Client.Tests
 
             Assert.NotNull(exception);
             Assert.IsType<ArgumentNullException>(exception);
-            Assert.True(((ArgumentNullException)exception).ParamName.Equals("config"));
+            Assert.Equal("config", ((ArgumentNullException)exception).ParamName);
         }
 
         [Fact]
-        public void Ctor_ShouldSetFileLoggerIfCustomIsEmptyAndLogFileIsSet()
+        public void Ctor_ShouldSetFileLoggerIfCustomIsEmptyAndLogFilePropertyIsSet()
         {
             var config = new AirbrakeConfig
             {
@@ -39,31 +35,12 @@ namespace Sharpbrake.Client.Tests
                 LogFile = Guid.NewGuid() + ".log"
             };
 
-            var logFile =
-#if NET452
-                Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location ?? string.Empty), config.LogFile);
-#else
-                Path.Combine(AppContext.BaseDirectory, config.LogFile);
-#endif
+            var notifier = new AirbrakeNotifier(config);
 
-            using (var requestHandler = new FakeHttpRequestHandler())
-            {
-                requestHandler.HttpResponse.StatusCode = HttpStatusCode.Created;
-                requestHandler.HttpResponse.ResponseJson = "{\"Id\":\"12345\",\"Url\":\"https://airbrake.io/\"}";
+            var loggerFieldInfo = notifier.GetType().GetField("logger", BindingFlags.Instance | BindingFlags.NonPublic);
+            var loggerFieldValue = loggerFieldInfo.GetValue(notifier);
 
-                var notifier = new AirbrakeNotifier(config, null, requestHandler);
-                notifier.Notify(new Exception());
-
-                var resetEvent = new AutoResetEvent(false);
-                while (!resetEvent.WaitOne(2000))
-                    if (File.Exists(logFile))
-                        resetEvent.Set();
-
-                resetEvent.Dispose();
-            }
-
-            Assert.True(File.Exists(logFile));
-            File.Delete(logFile);
+            Assert.IsType<FileLogger>(loggerFieldValue);
         }
 
         [Theory,
@@ -86,7 +63,7 @@ namespace Sharpbrake.Client.Tests
                 var exception = exceptionTask.Result;
 
                 Assert.IsType<Exception>(exception);
-                Assert.True(exception.Message.Equals("Project " + (string.IsNullOrEmpty(projectId) ? "Id" : "Key") + " is required"));
+                Assert.Equal("Project " + (string.IsNullOrEmpty(projectId) ? "Id" : "Key") + " is required", exception.Message);
             }
         }
 

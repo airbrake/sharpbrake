@@ -17,15 +17,11 @@ namespace Sharpbrake.Client.Tests.Mocks
         public string Method { get; set; }
         public IWebProxy Proxy { get; set; }
 
-        public Uri RequestUri
-        {
-            get { return requestUri; }
-        }
+        public Uri RequestUri { get; }
 
         private readonly IHttpResponse httpResponse;
         private readonly Stream requestStream;
         private readonly StringBuilder contentBuilder;
-        private readonly Uri requestUri;
 
         public bool IsFaultedGetRequestStream { get; set; }
         public bool IsCanceledGetRequestStream { get; set; }
@@ -38,7 +34,7 @@ namespace Sharpbrake.Client.Tests.Mocks
             httpResponse = response;
             contentBuilder = new StringBuilder();
             requestStream = new CapturedMemoryStream(contentBuilder);
-            requestUri = new Uri("https://airbrake.io");
+            RequestUri = new Uri("https://airbrake.io");
         }
 
         public Task<Stream> GetRequestStreamAsync()
@@ -80,8 +76,7 @@ namespace Sharpbrake.Client.Tests.Mocks
         {
             if (disposing)
             {
-                if (requestStream != null)
-                    requestStream.Dispose();
+                requestStream?.Dispose();
             }
         }
     }

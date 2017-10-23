@@ -13,7 +13,7 @@ namespace Sharpbrake.Client.Tests
         {
             var notifierInfo = new NotifierInfo();
 
-            Assert.True(notifierInfo.Name.Equals("sharpbrake"));
+            Assert.Equal("sharpbrake", notifierInfo.Name);
         }
 
         [Fact]
@@ -21,7 +21,7 @@ namespace Sharpbrake.Client.Tests
         {
             var notifierInfo = new NotifierInfo();
 
-            Assert.True(notifierInfo.Version.Equals("4.3.0"));
+            Assert.Equal("4.3.0", notifierInfo.Version);
         }
 
         [Fact]
@@ -29,7 +29,7 @@ namespace Sharpbrake.Client.Tests
         {
             var notifierInfo = new NotifierInfo();
 
-            Assert.True(notifierInfo.Url.Equals("https://github.com/airbrake/sharpbrake"));
+            Assert.Equal("https://github.com/airbrake/sharpbrake", notifierInfo.Url);
         }
     }
 }

@@ -17,7 +17,7 @@ namespace Sharpbrake.Client.Tests
 
             Assert.NotNull(exception);
             Assert.IsType<ArgumentNullException>(exception);
-            Assert.True(((ArgumentNullException)exception).ParamName.Equals("request"));
+            Assert.Equal("request", ((ArgumentNullException)exception).ParamName);
         }
 
         [Fact]
@@ -27,7 +27,7 @@ namespace Sharpbrake.Client.Tests
 
             Assert.NotNull(exception);
             Assert.IsType<ArgumentNullException>(exception);
-            Assert.True(((ArgumentNullException)exception).ParamName.Equals("endpoint"));
+            Assert.Equal("endpoint", ((ArgumentNullException)exception).ParamName);
         }
 
         [Fact]
@@ -39,7 +39,7 @@ namespace Sharpbrake.Client.Tests
 
             Assert.NotNull(httpRequest);
             Assert.True(httpRequest.RequestUri.ToString() == endpoint);
-            Assert.IsType<Impl.HttpWebRequest>(httpRequest);
+            Assert.IsType<HttpWebRequest>(httpRequest);
         }
 
         [Fact]

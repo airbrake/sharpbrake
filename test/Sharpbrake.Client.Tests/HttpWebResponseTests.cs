@@ -16,7 +16,7 @@ namespace Sharpbrake.Client.Tests
 
             Assert.NotNull(exception);
             Assert.IsType<ArgumentNullException>(exception);
-            Assert.True(((ArgumentNullException)exception).ParamName.Equals("response"));
+            Assert.Equal("response", ((ArgumentNullException)exception).ParamName);
         }
     }
 }

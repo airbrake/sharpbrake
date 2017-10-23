@@ -36,8 +36,7 @@ namespace Sharpbrake.Client.Tests.Mocks
         {
             if (disposing)
             {
-                if (responseStream != null)
-                    responseStream.Dispose();
+                responseStream?.Dispose();
             }
         }
     }

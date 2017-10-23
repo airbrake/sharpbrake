@@ -37,9 +37,10 @@ namespace Sharpbrake.Client.Tests
             var errorEntries = builder.ToNotice().Errors;
 
             Assert.True(errorEntries.Count.Equals(3));
-            Assert.True(errorEntries[0].Message.Equals("Exception: Main exception"));
-            Assert.True(errorEntries[1].Message.Equals("Exception: Inner exception 1"));
-            Assert.True(errorEntries[2].Message.Equals("Exception: Inner exception 2"));
+
+            Assert.Equal("Exception: Main exception", errorEntries[0].Message);
+            Assert.Equal("Exception: Inner exception 1", errorEntries[1].Message);
+            Assert.Equal("Exception: Inner exception 2", errorEntries[2].Message);
         }
 
         [Fact]
@@ -72,13 +73,13 @@ namespace Sharpbrake.Client.Tests
 
             Assert.NotNull(errorEntries);
             Assert.True(errorEntries.Count == 1);
-            Assert.True(errorEntries.First().Message.Equals("FakeException: error message"));
+            Assert.Equal("FakeException: error message", errorEntries.First().Message);
         }
 
         [Fact]
         public void SetErrorEntries_ShouldSetErrorMessageFromExceptionTypeIfNoExceptionMessage()
         {
-            var ex = new FakeException();
+            var ex = new FakeException(null);
 
             var builder = new NoticeBuilder();
             builder.SetErrorEntries(ex);
@@ -87,7 +88,7 @@ namespace Sharpbrake.Client.Tests
 
             Assert.NotNull(errorEntries);
             Assert.True(errorEntries.Count == 1);
-            Assert.True(errorEntries.First().Message.Equals("FakeException"));
+            Assert.Equal("FakeException", errorEntries.First().Message);
         }
 
         [Fact]
@@ -126,8 +127,8 @@ namespace Sharpbrake.Client.Tests
             var notice = builder.ToNotice();
 
             Assert.NotNull(notice.Context);
-            Assert.True(notice.Context.EnvironmentName.Equals("local"));
-            Assert.True(notice.Context.AppVersion.Equals("1.2.3"));
+            Assert.Equal("local", notice.Context.EnvironmentName);
+            Assert.Equal("1.2.3", notice.Context.AppVersion);
         }
 
         [Fact]
@@ -307,7 +308,7 @@ namespace Sharpbrake.Client.Tests
 
             var notice = builder.ToNotice();
 
-            Assert.True(notice.Context.Severity.Equals("critical"));
+            Assert.Equal("critical", notice.Context.Severity);
         }
 
         [Fact]
@@ -325,7 +326,7 @@ namespace Sharpbrake.Client.Tests
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore
             });
 
-            Assert.True(actualJson.Equals(expectedJson));
+            Assert.Equal(expectedJson, actualJson);
         }
 
         [Fact]

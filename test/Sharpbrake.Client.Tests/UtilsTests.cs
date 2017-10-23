@@ -22,7 +22,7 @@ namespace Sharpbrake.Client.Tests
             Assert.Equal(expected.Count, actual.Count);
 
             for (var i = 0; i < expected.Count; i++)
-                Assert.True(string.Equals(expected[i], actual[i]));
+                Assert.Equal(expected[i], actual[i]);
         }
 
         [Theory,
@@ -37,7 +37,7 @@ namespace Sharpbrake.Client.Tests
 
             var actual = Utils.GetRequestUri(projectId, projectKey, host);
 
-            Assert.True(string.Equals(expected, actual));
+            Assert.Equal(expected, actual);
         }
 
         [Theory,
@@ -65,7 +65,7 @@ namespace Sharpbrake.Client.Tests
 
             var actual = Utils.GetRequestUri(projectId, projectKey, host);
 
-            Assert.True(string.Equals(expected, actual));
+            Assert.Equal(expected, actual);
         }
 
         [Fact]
@@ -104,8 +104,8 @@ namespace Sharpbrake.Client.Tests
             var proxy = Utils.ConfigureProxy(uri, username, password);
 
             Assert.NotNull(proxy.Credentials);
-            Assert.True(string.Equals(proxy.Credentials.GetCredential(proxyUri, authType).UserName, username));
-            Assert.True(string.Equals(proxy.Credentials.GetCredential(proxyUri, authType).Password, password));
+            Assert.Equal(username, proxy.Credentials.GetCredential(proxyUri, authType).UserName);
+            Assert.Equal(password, proxy.Credentials.GetCredential(proxyUri, authType).Password);
         }
 
         [Theory,
@@ -167,10 +167,10 @@ namespace Sharpbrake.Client.Tests
 
             var result = Utils.FilterParameters(parameters, Utils.CompileRegex(blackList), Utils.CompileRegex(whiteList));
 
-            Assert.True(result["password"].Equals("[Filtered]"));
-            Assert.True(result["account_id"].Equals("[Filtered]"));
-            Assert.True(result["user_name"].Equals("[Filtered]"));
-            Assert.True(result["email"].Equals(parameters["email"]));
+            Assert.Equal("[Filtered]", result["password"]);
+            Assert.Equal("[Filtered]", result["account_id"]);
+            Assert.Equal("[Filtered]", result["user_name"]);
+            Assert.Equal(parameters["email"], result["email"]);
         }
 
         [Fact]
@@ -189,10 +189,10 @@ namespace Sharpbrake.Client.Tests
 
             var result = Utils.FilterParameters(parameters, Utils.CompileRegex(blackList), Utils.CompileRegex(whiteList));
 
-            Assert.True(result["user"].Equals(parameters["user"]));
-            Assert.True(result["Password"].Equals("[Filtered]"));
-            Assert.True(result["email"].Equals("[Filtered]"));
-            Assert.True(result["account_id"].Equals(parameters["account_id"]));
+            Assert.Equal(parameters["user"], result["user"]);
+            Assert.Equal("[Filtered]", result["Password"]);
+            Assert.Equal("[Filtered]", result["email"]);
+            Assert.Equal(parameters["account_id"], result["account_id"]);
         }
 
         [Fact]
@@ -211,10 +211,10 @@ namespace Sharpbrake.Client.Tests
 
             var result = Utils.FilterParameters(parameters, Utils.CompileRegex(blackList), Utils.CompileRegex(whiteList));
 
-            Assert.True(result["user"].Equals(parameters["user"]));
-            Assert.True(result["email"].Equals(parameters["email"]));
-            Assert.True(result["password"].Equals("[Filtered]"));
-            Assert.True(result["account_id"].Equals("[Filtered]"));
+            Assert.Equal(parameters["user"], result["user"]);
+            Assert.Equal(parameters["email"], result["email"]);
+            Assert.Equal("[Filtered]", result["password"]);
+            Assert.Equal("[Filtered]", result["account_id"]);
         }
 
         [Fact]
@@ -233,10 +233,10 @@ namespace Sharpbrake.Client.Tests
 
             var result = Utils.FilterParameters(parameters, Utils.CompileRegex(blackList), Utils.CompileRegex(whiteList));
 
-            Assert.True(result["user"].Equals(parameters["user"]));
-            Assert.True(result["password"].Equals(parameters["password"]));
-            Assert.True(result["email"].Equals(parameters["email"]));
-            Assert.True(result["account_id"].Equals(parameters["account_id"]));
+            Assert.Equal(parameters["user"], result["user"]);
+            Assert.Equal(parameters["password"], result["password"]);
+            Assert.Equal(parameters["email"], result["email"]);
+            Assert.Equal(parameters["account_id"], result["account_id"]);
         }
 
         [Fact]
@@ -258,7 +258,7 @@ namespace Sharpbrake.Client.Tests
             var result = Utils.TruncateParameters(parameters, 16);
 
             Assert.NotNull(result);
-            Assert.True(result["email"] == "john@example.com");
+            Assert.Equal("john@example.com", result["email"]);
         }
 
         [Fact]
@@ -273,7 +273,7 @@ namespace Sharpbrake.Client.Tests
             var result = Utils.TruncateParameters(parameters, 4);
 
             Assert.NotNull(result);
-            Assert.True(result["email"] == "john...");
+            Assert.Equal("john...", result["email"]);
         }
 
         [Fact]
@@ -337,7 +337,7 @@ namespace Sharpbrake.Client.Tests
 
             Assert.NotNull(noticeOut);
             Assert.NotNull(noticeOut.Context);
-            Assert.True(noticeOut.Context.Action == "test");
+            Assert.Equal("test", noticeOut.Context.Action);
         }
 
         [Fact]
@@ -355,7 +355,7 @@ namespace Sharpbrake.Client.Tests
 
             Assert.NotNull(noticeOut);
             Assert.NotNull(noticeOut.Context);
-            Assert.True(noticeOut.Context.Action == "test action");
+            Assert.Equal("test action", noticeOut.Context.Action);
         }
 
         [Fact]
@@ -380,7 +380,7 @@ namespace Sharpbrake.Client.Tests
 
             Assert.NotNull(noticeOut);
             Assert.NotNull(noticeOut.Context);
-            Assert.True(noticeOut.Context.Action == "updated action");
+            Assert.Equal("updated action", noticeOut.Context.Action);
         }
 
         [Fact]
@@ -410,7 +410,7 @@ namespace Sharpbrake.Client.Tests
 
             Assert.NotNull(noticeOut);
             Assert.NotNull(noticeOut.Context);
-            Assert.True(noticeOut.Context.Action == "test action update 1 update 2");
+            Assert.Equal("test action update 1 update 2", noticeOut.Context.Action);
         }
     }
 }

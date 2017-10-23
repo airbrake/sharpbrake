@@ -90,14 +90,14 @@ Task("Run-Unit-Tests")
         using (var process = tool.StartAndReturnProcess(
             dotnetCmd,
             new ProcessSettings {
-                Arguments = "xunit -f netcoreapp1.1 -nobuild -c " + configuration,
+                Arguments = "xunit -f netcoreapp2.0 -nobuild -c " + configuration,
                 WorkingDirectory = workingDirectory
             }
         ))
         {
             process.WaitForExit();
             if (process.GetExitCode() != 0)
-                throw new Exception("Tests for netcoreapp1.1 have failed!");
+                throw new Exception("Tests for netcoreapp2.0 have failed!");
         }
     });
 

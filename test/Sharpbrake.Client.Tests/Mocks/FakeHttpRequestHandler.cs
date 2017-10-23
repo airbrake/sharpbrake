@@ -7,8 +7,8 @@ namespace Sharpbrake.Client.Tests.Mocks
     /// </summary>
     public class FakeHttpRequestHandler : IHttpRequestHandler, IDisposable
     {
-        public FakeHttpRequest HttpRequest { get; private set; }
-        public FakeHttpResponse HttpResponse { get; private set; }
+        public FakeHttpRequest HttpRequest { get; }
+        public FakeHttpResponse HttpResponse { get; }
 
         public FakeHttpRequestHandler()
         {
@@ -29,14 +29,11 @@ namespace Sharpbrake.Client.Tests.Mocks
 
         private void Dispose(bool disposing)
         {
-            if (disposing)
-            {
-                if (HttpResponse != null)
-                    HttpResponse.Dispose();
+            if (!disposing)
+                return;
 
-                if (HttpRequest != null)
-                    HttpRequest.Dispose();
-            }
+            HttpResponse?.Dispose();
+            HttpRequest?.Dispose();
         }
     }
 }

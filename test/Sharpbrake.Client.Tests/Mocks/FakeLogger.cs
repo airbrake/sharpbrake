@@ -5,8 +5,8 @@ namespace Sharpbrake.Client.Tests.Mocks
 {
     public class FakeLogger : ILogger
     {
-        public IList<AirbrakeResponse> LoggedResponses { get; private set; }
-        public IList<Exception> LoggedExceptions { get; private set; }
+        public IList<AirbrakeResponse> LoggedResponses { get; }
+        public IList<Exception> LoggedExceptions { get; }
 
         public FakeLogger()
         {

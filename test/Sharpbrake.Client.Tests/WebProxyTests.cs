@@ -1,4 +1,4 @@
-﻿#if NETCOREAPP1_1
+﻿#if NETCOREAPP2_0
 using System;
 using Xunit;
 
@@ -16,7 +16,7 @@ namespace Sharpbrake.Client.Tests
 
             Assert.NotNull(exception);
             Assert.IsType<ArgumentNullException>(exception);
-            Assert.True(((ArgumentNullException)exception).ParamName.Equals("uri"));
+            Assert.Equal("uri", ((ArgumentNullException)exception).ParamName);
         }
 
         [Fact]
