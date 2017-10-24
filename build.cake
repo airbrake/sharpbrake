@@ -64,15 +64,14 @@ Task("Build")
     var projects = GetFiles("./src/**/*.csproj");
     projects.Add(GetFiles("./test/**/*.csproj"));
 
-    foreach (var project in projects)
+    var settings = new DotNetCoreBuildSettings
     {
-        DotNetCoreBuild(project.FullPath,
-            new DotNetCoreBuildSettings
-            {
-                Configuration = configuration,
-                ArgumentCustomization = args => args.Append("/p:DebugType=full /p:DebugSymbols=True")
-            }
-        );
+        Configuration = configuration,
+        ArgumentCustomization = args => args.Append("/p:DebugType=full /p:DebugSymbols=True")
+    };
+
+    foreach (var project in projects) {
+        DotNetCoreBuild(project.FullPath, settings);
     }
 });
 
@@ -80,41 +79,19 @@ Task("Run-Unit-Tests")
     .IsDependentOn("Build")
     .Does(() =>
 {
-    var testProject = new FilePath("./test/Sharpbrake.Client.Tests/Sharpbrake.Client.Tests.csproj");
+    var testProject = MakeAbsolute(new FilePath("./test/Sharpbrake.Client.Tests/Sharpbrake.Client.Tests.csproj")).FullPath;
     var workingDirectory = MakeAbsolute(new DirectoryPath("./test/Sharpbrake.Client.Tests")).FullPath;
 
-    var testActions = new List<Action<ICakeContext>>();
-    var dotnetCmd = isRunningOnWindows ? "dotnet.exe" : "dotnet";
+    var settings = new DotNetCoreTestSettings
+    {
+        Configuration = configuration,
+        WorkingDirectory = workingDirectory,
+        NoBuild = true
+    };
 
-    testActions.Add(tool => {
-        using (var process = tool.StartAndReturnProcess(
-            dotnetCmd,
-            new ProcessSettings {
-                Arguments = "xunit -f netcoreapp2.0 -nobuild -c " + configuration,
-                WorkingDirectory = workingDirectory
-            }
-        ))
-        {
-            process.WaitForExit();
-            if (process.GetExitCode() != 0)
-                throw new Exception("Tests for netcoreapp2.0 have failed!");
-        }
-    });
-
-    testActions.Add(tool => {
-        using (var process = tool.StartAndReturnProcess(
-            dotnetCmd,
-            new ProcessSettings {
-                Arguments = "xunit -f net452 -nobuild -noshadow -c " + configuration,
-                WorkingDirectory = workingDirectory
-            }
-        ))
-        {
-            process.WaitForExit();
-            if (process.GetExitCode() != 0)
-                throw new Exception("Tests for net452 have failed!");
-        }
-    });
+    Action<ICakeContext> testAction = tool => {
+        tool.DotNetCoreTest(testProject, settings);
+    };
 
     EnsureDirectoryExists(testResultsDir);
 
@@ -124,7 +101,7 @@ Task("Run-Unit-Tests")
         var openCoverXml = MakeAbsolute(testResultsDir.Path.CombineWithFilePath("OpenCover").AppendExtension("xml"));;
         var coverageReportDir = System.IO.Path.Combine(testResultsDir, "report");
 
-        var settings = new OpenCoverSettings
+        var openCoverSettings = new OpenCoverSettings
         {
             Register = "user",
             ReturnTargetCodeOffset = 0,
@@ -138,8 +115,7 @@ Task("Run-Unit-Tests")
         .ExcludeByAttribute("*.ExcludeFromCodeCoverage*")
         .ExcludeByFile("*/*Designer.cs;*/*.g.cs;*/*.g.i.cs");
 
-        foreach (var testAction in testActions)
-            OpenCover(testAction, openCoverXml, settings);
+        OpenCover(testAction, openCoverXml, openCoverSettings);
 
         // for non-local build coverage is uploaded to codecov.io so no need to generate the report
         if (FileExists(openCoverXml) && isLocalBuild)
@@ -153,8 +129,7 @@ Task("Run-Unit-Tests")
     }
     else
     {
-        foreach (var testAction in testActions)
-            testAction(Context);
+         testAction(Context);
     }
 });
 
@@ -180,16 +155,15 @@ Task("Create-Packages")
 {
     var projects = GetFiles("./src/**/*.csproj");
 
-    foreach (var project in projects)
+    var settings = new DotNetCorePackSettings()
     {
-        DotNetCorePack(
-            project.GetDirectory().FullPath,
-            new DotNetCorePackSettings()
-            {
-                Configuration = configuration,
-                OutputDirectory = nugetDir,
-                ArgumentCustomization = args => args.Append("--include-symbols")
-            });
+        Configuration = configuration,
+        OutputDirectory = nugetDir,
+        ArgumentCustomization = args => args.Append("--include-symbols")
+    };
+
+    foreach (var project in projects) {
+        DotNetCorePack(project.GetDirectory().FullPath, settings);
     }
 });
 
@@ -208,6 +182,18 @@ Task("Publish-MyGet")
     if (string.IsNullOrEmpty(apiKey))
         throw new InvalidOperationException("Could not resolve MyGet API key");
 
+    var symbolServerSettings = new NuGetPushSettings
+    {
+        Source = symbolServerUrl,
+        ApiKey = apiKey
+    };
+
+    var serverSettings = new NuGetPushSettings
+    {
+        Source = serverUrl,
+        ApiKey = apiKey
+    };
+
     foreach (var package in GetFiles(nugetDir + "/*.nupkg"))
     {
         if (package.FullPath.EndsWith("symbols.nupkg", StringComparison.OrdinalIgnoreCase))
@@ -215,17 +201,11 @@ Task("Publish-MyGet")
             if (string.IsNullOrEmpty(symbolServerUrl))
                 continue;
 
-            NuGetPush(package.FullPath, new NuGetPushSettings {
-                Source = symbolServerUrl,
-                ApiKey = apiKey
-            });
+            NuGetPush(package.FullPath, symbolServerSettings);
         }
         else
         {
-            NuGetPush(package.FullPath, new NuGetPushSettings {
-                Source = serverUrl,
-                ApiKey = apiKey
-            });
+            NuGetPush(package.FullPath, serverSettings);
         }
     }
 })
@@ -247,16 +227,19 @@ Task("Publish-NuGet")
     if (string.IsNullOrEmpty(apiKey))
         throw new InvalidOperationException("Could not resolve NuGet API key");
 
+    var settings = new NuGetPushSettings
+    {
+        Source = serverUrl,
+        ApiKey = apiKey
+    };
+
     foreach (var package in GetFiles(nugetDir + "/*.nupkg"))
     {
         // symbols packages are pushed alongside regular ones so no need to push them explicitly
         if (package.FullPath.EndsWith("symbols.nupkg", StringComparison.OrdinalIgnoreCase))
             continue;
 
-        NuGetPush(package.FullPath, new NuGetPushSettings {
-            Source = serverUrl,
-            ApiKey = apiKey
-        });
+        NuGetPush(package.FullPath, settings);
     }
 })
 .OnError(exception =>
