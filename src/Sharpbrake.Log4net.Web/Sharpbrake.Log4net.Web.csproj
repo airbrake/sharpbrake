@@ -10,7 +10,7 @@
     <PackageLicenseUrl>https://raw.githubusercontent.com/airbrake/sharpbrake/master/LICENSE.md</PackageLicenseUrl>
     <PackageTags>Airbrake;Sharpbrake;log4net;Web</PackageTags>
     <RepositoryUrl>https://github.com/airbrake/sharpbrake</RepositoryUrl>
-    <TargetFrameworks>netstandard1.4;net452</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netstandard1.4;net452</TargetFrameworks>
     <Title>Sharpbrake Log4net.Web</Title>
     <Version>1.1.0</Version>
   </PropertyGroup>
