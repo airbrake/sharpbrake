@@ -16,7 +16,7 @@ namespace Sharpbrake.NLog.Web
             var httpContext = System.Web.HttpContext.Current;
             return httpContext == null ? null : new AspNetHttpContext(httpContext);
         }
-#elif NETSTANDARD1_4
+#elif NETSTANDARD1_4 || NETSTANDARD2_0
         public Microsoft.AspNetCore.Http.IHttpContextAccessor ContextAccessor { get; set; }
 
         /// <summary>
