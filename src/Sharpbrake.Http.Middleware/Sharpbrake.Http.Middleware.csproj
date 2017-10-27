@@ -9,12 +9,18 @@
     <PackageLicenseUrl>https://raw.githubusercontent.com/airbrake/sharpbrake/master/LICENSE.md</PackageLicenseUrl>
     <PackageTags>Airbrake;Sharpbrake;ASP.NET Core Middleware</PackageTags>
     <RepositoryUrl>https://github.com/airbrake/sharpbrake</RepositoryUrl>
-    <TargetFrameworks>netstandard1.4</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netstandard1.4</TargetFrameworks>
     <Title>Airbrake ASP.NET Core Middleware</Title>
     <Version>2.3.0</Version>
   </PropertyGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.0.0" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.4'">
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="1.1.2" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="1.1.2" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="1.1.2" />

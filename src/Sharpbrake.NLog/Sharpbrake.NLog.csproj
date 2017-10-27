@@ -10,13 +10,17 @@
     <PackageLicenseUrl>https://raw.githubusercontent.com/airbrake/sharpbrake/master/LICENSE.md</PackageLicenseUrl>
     <PackageTags>Airbrake;Sharpbrake;NLog</PackageTags>
     <RepositoryUrl>https://github.com/airbrake/sharpbrake</RepositoryUrl>
-    <TargetFrameworks>netstandard1.4;net452</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netstandard1.4;net452</TargetFrameworks>
     <Title>Sharpbrake NLog</Title>
     <Version>1.2.0</Version>
   </PropertyGroup>
 
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="NLog" Version="5.0.0-beta11" />
+  </ItemGroup>
+
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.4'">
-    <PackageReference Include="NLog" Version="5.0.0-beta09" />
+    <PackageReference Include="NLog" Version="5.0.0-beta11" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net452'">

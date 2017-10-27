@@ -4,30 +4,19 @@ namespace Sharpbrake.Client.Tests.Mocks
 {
     public class FakeException : Exception
     {
-        private readonly string message;
         private readonly string source;
-        private readonly string stackTrace;
 
-        public FakeException(string message = null, string source = null, string stackTrace = null)
+        public FakeException(string message, string source = null, string stackTrace = null)
         {
-            this.message = message;
+            Message = message;
             this.source = source;
-            this.stackTrace = stackTrace;
+            StackTrace = stackTrace;
         }
 
-        public override string Message
-        {
-            get { return message; }
-        }
+        public override string Message { get; }
 
-        public override string Source
-        {
-            get { return source; }
-        }
+        public override string Source => source;
 
-        public override string StackTrace
-        {
-            get { return stackTrace; }
-        }
+        public override string StackTrace { get; }
     }
 }

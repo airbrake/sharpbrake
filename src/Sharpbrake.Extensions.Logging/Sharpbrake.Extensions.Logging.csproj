@@ -10,12 +10,17 @@
     <PackageLicenseUrl>https://raw.githubusercontent.com/airbrake/sharpbrake/master/LICENSE.md</PackageLicenseUrl>
     <PackageTags>Airbrake;Sharpbrake;Microsoft.Extensions.Logging</PackageTags>
     <RepositoryUrl>https://github.com/airbrake/sharpbrake</RepositoryUrl>
-    <TargetFrameworks>netstandard1.4</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netstandard1.4</TargetFrameworks>
     <Title>Sharpbrake.Extensions.Logging</Title>
     <Version>1.0.0</Version>
   </PropertyGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="2.0.0" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.4'">
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="1.1.2" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="1.1.2" />
   </ItemGroup>

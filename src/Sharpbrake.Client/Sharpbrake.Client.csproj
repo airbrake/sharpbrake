@@ -9,7 +9,7 @@
     <PackageLicenseUrl>https://raw.githubusercontent.com/airbrake/sharpbrake/master/LICENSE.md</PackageLicenseUrl>
     <PackageTags>Airbrake;Sharpbrake;C# Notifier</PackageTags>
     <RepositoryUrl>https://github.com/airbrake/sharpbrake</RepositoryUrl>
-    <TargetFrameworks>netstandard1.4;net452</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netstandard1.4;net452</TargetFrameworks>
     <Title>Airbrake C#/.NET Notifier</Title>
     <Version>4.3.0</Version>
   </PropertyGroup>

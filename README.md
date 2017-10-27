@@ -776,7 +776,7 @@ Provider notifies the Airbrake dashboard of an exception with the help of
    PM> Install-Package Sharpbrake.Extensions.Logging
    ```
 
-2. Configure the Airbrake provider:
+2. Configure the Airbrake logging provider:
 
    2.1. In your `Startup.cs` add the import:
 
@@ -784,7 +784,27 @@ Provider notifies the Airbrake dashboard of an exception with the help of
    using Sharpbrake.Extensions.Logging
    ```
 
-   2.2. In the `Configure` method (the same `Startup.cs` file) add the Airbrake provider to the logger factory:
+   2.2. Add the Airbrake provider to the list of loggers:
+
+   * For ASP.NET Core 2.x the provider can be added in the `ConfigureServices` method:
+
+   ```csharp
+   public void ConfigureServices(IServiceCollection services)
+   {
+       services.AddMvc();
+
+       // adds the Airbrake provider with HTTP Context accessor
+       // to the list of services
+       var contextAccessor = new HttpContextAccessor();
+       services.AddSingleton<IHttpContextAccessor>(contextAccessor);
+       services.AddLogging(logging =>
+       {
+           logging.AddAirbrake(Configuration.GetSection("Airbrake"), contextAccessor);
+       });
+   }
+   ```
+
+   * If your project uses ASP.NET Core 1.x the provider can be added in the `Configure` method:
 
    ```csharp
    loggerFactory.AddAirbrake(Configuration.GetSection("Airbrake"),

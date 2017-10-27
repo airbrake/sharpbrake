@@ -1,4 +1,4 @@
-﻿#if NETSTANDARD1_4
+﻿#if NETSTANDARD1_4 || NETSTANDARD2_0
 using System.Linq;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
