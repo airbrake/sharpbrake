@@ -239,7 +239,14 @@ Task("Publish-NuGet")
         if (package.FullPath.EndsWith("symbols.nupkg", StringComparison.OrdinalIgnoreCase))
             continue;
 
-        NuGetPush(package.FullPath, settings);
+        try
+        {
+            NuGetPush(package.FullPath, settings);
+        }
+        catch (Exception ex)
+        {
+            Information("Error: " + ex.Message);
+        }
     }
 })
 .OnError(exception =>
