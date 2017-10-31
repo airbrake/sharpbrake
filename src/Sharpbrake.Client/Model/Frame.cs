@@ -1,35 +1,36 @@
-﻿using Newtonsoft.Json;
+﻿using System.Runtime.Serialization;
 
 namespace Sharpbrake.Client.Model
 {
     /// <summary>
     /// Frame from the error.
     /// </summary>
+    [DataContract]
     public class Frame
     {
         /// <summary>
         /// The full path of the file in this entry of the backtrace.
         /// </summary>
-        [JsonProperty("file")]
+        [DataMember(Name = "file", EmitDefaultValue = false)]
         public string File { get; set; }
 
         /// <summary>
         /// The file's line number in this entry of the backtrace.
         /// </summary>
-        [JsonProperty("line")]
+        [DataMember(Name = "line", EmitDefaultValue = false)]
         public int Line { get; set; }
 
         /// <summary>
         /// The line's column number in this entry of the backtrace.
         /// </summary>
-        [JsonProperty("column")]
+        [DataMember(Name = "column", EmitDefaultValue = false)]
         public int Column { get; set; }
 
         /// <summary>
         /// When available, the function 
         /// or method name in this entry of the backtrace.
         /// </summary>
-        [JsonProperty("function")]
+        [DataMember(Name = "function", EmitDefaultValue = false)]
         public string Function { get; set; }
     }
 }

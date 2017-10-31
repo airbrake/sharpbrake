@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using Newtonsoft.Json;
+using System.Runtime.Serialization.Json;
+using System.Text;
 using Sharpbrake.Client.Model;
 
 namespace Sharpbrake.Client
@@ -157,25 +159,42 @@ namespace Sharpbrake.Client
             const int noticeLengthMax = 64000;
             const int stringLengthMax = 1024;
 
-            var jsonSerializerSettings = new JsonSerializerSettings
+            var serializerSettings = new DataContractJsonSerializerSettings
             {
-                NullValueHandling = NullValueHandling.Ignore,
-                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                UseSimpleDictionaryFormat = true
             };
 
-            var json = JsonConvert.SerializeObject(notice, jsonSerializerSettings);
-            var level = 0;
+            var serializer = new DataContractJsonSerializer(typeof(Notice), serializerSettings);
 
+            string json;
+            using (var memoryStream = new MemoryStream())
+            {
+                serializer.WriteObject(memoryStream, notice);
+                memoryStream.Position = 0;
+
+                using (var reader = new StreamReader(memoryStream))
+                    json = reader.ReadToEnd();
+            }
+
+            var level = 0;
             while (json.Length > noticeLengthMax && level < 8)
             {
                 // each level reduces the string limit by a half
-                var stringLimit = stringLengthMax / (int)Math.Pow(2, level);
+                var stringLimit = stringLengthMax / (int) Math.Pow(2, level);
 
                 notice.EnvironmentVars = Utils.TruncateParameters(notice.EnvironmentVars, stringLimit);
                 notice.Params = Utils.TruncateParameters(notice.Params, stringLimit);
                 notice.Session = Utils.TruncateParameters(notice.Session, stringLimit);
 
-                json = JsonConvert.SerializeObject(notice, jsonSerializerSettings);
+                using (var memoryStream = new MemoryStream())
+                {
+                    serializer.WriteObject(memoryStream, notice);
+                    memoryStream.Position = 0;
+
+                    using (var reader = new StreamReader(memoryStream))
+                        json = reader.ReadToEnd();
+                }
+
                 level++;
             }
 
@@ -187,11 +206,18 @@ namespace Sharpbrake.Client
         /// </summary>
         public static Notice FromJsonString(string json)
         {
-            return JsonConvert.DeserializeObject<Notice>(json, new JsonSerializerSettings
+            var serializerSettings = new DataContractJsonSerializerSettings
             {
-                NullValueHandling = NullValueHandling.Ignore,
-                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-            });
+                UseSimpleDictionaryFormat = true
+            };
+
+            var serializer = new DataContractJsonSerializer(typeof(Notice), serializerSettings);
+
+            using (var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(json)))
+            {
+                memoryStream.Position = 0;
+                return serializer.ReadObject(memoryStream) as Notice;
+            }
         }
     }
 }
