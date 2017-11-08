@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using Newtonsoft.Json;
+using System.Runtime.Serialization.Json;
 using Sharpbrake.Client.Model;
 using Sharpbrake.Client.Tests.Mocks;
 using Xunit;
@@ -320,11 +321,23 @@ namespace Sharpbrake.Client.Tests
             var notice = builder.ToNotice();
 
             var actualJson = NoticeBuilder.ToJsonString(notice);
-            var expectedJson = JsonConvert.SerializeObject(notice, new JsonSerializerSettings
+
+            var serializerSettings = new DataContractJsonSerializerSettings
             {
-                NullValueHandling = NullValueHandling.Ignore,
-                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-            });
+                UseSimpleDictionaryFormat = true
+            };
+
+            var serializer = new DataContractJsonSerializer(typeof(Notice), serializerSettings);
+
+            string expectedJson;
+            using (var memoryStream = new MemoryStream())
+            {
+                serializer.WriteObject(memoryStream, notice);
+                memoryStream.Position = 0;
+
+                using (var reader = new StreamReader(memoryStream))
+                    expectedJson = reader.ReadToEnd();
+            }
 
             Assert.Equal(expectedJson, actualJson);
         }

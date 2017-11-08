@@ -1,28 +1,29 @@
-﻿using Newtonsoft.Json;
+﻿using System.Runtime.Serialization;
 
 namespace Sharpbrake.Client.Model
 {
     /// <summary>
     /// Represents user specific info.
     /// </summary>
+    [DataContract]
     public class UserInfo
     {
         /// <summary>
         /// If applicable, the current user's ID.
         /// </summary>
-        [JsonProperty("id")]
+        [DataMember(Name = "id", EmitDefaultValue = false)]
         public string Id { get; set; }
 
         /// <summary>
         /// If applicable, the current user's username.
         /// </summary>
-        [JsonProperty("name")]
+        [DataMember(Name = "name", EmitDefaultValue = false)]
         public string Name { get; set; }
 
         /// <summary>
         /// If applicable, the current user's email address.
         /// </summary>
-        [JsonProperty("email")]
+        [DataMember(Name = "email", EmitDefaultValue = false)]
         public string Email { get; set; }
     }
 }

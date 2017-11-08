@@ -1,24 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
+using System.Runtime.Serialization;
 
 namespace Sharpbrake.Client.Model
 {
     /// <summary>
     /// Object to send to the Airbrake endpoint.
     /// </summary>
+    [DataContract]
     public sealed class Notice
     {
         /// <summary>
         /// A list of <see cref="ErrorEntry"/> objects that describe the error.
         /// </summary>
-        [JsonProperty("errors")]
+        [DataMember(Name = "errors", EmitDefaultValue = false)]
         public IList<ErrorEntry> Errors { get; set; }
 
         /// <summary>
         /// Additional context for the error.
         /// </summary>
-        [JsonProperty("context")]
+        [DataMember(Name = "context", EmitDefaultValue = false)]
         public Context Context { get; set; }
 
         /// <summary>
@@ -27,7 +28,7 @@ namespace Sharpbrake.Client.Model
         /// <remarks>
         /// Key is the variable name, e.g. { "PORT": "443", "CODE_NAME": "gorilla" }
         /// </remarks>
-        [JsonProperty("environment")]
+        [DataMember(Name = "environment", EmitDefaultValue = false)]
         public IDictionary<string, string> EnvironmentVars { get; set; }
 
         /// <summary>
@@ -36,7 +37,7 @@ namespace Sharpbrake.Client.Model
         /// <remarks>
         /// Key is the variable name, e.g. { "basket_total": "1234", "user_id": "123" }
         /// </remarks>
-        [JsonProperty("session")]
+        [DataMember(Name = "session", EmitDefaultValue = false)]
         public IDictionary<string, string> Session { get; set; }
 
         /// <summary>
@@ -45,7 +46,7 @@ namespace Sharpbrake.Client.Model
         /// <remarks>
         /// Key is the parameter name, e.g. { "page": "3", "sort": "desc" }
         /// </remarks>
-        [JsonProperty("params")]
+        [DataMember(Name = "params", EmitDefaultValue = false)]
         public IDictionary<string, string> Params { get; set; }
 
         /// <summary>
@@ -55,7 +56,6 @@ namespace Sharpbrake.Client.Model
         /// This object is not sent to Airbrake. You can use it to assess properties
         /// of original exception in your dynamic filters.
         /// </remarks>
-        [JsonIgnore]
         public Exception Exception { get; set; }
 
         /// <summary>
@@ -65,7 +65,6 @@ namespace Sharpbrake.Client.Model
         /// This object is not sent to Airbrake. You can use it to assess HTTP context
         /// properties in your dynamic filters.
         /// </remarks>
-        [JsonIgnore]
         public IHttpContext HttpContext { get; set; }
     }
 }

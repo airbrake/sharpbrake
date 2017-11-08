@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using Newtonsoft.Json;
+using System.Runtime.Serialization.Json;
+using System.Text;
 using Sharpbrake.Client.Impl;
 using Sharpbrake.Client.Model;
 #if NET452
@@ -174,7 +175,21 @@ namespace Sharpbrake.Client
                                     using (var responseStream = httpResponse.GetResponseStream())
                                     using (var responseReader = new StreamReader(responseStream))
                                     {
-                                        var airbrakeResponse = JsonConvert.DeserializeObject<AirbrakeResponse>(responseReader.ReadToEnd());
+                                        var serializerSettings = new DataContractJsonSerializerSettings
+                                        {
+                                            UseSimpleDictionaryFormat = true
+                                        };
+
+                                        var serializer = new DataContractJsonSerializer(typeof(AirbrakeResponse), serializerSettings);
+
+                                        AirbrakeResponse airbrakeResponse;
+                                        using (var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(responseReader.ReadToEnd())))
+                                        {
+                                            memoryStream.Position = 0;
+                                            airbrakeResponse = (AirbrakeResponse)serializer.ReadObject(memoryStream);
+                                        }
+
+                                        //JsonConvert.DeserializeObject<AirbrakeResponse>(responseReader.ReadToEnd());
                                         // Note: a success response means that the data has been received and accepted for processing.
                                         // Use the URL or id from the response to query the status of an error. This will tell you if the error has been processed,
                                         // or if it has been rejected for reasons including invalid JSON and rate limiting.
