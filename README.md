@@ -869,6 +869,38 @@ Provider notifies the Airbrake dashboard of an exception with the help of
        app.ApplicationServices.GetService<IHttpContextAccessor>());
    ```
 
+Debugging and Diagnostics
+-------------------------
+
+If something goes wrong with the notifier itself (notice is not sending, some
+internal exception happens etc.) you may want to turn on the tracing mode and
+get more insights on what is going on.
+
+Tracing to the Debug window can be enabled with the next code:
+
+```csharp
+Sharpbrake.Client.InternalLogger.Enable(msg => Debug.WriteLine(msg));
+```
+
+You can output to the file as well:
+
+```csharp
+var traceWriter = System.IO.TextWriter.Synchronized(
+    System.IO.File.AppendText("AirbrakeNotifier.log"));
+
+Sharpbrake.Client.InternalLogger.Enable(msg =>
+{
+    traceWriter.WriteLine(msg);
+    traceWriter.Flush();
+});
+```
+
+Tracing can be disabled (this is the default state) with the code:
+
+```csharp
+Sharpbrake.Client.InternalLogger.Disable();
+```
+
 .NET 3.5 Support
 ----------------
 
