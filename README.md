@@ -872,11 +872,11 @@ Provider notifies the Airbrake dashboard of an exception with the help of
 Debugging and Diagnostics
 -------------------------
 
-If something goes wrong with the notifier itself (notice is not sending, some
-internal exception happens etc.) you may want to turn on the tracing mode and
-get more insights on what is going on.
+If something goes wrong with the notifier itself (a notice is not being sent,
+some internal exception happens, etc.) you may want to turn on the tracing mode
+and get more insights on what is going on.
 
-Tracing to the Debug window can be enabled with the next code:
+Tracing to the Debug window can be enabled with the following code:
 
 ```csharp
 Sharpbrake.Client.InternalLogger.Enable(msg => Debug.WriteLine(msg));
