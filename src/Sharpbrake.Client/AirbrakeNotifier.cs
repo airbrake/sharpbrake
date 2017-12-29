@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Runtime.Serialization.Json;
 using System.Text;
@@ -86,11 +87,19 @@ namespace Sharpbrake.Client
         /// </summary>
         public Task<AirbrakeResponse> NotifyAsync(Exception exception, IHttpContext context = null, Severity severity = Severity.Error)
         {
+            var log = InternalLogger.CreateInstance();
+
             if (string.IsNullOrEmpty(config.ProjectId))
+            {
+                log.Trace("Project Id is required");
                 throw new Exception("Project Id is required");
+            }
 
             if (string.IsNullOrEmpty(config.ProjectKey))
+            {
+                log.Trace("Project Key is required");
                 throw new Exception("Project Key is required");
+            }
 
             // Task-based Asynchronous Pattern (https://msdn.microsoft.com/en-us/library/hh873177.aspx)
             var tcs = new TaskCompletionSource<AirbrakeResponse>();
@@ -100,16 +109,28 @@ namespace Sharpbrake.Client
                 {
                     var response = new AirbrakeResponse { Status = RequestStatus.Ignored };
                     tcs.SetResult(response);
+                    log.Trace("Ignoring notice for environment: {0}", config.Environment);
                     return tcs.Task;
                 }
 
                 var noticeBuilder = new NoticeBuilder();
+
+                log.Trace("Setting error entries");
                 noticeBuilder.SetErrorEntries(exception);
+
+                log.Trace("Setting configuration context");
                 noticeBuilder.SetConfigurationContext(config);
+
+                log.Trace("Setting severity to {0}", severity);
                 noticeBuilder.SetSeverity(severity);
 
                 if (context != null)
+                {
+                    log.Trace("Setting HTTP context");
                     noticeBuilder.SetHttpContext(context, config);
+                }
+
+                log.Trace("Setting environment context");
 
 #if NET452
                 noticeBuilder.SetEnvironmentContext(Dns.GetHostName(), Environment.OSVersion.VersionString, "C#/NET45");
@@ -120,14 +141,19 @@ namespace Sharpbrake.Client
                 noticeBuilder.SetEnvironmentContext(Dns.GetHostName(), RuntimeInformation.OSDescription, "C#/NETCORE2");
 #endif
                 var notice = noticeBuilder.ToNotice();
+                log.Trace("Notice was created");
 
                 if (filters.Count > 0)
+                {
+                    log.Trace("Applying filters");
                     notice = Utils.ApplyFilters(notice, filters);
+                }
 
                 if (notice == null)
                 {
                     var response = new AirbrakeResponse { Status = RequestStatus.Ignored };
                     tcs.SetResult(response);
+                    log.Trace("Ignoring notice because of filters");
                     return tcs.Task;
                 }
 
@@ -142,28 +168,45 @@ namespace Sharpbrake.Client
                     if (requestStreamTask.IsFaulted)
                     {
                         if (requestStreamTask.Exception != null)
-                            tcs.SetException(requestStreamTask.Exception.InnerExceptions);
+                        {
+                            var exceptions = requestStreamTask.Exception.InnerExceptions;
+                            tcs.SetException(exceptions);
+                            log.Trace("Exception occurred in request stream: {0}", exceptions.First().Message);
+                        }
+
+                        log.Trace("Request stream is faulted");
                     }
                     else if (requestStreamTask.IsCanceled)
                     {
                         tcs.SetCanceled();
+                        log.Trace("Request stream is canceled");
                     }
                     else
                     {
                         using (var requestStream = requestStreamTask.Result)
                         using (var requestWriter = new StreamWriter(requestStream))
+                        {
+                            log.Trace("Writing to request stream");
                             requestWriter.Write(NoticeBuilder.ToJsonString(notice));
+                        }
 
                         request.GetResponseAsync().ContinueWith(responseTask =>
                         {
                             if (responseTask.IsFaulted)
                             {
                                 if (responseTask.Exception != null)
-                                    tcs.SetException(responseTask.Exception.InnerExceptions);
+                                {
+                                    var exceptions = responseTask.Exception.InnerExceptions;
+                                    tcs.SetException(exceptions);
+                                    log.Trace("Exception occurred in response task: {0}", exceptions.First().Message);
+                                }
+
+                                log.Trace("Response task is faulted");
                             }
                             else if (responseTask.IsCanceled)
                             {
                                 tcs.SetCanceled();
+                                log.Trace("Response task is canceled");
                             }
                             else
                             {
@@ -198,6 +241,7 @@ namespace Sharpbrake.Client
                                             : RequestStatus.RequestError;
 
                                         tcs.SetResult(airbrakeResponse);
+                                        log.Trace("Notice was registered: {0}", airbrakeResponse.Url);
                                     }
                                 }
                                 finally
@@ -213,6 +257,7 @@ namespace Sharpbrake.Client
             catch (Exception ex)
             {
                 tcs.SetException(ex);
+                log.Trace("Exception occurred when preparing notice: {0}", ex.Message);
                 return tcs.Task;
             }
 
