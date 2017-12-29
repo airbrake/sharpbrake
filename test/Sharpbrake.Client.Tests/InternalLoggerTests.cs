@@ -12,17 +12,6 @@ namespace Sharpbrake.Client.Tests
     public class InternalLoggerTests
     {
         [Fact]
-        public void Enable_ShouldWriteToSpecifiedOutput()
-        {
-            var traceOutput = new StringBuilder();
-            InternalLogger.Enable(msg => traceOutput.AppendLine(msg));
-
-            NotifyAsync();
-
-            Assert.True(traceOutput.Length > 0);
-        }
-
-        [Fact]
         public void Enable_ShouldThrowExceptionIfArgumentIsNull()
         {
             var exception = Record.Exception(() => InternalLogger.Enable(null));
@@ -33,21 +22,21 @@ namespace Sharpbrake.Client.Tests
         }
 
         [Fact]
-        public void Disable_ShouldStopTracing()
+        public void Enable_Disable_ShouldStartAndStopTracing()
         {
             var traceOutput = new StringBuilder();
             InternalLogger.Enable(msg => traceOutput.AppendLine(msg));
 
             NotifyAsync();
 
-            Assert.True(traceOutput.Length > 0);
+            Assert.True(traceOutput.Length > 0, traceOutput.ToString());
 
-            traceOutput.Clear();
             InternalLogger.Disable();
+            traceOutput.Clear();
 
             NotifyAsync();
 
-            Assert.True(traceOutput.Length == 0);
+            Assert.True(traceOutput.Length == 0, traceOutput.ToString());
         }
 
         private void NotifyAsync()
