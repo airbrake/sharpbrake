@@ -3,6 +3,13 @@ Sharpbrake Changelog
 
 ### master
 
+### [v4.5.0][v4.5.0] (January 12, 2018)
+
+* Added internal logging (tracing)
+  ([#80](https://github.com/airbrake/sharpbrake/pull/80))
+* Removed dependency on Newtonsoft.Json
+  ([#78](https://github.com/airbrake/sharpbrake/pull/78))
+
 ### [v4.4.0][v4.4.0] (October 30, 2017)
 
 * Added support for .NET Standard 2.0
@@ -78,3 +85,4 @@ Sharpbrake Changelog
 [v4.2.0]: https://github.com/airbrake/sharpbrake/releases/tag/v4.2.0
 [v4.3.0]: https://github.com/airbrake/sharpbrake/releases/tag/v4.3.0
 [v4.4.0]: https://github.com/airbrake/sharpbrake/releases/tag/v4.4.0
+[v4.5.0]: https://github.com/airbrake/sharpbrake/releases/tag/v4.5.0
