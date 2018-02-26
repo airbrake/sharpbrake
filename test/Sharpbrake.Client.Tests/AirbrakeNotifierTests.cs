@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
-using System.Reflection;
-using System.Threading;
-using Sharpbrake.Client.Impl;
 using Sharpbrake.Client.Tests.Mocks;
 using System.Threading.Tasks;
 using Xunit;
@@ -25,24 +22,6 @@ namespace Sharpbrake.Client.Tests
             Assert.Equal("config", ((ArgumentNullException)exception).ParamName);
         }
 
-        [Fact]
-        public void Ctor_ShouldSetFileLoggerIfCustomIsEmptyAndLogFilePropertyIsSet()
-        {
-            var config = new AirbrakeConfig
-            {
-                ProjectId = "127348",
-                ProjectKey = "e2046ca6e4e9214b24ad252e3c99a0f6",
-                LogFile = Guid.NewGuid() + ".log"
-            };
-
-            var notifier = new AirbrakeNotifier(config);
-
-            var loggerFieldInfo = notifier.GetType().GetField("logger", BindingFlags.Instance | BindingFlags.NonPublic);
-            var loggerFieldValue = loggerFieldInfo.GetValue(notifier);
-
-            Assert.IsType<FileLogger>(loggerFieldValue);
-        }
-
         [Theory,
          InlineData("", "e2046ca6e4e9214b24ad252e3c99a0f6"),
          InlineData("127348", "")]
@@ -56,7 +35,7 @@ namespace Sharpbrake.Client.Tests
 
             using (var requestHandler = new FakeHttpRequestHandler())
             {
-                var notifier = new AirbrakeNotifier(config, new FakeLogger(), requestHandler);
+                var notifier = new AirbrakeNotifier(config, requestHandler);
                 var exceptionTask = Record.ExceptionAsync(() => Task.Run(() => notifier.NotifyAsync(new Exception())));
 
                 Assert.NotNull(exceptionTask);
@@ -75,12 +54,12 @@ namespace Sharpbrake.Client.Tests
                 ProjectId = "127348",
                 ProjectKey = "e2046ca6e4e9214b24ad252e3c99a0f6",
                 Environment = "test",
-                IgnoreEnvironments = new List<string> {"test"}
+                IgnoreEnvironments = new List<string> { "test" }
             };
 
             using (var requestHandler = new FakeHttpRequestHandler())
             {
-                var notifier = new AirbrakeNotifier(config, new FakeLogger(), requestHandler);
+                var notifier = new AirbrakeNotifier(config, requestHandler);
                 var airbrakeResponse = notifier.NotifyAsync(new Exception()).Result;
 
                 Assert.True(airbrakeResponse.Status == RequestStatus.Ignored);
@@ -103,7 +82,7 @@ namespace Sharpbrake.Client.Tests
                 requestHandler.HttpResponse.StatusCode = HttpStatusCode.Created;
                 requestHandler.HttpResponse.ResponseJson = "{\"Id\":\"12345\",\"Url\":\"https://airbrake.io/\"}";
 
-                var notifier = new AirbrakeNotifier(config, new FakeLogger(), requestHandler);
+                var notifier = new AirbrakeNotifier(config, requestHandler);
 
                 FakeHttpContext context = null;
                 if (isHttpContextProvided)
@@ -140,7 +119,7 @@ namespace Sharpbrake.Client.Tests
                 requestHandler.HttpRequest.IsFaultedGetRequestStream = faultedTask == "GetRequestStream";
                 requestHandler.HttpRequest.IsFaultedGetResponse = faultedTask == "GetResponse";
 
-                var notifier = new AirbrakeNotifier(config, new FakeLogger(), requestHandler);
+                var notifier = new AirbrakeNotifier(config, requestHandler);
                 var notifyTask = notifier.NotifyAsync(new Exception());
                 var exceptionTask = Record.ExceptionAsync(() => notifyTask);
 
@@ -170,7 +149,7 @@ namespace Sharpbrake.Client.Tests
                 requestHandler.HttpRequest.IsCanceledGetRequestStream = canceledTask == "GetRequestStream";
                 requestHandler.HttpRequest.IsCanceledGetResponse = canceledTask == "GetResponse";
 
-                var notifier = new AirbrakeNotifier(config, new FakeLogger(), requestHandler);
+                var notifier = new AirbrakeNotifier(config, requestHandler);
                 var notifyTask = notifier.NotifyAsync(new Exception());
                 var exceptionTask = Record.ExceptionAsync(() => notifyTask);
 
@@ -199,7 +178,7 @@ namespace Sharpbrake.Client.Tests
                     : HttpStatusCode.BadRequest;
                 requestHandler.HttpResponse.ResponseJson = "{\"Id\":\"12345\",\"Url\":\"https://airbrake.io/\"}";
 
-                var notifier = new AirbrakeNotifier(config, new FakeLogger(), requestHandler);
+                var notifier = new AirbrakeNotifier(config, requestHandler);
                 var airbrakeResponse = notifier.NotifyAsync(new Exception()).Result;
 
                 if (isStatusCodeCreated)
@@ -223,7 +202,7 @@ namespace Sharpbrake.Client.Tests
                 requestHandler.HttpResponse.StatusCode = HttpStatusCode.Created;
                 requestHandler.HttpResponse.ResponseJson = "{\"Id\":\"12345\",\"Url\":\"https://airbrake.io/\"}";
 
-                var notifier = new AirbrakeNotifier(config, new FakeLogger(), requestHandler);
+                var notifier = new AirbrakeNotifier(config, requestHandler);
 
                 notifier.AddFilter(notice =>
                 {
@@ -251,72 +230,13 @@ namespace Sharpbrake.Client.Tests
 
             using (var requestHandler = new FakeHttpRequestHandler())
             {
-                var notifier = new AirbrakeNotifier(config, new FakeLogger(), requestHandler);
+                var notifier = new AirbrakeNotifier(config, requestHandler);
                 notifier.AddFilter(notice => null);
 
                 var airbrakeResponse = notifier.NotifyAsync(new Exception()).Result;
 
                 Assert.True(airbrakeResponse.Status == RequestStatus.Ignored);
             }
-        }
-
-        [Fact]
-        public void Notify_ShouldLogResponseIfResponseIsOk()
-        {
-            var config = new AirbrakeConfig
-            {
-                ProjectId = "127348",
-                ProjectKey = "e2046ca6e4e9214b24ad252e3c99a0f6"
-            };
-
-            var logger = new FakeLogger();
-
-            using (var requestHandler = new FakeHttpRequestHandler())
-            {
-                requestHandler.HttpResponse.StatusCode = HttpStatusCode.Created;
-                requestHandler.HttpResponse.ResponseJson = "{\"Id\":\"12345\",\"Url\":\"https://airbrake.io/\"}";
-
-                var notifier = new AirbrakeNotifier(config, logger, requestHandler);
-                notifier.Notify(new Exception());
-
-                var resetEvent = new AutoResetEvent(false);
-                while (!resetEvent.WaitOne(2000))
-                    if (logger.LoggedResponses.Count > 0)
-                        resetEvent.Set();
-
-                resetEvent.Dispose();
-            }
-
-            Assert.True(logger.LoggedResponses.Count > 0);
-        }
-
-        [Fact]
-        public void Notify_ShouldLogExceptionIfResponseIsFaulted()
-        {
-            var config = new AirbrakeConfig
-            {
-                ProjectId = "127348",
-                ProjectKey = "e2046ca6e4e9214b24ad252e3c99a0f6"
-            };
-
-            var logger = new FakeLogger();
-
-            using (var requestHandler = new FakeHttpRequestHandler())
-            {
-                requestHandler.HttpRequest.IsFaultedGetResponse = true;
-
-                var notifier = new AirbrakeNotifier(config, logger, requestHandler);
-                notifier.Notify(new Exception());
-
-                var resetEvent = new AutoResetEvent(false);
-                while (!resetEvent.WaitOne(2000))
-                    if (logger.LoggedExceptions.Count > 0)
-                        resetEvent.Set();
-
-                resetEvent.Dispose();
-            }
-
-            Assert.True(logger.LoggedExceptions.Count > 0);
         }
     }
 }

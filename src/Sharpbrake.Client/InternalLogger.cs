@@ -66,7 +66,7 @@ namespace Sharpbrake.Client
         internal void Trace(string format, params object[] args)
         {
             traceAction?.Invoke(string.Format(CultureInfo.InvariantCulture,
-                string.Format(CultureInfo.InvariantCulture, "[{0}] ({1}) {2}", DateTime.UtcNow.ToString("o"),
+                string.Format(CultureInfo.InvariantCulture, "[{0}] ({1}) {2}", DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture),
                     traceId, format), args));
         }
 

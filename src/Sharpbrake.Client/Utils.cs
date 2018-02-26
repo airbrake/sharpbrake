@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
+using System.IO;
 using System.Net;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -202,6 +204,34 @@ namespace Sharpbrake.Client
         public static IList<Regex> CompileRegex(IList<string> stringPatterns)
         {
             return stringPatterns?.Select(pattern => new Regex(pattern, RegexOptions.Compiled | RegexOptions.IgnoreCase)).ToList();
+        }
+
+#if NETSTANDARD1_4
+        private static readonly object logResponseLocker = new object();
+#endif
+
+        /// <summary>
+        /// Logs response from Airbrake to the file.
+        /// </summary>
+        public static void LogResponse(string logFile, AirbrakeResponse response)
+        {
+            if (response == null)
+                return;
+
+#if NETSTANDARD1_4
+            using (var writer = File.AppendText(logFile))
+            {
+                lock (logResponseLocker)
+                {
+                    writer.WriteLineAsync(
+                        $"[{DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture)}] {response.Status} {response.Id} {response.Url}");
+                }
+            }
+#else
+            using (var writer = TextWriter.Synchronized(File.AppendText(logFile)))
+                writer.WriteLineAsync(
+                    $"[{DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture)}] {response.Status} {response.Id} {response.Url}");
+#endif
         }
 
         private static int IndexOfRegex(IList<Regex> regexList, string key)

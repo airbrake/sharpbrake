@@ -22,7 +22,6 @@ namespace Sharpbrake.Client
     public class AirbrakeNotifier
     {
         private readonly AirbrakeConfig config;
-        private readonly ILogger logger;
         private readonly IHttpRequestHandler httpRequestHandler;
 
         /// <summary>
@@ -31,21 +30,21 @@ namespace Sharpbrake.Client
         private readonly IList<Func<Notice, Notice>> filters = new List<Func<Notice, Notice>>();
 
         /// <summary>
+        /// Logs responses from Airbrake into the file.
+        /// </summary>
+        private readonly Action<AirbrakeResponse> logResponse;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="AirbrakeNotifier"/> class.
         /// </summary>
         /// <param name="config">The <see cref="AirbrakeConfig"/> instance to use.</param>
-        /// <param name="logger">The <see cref="ILogger"/> implementation to use.</param>
         /// <param name="httpRequestHandler">The <see cref="IHttpRequestHandler"/> implementation to use.</param>
-        public AirbrakeNotifier(AirbrakeConfig config, ILogger logger = null, IHttpRequestHandler httpRequestHandler = null)
+        public AirbrakeNotifier(AirbrakeConfig config, IHttpRequestHandler httpRequestHandler = null)
         {
             this.config = config ?? throw new ArgumentNullException(nameof(config));
 
-            // use default FileLogger if no custom implementation has been provided
-            // but config contains non-empty value for "LogFile" property
-            if (logger != null)
-                this.logger = logger;
-            else if (!string.IsNullOrEmpty(config.LogFile))
-                this.logger = new FileLogger(config.LogFile);
+            if (!string.IsNullOrEmpty(config.LogFile))
+                logResponse = response => Utils.LogResponse(config.LogFile, response);
 
             // use default provider that returns HttpWebRequest from standard .NET library
             // if custom implementation has not been provided
@@ -69,17 +68,7 @@ namespace Sharpbrake.Client
         /// </remarks>
         public void Notify(Exception exception, IHttpContext context = null, Severity severity = Severity.Error)
         {
-            var notifyTask = NotifyAsync(exception, context, severity);
-            if (logger != null)
-            {
-                notifyTask.ContinueWith(response =>
-                {
-                    if (response.IsFaulted)
-                        logger.Log(response.Exception);
-                    else
-                        logger.Log(response.Result);
-                });
-            }
+            // TODO: Define new meaning for this method
         }
 
         /// <summary>
@@ -242,6 +231,8 @@ namespace Sharpbrake.Client
 
                                         tcs.SetResult(airbrakeResponse);
                                         log.Trace("Notice was registered: {0}", airbrakeResponse.Url);
+
+                                        logResponse?.Invoke(airbrakeResponse);
                                     }
                                 }
                                 finally

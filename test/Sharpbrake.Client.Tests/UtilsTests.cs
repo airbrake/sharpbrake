@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using Sharpbrake.Client.Model;
 using Xunit;
 
@@ -411,6 +412,35 @@ namespace Sharpbrake.Client.Tests
             Assert.NotNull(noticeOut);
             Assert.NotNull(noticeOut.Context);
             Assert.Equal("test action update 1 update 2", noticeOut.Context.Action);
+        }
+
+        [Fact]
+        public void LogResponse_ShouldLogIfResponseNotEmpty()
+        {
+            var logFile = Guid.NewGuid() + ".log";
+            var response = new AirbrakeResponse
+            {
+                Id = "0005488e-8947-223e-90ca-16fec30b6d72",
+                Url = "https://airbrake.io/locate/0005488e-8947-223e-90ca-16fec30b6d72",
+                Status = RequestStatus.Success
+            };
+
+            Utils.LogResponse(logFile, response);
+
+            Assert.True(File.Exists(logFile));
+            Assert.True(!string.IsNullOrEmpty(File.ReadAllText(logFile)));
+            File.Delete(logFile);
+        }
+
+        [Fact]
+        public void LogResponse_ShouldNotLogIfResponseEmpty()
+        {
+            var logFile = Guid.NewGuid() + ".log";
+
+            Utils.LogResponse(logFile, null);
+
+            Assert.True(!File.Exists(logFile));
+            File.Delete(logFile);
         }
     }
 }
