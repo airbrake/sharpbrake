@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using Sharpbrake.Client.Model;
 using Xunit;
@@ -280,7 +282,7 @@ namespace Sharpbrake.Client.Tests
         [Fact]
         public void GetBacktrace_ShouldReturnBlankFrameIfStackTraceNotAvailable()
         {
-            var backtrace = Utils.GetBacktrace(new Exception());
+            var backtrace = Utils.GetBacktrace(new StackTrace(new Exception(), true));
 
             Assert.NotNull(backtrace);
             Assert.True(backtrace.Count == 1);
@@ -313,7 +315,7 @@ namespace Sharpbrake.Client.Tests
             }
             catch (Exception ex)
             {
-                var backtrace = Utils.GetBacktrace(ex);
+                var backtrace = Utils.GetBacktrace(new StackTrace(ex, true));
 
                 Assert.NotNull(backtrace);
                 Assert.True(backtrace.Count == 1);
@@ -441,6 +443,24 @@ namespace Sharpbrake.Client.Tests
 
             Assert.True(!File.Exists(logFile));
             File.Delete(logFile);
+        }
+
+        [Fact]
+        public void GetMessage_ShouldApplyCultureSpecificFormatting()
+        {
+            var date = new DateTime(2018, 3, 2);
+            var number = 1234.56;
+
+            var expected = "Friday, March 2, 2018               1,234.56";
+            var actual = Utils.GetMessage(new CultureInfo("en-US"), "{0,-35:D} {1:N}", date, number);
+
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void GetMessage_ShouldReturnNullIfMessageTemplateEmpty()
+        {
+            Assert.Null(Utils.GetMessage(null, null, null));
         }
     }
 }

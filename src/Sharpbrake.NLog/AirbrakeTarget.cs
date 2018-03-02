@@ -133,14 +133,12 @@ namespace Sharpbrake.NLog
         }
 
         /// <summary>
-        /// Notifies Airbrake on the logging event exception.
+        /// Notifies Airbrake on the error.
         /// </summary>
         protected override void Write(LogEventInfo logEvent)
         {
-            if (logEvent.Exception == null)
-                return;
-
-            Notifier.NotifyAsync(logEvent.Exception, GetHttpContext(), GetErrorSeverity(logEvent.Level));
+            var notifier = Notifier.ForContext(GetHttpContext());
+            notifier.NotifyAsync(GetErrorSeverity(logEvent.Level), logEvent.Exception, logEvent.FormattedMessage);
         }
 
         /// <summary>
@@ -148,7 +146,7 @@ namespace Sharpbrake.NLog
         /// </summary>
         protected virtual IHttpContext GetHttpContext()
         {
-            // in default case (non Web) HTTP context is not available
+            // in the default case (non Web) the HTTP context is not available
             return null;
         }
     }

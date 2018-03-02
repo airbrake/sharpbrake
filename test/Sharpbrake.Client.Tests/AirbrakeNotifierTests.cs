@@ -88,7 +88,7 @@ namespace Sharpbrake.Client.Tests
                 if (isHttpContextProvided)
                     context = new FakeHttpContext { UserAgent = "test" };
 
-                var airbrakeResponse = notifier.NotifyAsync(new Exception(), context).Result;
+                var airbrakeResponse = notifier.ForContext(context).NotifyAsync(new Exception()).Result;
                 var notice = NoticeBuilder.FromJsonString(requestHandler.HttpRequest.GetRequestStreamContent());
 
                 Assert.True(airbrakeResponse.Status == RequestStatus.Success);

@@ -33,15 +33,15 @@ namespace Sharpbrake.Client.Tests
                             new Exception("Inner exception 2")));
 
             var builder = new NoticeBuilder();
-            builder.SetErrorEntries(ex);
+            builder.SetErrorEntries(ex, string.Empty);
 
             var errorEntries = builder.ToNotice().Errors;
 
             Assert.True(errorEntries.Count.Equals(3));
 
-            Assert.Equal("Exception: Main exception", errorEntries[0].Message);
-            Assert.Equal("Exception: Inner exception 1", errorEntries[1].Message);
-            Assert.Equal("Exception: Inner exception 2", errorEntries[2].Message);
+            Assert.Equal("Main exception", errorEntries[0].Message);
+            Assert.Equal("Inner exception 1", errorEntries[1].Message);
+            Assert.Equal("Inner exception 2", errorEntries[2].Message);
         }
 
         [Fact]
@@ -54,7 +54,7 @@ namespace Sharpbrake.Client.Tests
                                     new Exception("Inner exception 4")))));
 
             var builder = new NoticeBuilder();
-            builder.SetErrorEntries(ex);
+            builder.SetErrorEntries(ex, string.Empty);
 
             var errorEntries = builder.ToNotice().Errors;
 
@@ -63,40 +63,40 @@ namespace Sharpbrake.Client.Tests
         }
 
         [Fact]
-        public void SetErrorEntries_ShouldSetErrorMessageFromExceptionMessageIfPresent()
+        public void SetErrorEntries_ShouldSetMessageIfPresent()
         {
-            var ex = new FakeException("error message");
+            var ex = new FakeException("error message from exception");
 
             var builder = new NoticeBuilder();
-            builder.SetErrorEntries(ex);
+            builder.SetErrorEntries(ex, "message");
 
             var errorEntries = builder.ToNotice().Errors;
 
             Assert.NotNull(errorEntries);
             Assert.True(errorEntries.Count == 1);
-            Assert.Equal("FakeException: error message", errorEntries.First().Message);
+            Assert.Equal("message", errorEntries.First().Message);
         }
 
         [Fact]
-        public void SetErrorEntries_ShouldSetErrorMessageFromExceptionTypeIfNoExceptionMessage()
+        public void SetErrorEntries_ShouldSetErrorMessageFromExceptionIfNoMessage()
         {
-            var ex = new FakeException(null);
+            var ex = new FakeException("error message from exception");
 
             var builder = new NoticeBuilder();
-            builder.SetErrorEntries(ex);
+            builder.SetErrorEntries(ex, string.Empty);
 
             var errorEntries = builder.ToNotice().Errors;
 
             Assert.NotNull(errorEntries);
             Assert.True(errorEntries.Count == 1);
-            Assert.Equal("FakeException", errorEntries.First().Message);
+            Assert.Equal("error message from exception", errorEntries.First().Message);
         }
 
         [Fact]
         public void SetErrorEntries_ShouldSetExceptionProperty()
         {
             var builder = new NoticeBuilder();
-            builder.SetErrorEntries(new Exception());
+            builder.SetErrorEntries(new Exception(), string.Empty);
 
             var notice = builder.ToNotice();
 
@@ -104,15 +104,16 @@ namespace Sharpbrake.Client.Tests
         }
 
         [Fact]
-        public void SetErrorEntries_ShouldNotSetActionAndComponentIfNoError()
+        public void SetErrorEntries_ShouldSetErrorEntryUsingMessageIfExceptionEmpty()
         {
             var builder = new NoticeBuilder();
-            builder.SetErrorEntries(null);
+            builder.SetErrorEntries(null, "message");
 
-            var notice = builder.ToNotice();
+            var errorEntries = builder.ToNotice().Errors;
 
-            Assert.True(string.IsNullOrEmpty(notice.Context.Action));
-            Assert.True(string.IsNullOrEmpty(notice.Context.Component));
+            Assert.NotNull(errorEntries);
+            Assert.True(errorEntries.Count == 1);
+            Assert.Equal("message", errorEntries.First().Message);
         }
 
         [Fact]
@@ -316,7 +317,7 @@ namespace Sharpbrake.Client.Tests
         public void ToJsonString()
         {
             var builder = new NoticeBuilder();
-            builder.SetErrorEntries(new Exception());
+            builder.SetErrorEntries(new Exception(), string.Empty);
 
             var notice = builder.ToNotice();
 
@@ -347,7 +348,7 @@ namespace Sharpbrake.Client.Tests
         {
             var builder = new NoticeBuilder();
 
-            builder.SetErrorEntries(new Exception());
+            builder.SetErrorEntries(new Exception(), string.Empty);
             builder.SetHttpContext(new FakeHttpContext(), null);
 
             var notice = builder.ToNotice();

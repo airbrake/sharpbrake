@@ -23,6 +23,7 @@ namespace Sharpbrake.Client
     {
         private readonly AirbrakeConfig config;
         private readonly IHttpRequestHandler httpRequestHandler;
+        private IHttpContext httpContext;
 
         /// <summary>
         /// List of filters for applying to the <see cref="Notice"/> object.
@@ -52,7 +53,7 @@ namespace Sharpbrake.Client
         }
 
         /// <summary>
-        /// Adds filter to the list of filters for current notifier.
+        /// Adds filter to the list of filters for the current notifier.
         /// </summary>
         public void AddFilter(Func<Notice, Notice> filter)
         {
@@ -60,21 +61,85 @@ namespace Sharpbrake.Client
         }
 
         /// <summary>
-        /// Notifies Airbrake on error in your app and logs response from Airbrake.
+        /// Clones the current notifier. Sets up provided HTTP context for it.
         /// </summary>
-        /// <remarks>
-        /// Call to Airbrake is made asynchronously. Logging is deferred and occurs only if constructor has been
-        /// provided with logger implementation or config contains non-empty value for "LogFile" property.
-        /// </remarks>
-        public void Notify(Exception exception, IHttpContext context = null, Severity severity = Severity.Error)
+        public AirbrakeNotifier ForContext(IHttpContext context)
         {
-            // TODO: Define new meaning for this method
+            var notifier = new AirbrakeNotifier(config, httpRequestHandler);
+
+            foreach (var filter in notifier.filters)
+                notifier.AddFilter(filter);
+
+            notifier.httpContext = context;
+
+            return notifier;
         }
 
         /// <summary>
-        /// Notifies Airbrake on error in your app using asynchronous call.
+        /// Notifies Airbrake on the exception with <see cref="Severity.Error"/> severity.
         /// </summary>
-        public Task<AirbrakeResponse> NotifyAsync(Exception exception, IHttpContext context = null, Severity severity = Severity.Error)
+        /// <param name="exception">Exception to report on.</param>
+        /// <returns>Task which represents an asynchronous operation to Airbrake.</returns>
+        public Task<AirbrakeResponse> NotifyAsync(Exception exception)
+        {
+            return NotifyAsync(Severity.Error, exception, null, null);
+        }
+
+        /// <summary>
+        /// Notifies Airbrake on the error with <see cref="Severity.Error"/> severity.
+        /// </summary>
+        /// <param name="messageTemplate">Message template describing the error.</param>
+        /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
+        /// <returns>Task which represents an asynchronous operation to Airbrake.</returns>
+        public Task<AirbrakeResponse> NotifyAsync(string messageTemplate, params object[] propertyValues)
+        {
+            return NotifyAsync(Severity.Error, null, messageTemplate, propertyValues);
+        }
+
+        /// <summary>
+        /// Notifies Airbrake on the error with <see cref="Severity.Error"/> severity and associated exception.
+        /// </summary>
+        /// <param name="exception">Exception associated with the error.</param>
+        /// <param name="messageTemplate">Message template describing the error.</param>
+        /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
+        /// <returns>Task which represents an asynchronous operation to Airbrake.</returns>
+        public Task<AirbrakeResponse> NotifyAsync(Exception exception, string messageTemplate, params object[] propertyValues)
+        {
+            return NotifyAsync(Severity.Error, exception, messageTemplate, propertyValues);
+        }
+
+        /// <summary>
+        /// Notifies Airbrake on the exception with specified severity.
+        /// </summary>
+        /// <param name="severity">Severity level of the error.</param>
+        /// <param name="exception">Exception to report on.</param>
+        /// <returns>Task which represents an asynchronous operation to Airbrake.</returns>
+        public Task<AirbrakeResponse> NotifyAsync(Severity severity, Exception exception)
+        {
+            return NotifyAsync(severity, exception, null, null);
+        }
+
+        /// <summary>
+        /// Notifies Airbrake on the error with specified severity.
+        /// </summary>
+        /// <param name="severity">Severity level of the error.</param>
+        /// <param name="messageTemplate">Message template describing the error.</param>
+        /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
+        /// <returns>Task which represents an asynchronous operation to Airbrake.</returns>
+        public Task<AirbrakeResponse> NotifyAsync(Severity severity, string messageTemplate, params object[] propertyValues)
+        {
+            return NotifyAsync(severity, null, messageTemplate, propertyValues);
+        }
+
+        /// <summary>
+        /// Notifies Airbrake on the error with specified severity and associated exception.
+        /// </summary>
+        /// <param name="severity">Severity level of the error.</param>
+        /// <param name="exception">Exception associated with the error.</param>
+        /// <param name="messageTemplate">Message template describing the error.</param>
+        /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
+        /// <returns>Task which represents an asynchronous operation to Airbrake.</returns>
+        public Task<AirbrakeResponse> NotifyAsync(Severity severity, Exception exception, string messageTemplate, params object[] propertyValues)
         {
             var log = InternalLogger.CreateInstance();
 
@@ -96,7 +161,7 @@ namespace Sharpbrake.Client
             {
                 if (Utils.IsIgnoredEnvironment(config.Environment, config.IgnoreEnvironments))
                 {
-                    var response = new AirbrakeResponse { Status = RequestStatus.Ignored };
+                    var response = new AirbrakeResponse {Status = RequestStatus.Ignored};
                     tcs.SetResult(response);
                     log.Trace("Ignoring notice for environment: {0}", config.Environment);
                     return tcs.Task;
@@ -105,7 +170,8 @@ namespace Sharpbrake.Client
                 var noticeBuilder = new NoticeBuilder();
 
                 log.Trace("Setting error entries");
-                noticeBuilder.SetErrorEntries(exception);
+                noticeBuilder.SetErrorEntries(exception,
+                    Utils.GetMessage(config.FormatProvider, messageTemplate, propertyValues));
 
                 log.Trace("Setting configuration context");
                 noticeBuilder.SetConfigurationContext(config);
@@ -113,10 +179,10 @@ namespace Sharpbrake.Client
                 log.Trace("Setting severity to {0}", severity);
                 noticeBuilder.SetSeverity(severity);
 
-                if (context != null)
+                if (httpContext != null)
                 {
                     log.Trace("Setting HTTP context");
-                    noticeBuilder.SetHttpContext(context, config);
+                    noticeBuilder.SetHttpContext(httpContext, config);
                 }
 
                 log.Trace("Setting environment context");
@@ -140,7 +206,7 @@ namespace Sharpbrake.Client
 
                 if (notice == null)
                 {
-                    var response = new AirbrakeResponse { Status = RequestStatus.Ignored };
+                    var response = new AirbrakeResponse {Status = RequestStatus.Ignored};
                     tcs.SetResult(response);
                     log.Trace("Ignoring notice because of filters");
                     return tcs.Task;
@@ -221,7 +287,6 @@ namespace Sharpbrake.Client
                                             airbrakeResponse = (AirbrakeResponse)serializer.ReadObject(memoryStream);
                                         }
 
-                                        //JsonConvert.DeserializeObject<AirbrakeResponse>(responseReader.ReadToEnd());
                                         // Note: a success response means that the data has been received and accepted for processing.
                                         // Use the URL or id from the response to query the status of an error. This will tell you if the error has been processed,
                                         // or if it has been rejected for reasons including invalid JSON and rate limiting.

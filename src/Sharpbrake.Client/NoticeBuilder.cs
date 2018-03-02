@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Json;
@@ -30,27 +31,50 @@ namespace Sharpbrake.Client
         }
 
         /// <summary>
-        /// Sets exception data into notice errors list.
+        /// Sets error entries into notice errors list.
         /// </summary>
-        public void SetErrorEntries(Exception exception)
+        public void SetErrorEntries(Exception exception, string message)
         {
             notice.Exception = exception;
+            notice.Message = message;
 
             var errors = new List<ErrorEntry>();
+            var ex = exception;
 
-            // main exception + no more than 3 inner exceptions (to reduce JSON size)
-            while (errors.Count < 4 && exception != null)
+            if (ex != null)
             {
-                var exceptionType = exception.GetType();
                 errors.Add(new ErrorEntry
                 {
-                    Message = !string.IsNullOrEmpty(exception.Message)
-                        ? string.Format("{0}: {1}", exceptionType.Name, exception.Message)
-                        : exceptionType.Name,
-                    Type = exceptionType.FullName,
-                    Backtrace = Utils.GetBacktrace(exception)
+                    Message = !string.IsNullOrEmpty(message) ? message : ex.Message,
+                    Type = ex.GetType().FullName,
+                    Backtrace = Utils.GetBacktrace(new StackTrace(ex, true))
                 });
-                exception = exception.InnerException;
+
+                ex = ex.InnerException;
+            }
+            else
+            {
+                errors.Add(new ErrorEntry
+                {
+                    Message = message,
+#if !NETSTANDARD1_4
+                    // skip 2 stack frames (for NotifyAsync and SetErrorEntries methods)
+                    Backtrace = Utils.GetBacktrace(new StackTrace(3, true))
+#endif
+                });
+            }
+
+            // to reduce JSON size no more than 3 inner exceptions are processed
+            while (ex != null && errors.Count < 4)
+            {
+                errors.Add(new ErrorEntry
+                {
+                    Message = ex.Message,
+                    Type = ex.GetType().FullName,
+                    Backtrace = Utils.GetBacktrace(new StackTrace(ex, true))
+                });
+
+                ex = ex.InnerException;
             }
 
             notice.Errors = errors;

@@ -6,7 +6,7 @@ using Sharpbrake.Client.Model;
 namespace Sharpbrake.Log4net
 {
     /// <summary>
-    /// Appender that sends an exception from logging request to Airbrake.
+    /// Appender that sends an error to Airbrake.
     /// </summary>
     public class AirbrakeAppender : AppenderSkeleton
     {
@@ -125,14 +125,12 @@ namespace Sharpbrake.Log4net
         }
 
         /// <summary>
-        /// Writes out an exception from logging event.
+        /// Notifies Airbrake on the error.
         /// </summary>
-        protected override void Append(LoggingEvent loggingEvent)
+        protected override void Append(LoggingEvent logEvent)
         {
-            if (loggingEvent?.ExceptionObject == null)
-                return;
-
-            Notifier.NotifyAsync(loggingEvent.ExceptionObject, GetHttpContext(), GetErrorSeverity(loggingEvent.Level));
+            var notifier = Notifier.ForContext(GetHttpContext());
+            notifier.NotifyAsync(GetErrorSeverity(logEvent.Level), logEvent.ExceptionObject, logEvent.RenderedMessage);
         }
 
         /// <summary>

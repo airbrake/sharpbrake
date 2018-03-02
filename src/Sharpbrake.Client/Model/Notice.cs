@@ -59,6 +59,16 @@ namespace Sharpbrake.Client.Model
         public Exception Exception { get; set; }
 
         /// <summary>
+        /// The message describing the error.
+        /// </summary>
+        /// <remarks>
+        /// Message is built from message template and zero or more properties using specified by
+        /// <see cref="IFormatProvider"/> formatting information in <see cref="AirbrakeConfig"/>.
+        /// Message is sent to Airbrake in the first <see cref="ErrorEntry"/> message.
+        /// </remarks>
+        public string Message { get; set; }
+
+        /// <summary>
         /// The <see cref="IHttpContext"/> object that the <see cref="Notice"/> is built for.
         /// </summary>
         /// <remarks>

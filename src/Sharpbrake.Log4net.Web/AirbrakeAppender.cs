@@ -4,7 +4,7 @@ using Sharpbrake.Web;
 namespace Sharpbrake.Log4net.Web
 {
     /// <summary>
-    /// Appender that sends an exception from logging request to Airbrake
+    /// Appender that sends an error to Airbrake
     /// with support for HTTP context properties.
     /// </summary>
     public class AirbrakeAppender : Log4net.AirbrakeAppender

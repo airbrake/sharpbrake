@@ -75,6 +75,11 @@ namespace Sharpbrake.Client
         public IList<string> BlacklistKeys { get; set; }
 
         /// <summary>
+        /// Culture-specific formatting information for error messages.
+        /// </summary>
+        public IFormatProvider FormatProvider { get; set; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="AirbrakeConfig"/> class.
         /// </summary>
         public AirbrakeConfig()
