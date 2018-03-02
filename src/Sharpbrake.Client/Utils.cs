@@ -244,8 +244,14 @@ namespace Sharpbrake.Client
         /// <returns></returns>
         public static string GetMessage(IFormatProvider provider, string messageTemplate, params object[] propertyValues)
         {
-            // TODO: Consider to add support for message templates for structured logging (https://messagetemplates.org/)
-            return string.IsNullOrEmpty(messageTemplate) ? null : string.Format(provider, messageTemplate, propertyValues);
+            // TODO: Add support for message templates for structured logging (https://messagetemplates.org/)
+
+            if (string.IsNullOrEmpty(messageTemplate))
+                return null;
+
+            return propertyValues == null || propertyValues.Length == 0
+                ? messageTemplate
+                : string.Format(provider, messageTemplate, propertyValues);
         }
 
         private static int IndexOfRegex(IList<Regex> regexList, string key)

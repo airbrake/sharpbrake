@@ -458,6 +458,12 @@ namespace Sharpbrake.Client.Tests
         }
 
         [Fact]
+        public void GetMessage_ShouldReturnRawMessageIfNoProperties()
+        {
+            Assert.Equal("{Message}", Utils.GetMessage(null, "{Message}", null));
+        }
+
+        [Fact]
         public void GetMessage_ShouldReturnNullIfMessageTemplateEmpty()
         {
             Assert.Null(Utils.GetMessage(null, null, null));
