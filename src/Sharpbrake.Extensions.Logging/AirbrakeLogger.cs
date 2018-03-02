@@ -35,7 +35,11 @@ namespace Sharpbrake.Extensions.Logging
             if (!IsEnabled(logLevel))
                 return;
 
-            notifier.ForContext(GetHttpContext()).NotifyAsync(GetErrorSeverity(logLevel), exception);
+            var message = string.Empty;
+            if (formatter != null)
+                message = formatter(state, exception);
+
+            notifier.ForContext(GetHttpContext()).NotifyAsync(GetErrorSeverity(logLevel), exception, message);
         }
 
         /// <summary>
