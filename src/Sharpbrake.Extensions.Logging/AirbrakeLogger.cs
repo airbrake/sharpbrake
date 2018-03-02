@@ -32,6 +32,9 @@ namespace Sharpbrake.Extensions.Logging
         /// </summary>
         public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
         {
+            if (!IsEnabled(logLevel))
+                return;
+
             notifier.ForContext(GetHttpContext()).NotifyAsync(GetErrorSeverity(logLevel), exception);
         }
 
