@@ -2,7 +2,6 @@ Sharpbrake
 ==========
 
 [![Build status](https://ci.appveyor.com/api/projects/status/e4o7ffmhq6y4rhei/branch/master?svg=true)](https://ci.appveyor.com/project/airbrake/sharpbrake/branch/master)
-[![Coverity](https://scan.coverity.com/projects/12047/badge.svg)](https://scan.coverity.com/projects/sharpbrake)
 [![Coverage](https://codecov.io/gh/airbrake/sharpbrake/branch/master/graph/badge.svg)](https://codecov.io/gh/airbrake/sharpbrake)
 
 ![The Sharpbrake notifier for C#/.NET](https://s3.amazonaws.com/airbrake-github-assets/sharpbrake/arthur-sharpbrake.jpeg)
@@ -12,16 +11,16 @@ Sharpbrake
 Introduction
 ------------
 
-[Airbrake](https://airbrake.io) is an online tool that provides robust exception
+[Airbrake](https://airbrake.io) is an online tool that provides robust error
 tracking in most of your C#/.NET applications. In doing so, it allows you to
 easily review errors, tie an error to an individual piece of code, and trace the
 cause back to recent changes. The Airbrake dashboard provides easy
-categorization, searching, and prioritization of exceptions so that when errors
+categorization, searching, and prioritization of errors so that when they
 occur, your team can quickly determine the root cause.
 
 Sharpbrake is a C# notifier library for Airbrake. It provides minimalist API to
-send C# exceptions to the Airbrake dashboard. The library perfectly suits any
-type of C# applications.
+send C# exceptions and error messages to the Airbrake dashboard. The library
+perfectly suits any type of C# applications.
 
 Key features
 ------------
@@ -31,7 +30,7 @@ Key features
 * SSL support (all communication with Airbrake is encrypted by default)
 * Support for .NET 4.5.2 and above (including the latest .NET Core platforms)
   <sup>[[net35](#net-35-support)]</sup>
-* Asynchronous exception reporting<sup>[[link](#notify)]</sup>
+* Asynchronous error reporting<sup>[[link](#notify)]</sup>
 * Logging support<sup>[[link](#logfile)]</sup>
 * Flexible configuration options (configure as many Airbrake notifiers in one
   application as you want)<sup>[[link](#configuration)]</sup>
@@ -97,7 +96,8 @@ namespace ConsoleApplication
             }
             catch (Exception ex)
             {
-                var response = airbrake.NotifyAsync(ex).Result;
+                var notice = airbrake.CreateNotice(ex);
+                var response = airbrake.NotifyAsync(notice).Result;
                 Console.WriteLine("Status: {0}, Id: {1}, Url: {2}", response.Status, response.Id, response.Url);
             }
         }
@@ -202,8 +202,8 @@ var config = new AirbrakeConfig {
 #### Environment
 
 Configures the environment the application is running in. Helps the Airbrake
-dashboard to distinguish between exceptions occurring in different
-environments. By default, it's not set.
+dashboard to distinguish between errors occurring in different environments.
+By default, it's not set.
 
 ```csharp
 var config = new AirbrakeConfig {
@@ -213,7 +213,7 @@ var config = new AirbrakeConfig {
 
 #### AppVersion
 
-The version of your application that you can pass to differentiate exceptions
+The version of your application that you can pass to differentiate errors
 between multiple versions. It's not set by default.
 
 ```csharp
@@ -251,9 +251,9 @@ var config = new AirbrakeConfig {
 
 #### IgnoreEnvironments
 
-Setting this option allows Airbrake to filter exceptions occurring in unwanted
+Setting this option allows Airbrake to filter errors occurring in unwanted
 environments such as `test`. By default, it is not set, which means Sharpbrake
-sends exceptions occurring in all environments.
+sends errors occurring in all environments.
 
 ```csharp
 var config = new AirbrakeConfig {
@@ -325,32 +325,24 @@ var config = AirbrakeConfig.Load(settings);
 
 ### AirbrakeNotifier
 
-#### Notify
+#### CreateNotice
 
-`Notify` asynchronously sends an exception to the Airbrake dashboard and logs a
-response from Airbrake. It's a convenience method
-around [`NotifyAsync`](#notifyasync).
+`CreateNotice` creates a notice with error details that can be sent to the
+Airbrake dashboard with the help of [`NotifyAsync`](#notifyasync):
 
 ```csharp
-try
-{
-    throw new Exception();
-}
-catch(Exception ex)
-{
-    airbrake.Notify(ex);
-}
+notifier.CreateNotice(Severity.Error, exception, "Failed with message {0}", exception.Message);
 ```
 
 #### NotifyAsync
 
-`NotifyAsync` is similar to [`Notify`](#notify), however it is much more
-powerful because it provides control over the response object from Airbrake.
+`NotifyAsync` asynchronously sends a notice with error details to the Airbrake
+dashboard. It also provides control over the response object from Airbrake.
 In .NET 4.5 and above you can use task-based programming model. Example of using
 a continuation, which prints URL to the error in the Airbrake dashboard:
 
 ```csharp
-airbrake.NotifyAsync(ex)
+airbrake.NotifyAsync(notice)
         .ContinueWith(response => Console.WriteLine(response.Result.Url));
 ```
 
@@ -360,6 +352,18 @@ The method also supports `async/await`:
 var response = await airbrake.NotifyAsync(ex);
 Console.WriteLine(response.Url);
 ```
+
+#### SetHttpContext
+
+`SetHttpContext` attaches HTTP context properties to the notice:
+
+```csharp
+var notice = notifier.CreateNotice(ex);
+notifier.SetHttpContext(notice, new AspNetCoreHttpContext(context));
+notifier.NotifyAsync(notice);
+```
+
+Usually, our integrations perform this for you.
 
 #### `AddFilter`
 
@@ -428,12 +432,10 @@ airbrake.AddFilter(notice =>
 
 [Severity][what-is-severity] allows categorizing how severe an error is. By
 default, it's set to `error`. To redefine severity, simply pass the `Severity`
-as a parameter to the `NotifyAsync` (or `Notify`) method. For example:
+as a parameter to the `CreateNotice` method. For example:
 
 ```csharp
-airbrake.NotifyAsync(ex, null,
-    Severity.Critical
-).Result;
+airbrake.CreateNotice(Severity.Critical, exception);
 ```
 
 ASP.NET Integration
@@ -516,8 +518,8 @@ NLog Integration
 
 ### Airbrake NLog target
 
-Airbrake NLog target is used to pass an exception from log message to the
-Airbrake dashboard.
+Airbrake NLog target is used to pass an error and exception from log message
+to the Airbrake dashboard.
 
 1. Install the `Sharpbrake.NLog` package from NuGet (you can use "Package
    Manager Console" from Visual Studio):
@@ -666,8 +668,8 @@ Log4net Integration
 
 ### Airbrake log4net appender
 
-Airbrake log4net appender sends an exception from the logging event to the
-Airbrake dashboard.
+Airbrake log4net appender sends an exception or/and error from the logging
+event to the Airbrake dashboard.
 
 1. Install the `Sharpbrake.Log4net` package from NuGet (you can use "Package
    Manager Console" from Visual Studio):
@@ -766,7 +768,7 @@ context properties in web applications.
 Microsoft.Extensions.Logging Integration
 ----------------------------------------
 
-Provider notifies the Airbrake dashboard of an exception with the help of
+Provider notifies the Airbrake dashboard of an error with the help of
 [Microsoft.Extensions.Logging](https://github.com/aspnet/Logging) methods.
 
 1. Install the `Sharpbrake.Extensions.Logging` package from NuGet (you can use "Package
@@ -832,7 +834,7 @@ Provider notifies the Airbrake dashboard of an exception with the help of
    To get access to the HTTP content `app.ApplicationServices.GetService<IHttpContextAccessor>()`
    is used.
 
-   Minimum log level can be set here to filter exceptions with lower severities
+   Minimum log level can be set here to filter errors with lower severities
    (defaults to `LogLevel.Error`):
 
    ```csharp
