@@ -12,16 +12,14 @@ namespace Sharpbrake.Client
     /// <summary>
     /// Builder for the <see cref="Notice"/> object.
     /// </summary>
-    public class NoticeBuilder
+    public static class NoticeBuilder
     {
-        private readonly Notice notice;
-
         /// <summary>
-        /// Initializes a new instance of the <see cref="NoticeBuilder"/> class.
+        /// Creates a new instance of <see cref="Notice"/>.
         /// </summary>
-        public NoticeBuilder()
+        public static Notice CreateNotice()
         {
-            notice = new Notice
+            return new Notice
             {
                 Context = new Context
                 {
@@ -33,7 +31,7 @@ namespace Sharpbrake.Client
         /// <summary>
         /// Sets error entries into notice errors list.
         /// </summary>
-        public void SetErrorEntries(Exception exception, string message)
+        public static void SetErrorEntries(this Notice notice, Exception exception, string message)
         {
             notice.Exception = exception;
             notice.Message = message;
@@ -91,7 +89,7 @@ namespace Sharpbrake.Client
         /// <summary>
         /// Sets configuration context into corresponding properties of notice.
         /// </summary>
-        public void SetConfigurationContext(AirbrakeConfig config)
+        public static void SetConfigurationContext(this Notice notice, AirbrakeConfig config)
         {
             if (config == null)
                 return;
@@ -103,7 +101,7 @@ namespace Sharpbrake.Client
         /// <summary>
         /// Sets environment context (host, OS and C#/.NET info) into corresponding properties of notice.
         /// </summary>
-        public void SetEnvironmentContext(string hostName, string osVersion, string langVersion)
+        public static void SetEnvironmentContext(this Notice notice, string hostName, string osVersion, string langVersion)
         {
             if (string.IsNullOrEmpty(hostName) && string.IsNullOrEmpty(osVersion) && string.IsNullOrEmpty(langVersion))
                 return;
@@ -116,7 +114,7 @@ namespace Sharpbrake.Client
         /// <summary>
         /// Sets error severity.
         /// </summary>
-        public void SetSeverity(Severity severity)
+        public static void SetSeverity(this Notice notice, Severity severity)
         {
             notice.Context.Severity = severity.ToString().ToLowerInvariant();
         }
@@ -124,9 +122,9 @@ namespace Sharpbrake.Client
         /// <summary>
         /// Sets the current Http context properties into corresponding properties of notice.
         /// </summary>
-        public void SetHttpContext(IHttpContext httpContext, AirbrakeConfig config)
+        public static void SetHttpContext(this Notice notice, IHttpContext httpContext, AirbrakeConfig config)
         {
-            if (httpContext == null)
+            if (notice == null || httpContext == null)
                 return;
 
             notice.HttpContext = httpContext;
@@ -165,20 +163,12 @@ namespace Sharpbrake.Client
         }
 
         /// <summary>
-        /// Gets the current instance of <see cref="Notice"/>.
-        /// </summary>
-        public Notice ToNotice()
-        {
-            return notice;
-        }
-
-        /// <summary>
         /// Gets JSON string for the instance of <see cref="Notice"/>.
         /// </summary>
         /// <remarks>
         /// Notice that exceeds 64 KB is truncated.
         /// </remarks>
-        public static string ToJsonString(Notice notice)
+        public static string ToJsonString(this Notice notice)
         {
             const int noticeLengthMax = 64000;
             const int stringLengthMax = 1024;

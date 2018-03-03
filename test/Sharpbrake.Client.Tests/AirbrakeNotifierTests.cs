@@ -4,6 +4,7 @@ using System.Net;
 using Sharpbrake.Client.Tests.Mocks;
 using System.Threading.Tasks;
 using Xunit;
+using Sharpbrake.Client.Model;
 
 namespace Sharpbrake.Client.Tests
 {
@@ -22,6 +23,79 @@ namespace Sharpbrake.Client.Tests
             Assert.Equal("config", ((ArgumentNullException)exception).ParamName);
         }
 
+        [Fact]
+        public void CreateNotice_ShouldSetDefaultSeverityToError()
+        {
+            var notifier = new AirbrakeNotifier(new AirbrakeConfig());
+
+            var notice1 = notifier.CreateNotice("message");
+            var notice2 = notifier.CreateNotice(new Exception());
+
+            Assert.Equal(Severity.Error.ToString().ToLowerInvariant(), notice1.Context.Severity);
+            Assert.Equal(Severity.Error.ToString().ToLowerInvariant(), notice2.Context.Severity);
+        }
+
+        [Fact]
+        public void CreateNotice_ShouldSetErrorEntriesIfExceptionProvided()
+        {
+            var notifier = new AirbrakeNotifier(new AirbrakeConfig());
+
+            var notice = notifier.CreateNotice(Severity.Error, new Exception());
+
+            Assert.NotNull(notice.Errors);
+        }
+
+        [Fact]
+        public void CreateNotice_ShouldSetErrorEntriesIfMessageProvided()
+        {
+            var notifier = new AirbrakeNotifier(new AirbrakeConfig());
+
+            var notice = notifier.CreateNotice(Severity.Error, "message {0}", 1);
+
+            Assert.NotNull(notice.Errors);
+        }
+
+        [Fact]
+        public void CreateNotice_ShouldUpdateNoticeAfterApplyingFilters()
+        {
+            var notifier = new AirbrakeNotifier(new AirbrakeConfig());
+
+            notifier.AddFilter(n =>
+            {
+                n.Context.Action = "modified action";
+                return n;
+            });
+
+            var notice = notifier.CreateNotice("message");
+
+            Assert.NotNull(notice.Context);
+            Assert.True(notice.Context.Action == "modified action");
+        }
+
+        [Fact]
+        public void CreateNotice_ShouldReturnNullIfFilterSetNoticeToNull()
+        {
+            var notifier = new AirbrakeNotifier(new AirbrakeConfig());
+
+            notifier.AddFilter(n => null);
+
+            var notice = notifier.CreateNotice("message");
+
+            Assert.Null(notice);
+        }
+
+        [Fact]
+        public void SetHttpContext_ShouldSetHttpContext()
+        {
+            var notifier = new AirbrakeNotifier(new AirbrakeConfig());
+            var notice = NoticeBuilder.CreateNotice();
+            var context = new FakeHttpContext();
+
+            notifier.SetHttpContext(notice, context);
+
+            Assert.NotNull(notice.HttpContext);
+        }
+
         [Theory,
          InlineData("", "e2046ca6e4e9214b24ad252e3c99a0f6"),
          InlineData("127348", "")]
@@ -36,9 +110,10 @@ namespace Sharpbrake.Client.Tests
             using (var requestHandler = new FakeHttpRequestHandler())
             {
                 var notifier = new AirbrakeNotifier(config, requestHandler);
-                var exceptionTask = Record.ExceptionAsync(() => Task.Run(() => notifier.NotifyAsync(new Exception())));
+                var exceptionTask = Record.ExceptionAsync(() => Task.Run(() => notifier.NotifyAsync(NoticeBuilder.CreateNotice())));
 
                 Assert.NotNull(exceptionTask);
+
                 var exception = exceptionTask.Result;
 
                 Assert.IsType<Exception>(exception);
@@ -60,43 +135,9 @@ namespace Sharpbrake.Client.Tests
             using (var requestHandler = new FakeHttpRequestHandler())
             {
                 var notifier = new AirbrakeNotifier(config, requestHandler);
-                var airbrakeResponse = notifier.NotifyAsync(new Exception()).Result;
+                var response = notifier.NotifyAsync(NoticeBuilder.CreateNotice()).Result;
 
-                Assert.True(airbrakeResponse.Status == RequestStatus.Ignored);
-            }
-        }
-
-        [Theory,
-         InlineData(true),
-         InlineData(false)]
-        public void NotifyAsync_ShouldInitializeHttpContextOnlyIfProvided(bool isHttpContextProvided)
-        {
-            var config = new AirbrakeConfig
-            {
-                ProjectId = "127348",
-                ProjectKey = "e2046ca6e4e9214b24ad252e3c99a0f6"
-            };
-
-            using (var requestHandler = new FakeHttpRequestHandler())
-            {
-                requestHandler.HttpResponse.StatusCode = HttpStatusCode.Created;
-                requestHandler.HttpResponse.ResponseJson = "{\"Id\":\"12345\",\"Url\":\"https://airbrake.io/\"}";
-
-                var notifier = new AirbrakeNotifier(config, requestHandler);
-
-                FakeHttpContext context = null;
-                if (isHttpContextProvided)
-                    context = new FakeHttpContext { UserAgent = "test" };
-
-                var airbrakeResponse = notifier.ForContext(context).NotifyAsync(new Exception()).Result;
-                var notice = NoticeBuilder.FromJsonString(requestHandler.HttpRequest.GetRequestStreamContent());
-
-                Assert.True(airbrakeResponse.Status == RequestStatus.Success);
-
-                if (isHttpContextProvided)
-                    Assert.True(notice.Context != null);
-                else
-                    Assert.True(notice.Context == null || string.IsNullOrEmpty(notice.Context.UserAgent));
+                Assert.True(response.Status == RequestStatus.Ignored);
             }
         }
 
@@ -120,11 +161,13 @@ namespace Sharpbrake.Client.Tests
                 requestHandler.HttpRequest.IsFaultedGetResponse = faultedTask == "GetResponse";
 
                 var notifier = new AirbrakeNotifier(config, requestHandler);
-                var notifyTask = notifier.NotifyAsync(new Exception());
+                var notifyTask = notifier.NotifyAsync(NoticeBuilder.CreateNotice());
                 var exceptionTask = Record.ExceptionAsync(() => notifyTask);
 
                 Assert.NotNull(exceptionTask);
+
                 var exception = exceptionTask.Result;
+
                 Assert.True(notifyTask.IsFaulted);
                 Assert.IsType<Exception>(exception);
             }
@@ -150,11 +193,13 @@ namespace Sharpbrake.Client.Tests
                 requestHandler.HttpRequest.IsCanceledGetResponse = canceledTask == "GetResponse";
 
                 var notifier = new AirbrakeNotifier(config, requestHandler);
-                var notifyTask = notifier.NotifyAsync(new Exception());
+                var notifyTask = notifier.NotifyAsync(NoticeBuilder.CreateNotice());
                 var exceptionTask = Record.ExceptionAsync(() => notifyTask);
 
                 Assert.NotNull(exceptionTask);
+
                 var exception = exceptionTask.Result;
+
                 Assert.True(notifyTask.IsCanceled);
                 Assert.IsType<TaskCanceledException>(exception);
             }
@@ -179,7 +224,7 @@ namespace Sharpbrake.Client.Tests
                 requestHandler.HttpResponse.ResponseJson = "{\"Id\":\"12345\",\"Url\":\"https://airbrake.io/\"}";
 
                 var notifier = new AirbrakeNotifier(config, requestHandler);
-                var airbrakeResponse = notifier.NotifyAsync(new Exception()).Result;
+                var airbrakeResponse = notifier.NotifyAsync(NoticeBuilder.CreateNotice()).Result;
 
                 if (isStatusCodeCreated)
                     Assert.True(airbrakeResponse.Status == RequestStatus.Success);
@@ -189,38 +234,7 @@ namespace Sharpbrake.Client.Tests
         }
 
         [Fact]
-        public void NotifyAsync_ShouldUpdateNoticeAfterApplyingFilters()
-        {
-            var config = new AirbrakeConfig
-            {
-                ProjectId = "127348",
-                ProjectKey = "e2046ca6e4e9214b24ad252e3c99a0f6"
-            };
-
-            using (var requestHandler = new FakeHttpRequestHandler())
-            {
-                requestHandler.HttpResponse.StatusCode = HttpStatusCode.Created;
-                requestHandler.HttpResponse.ResponseJson = "{\"Id\":\"12345\",\"Url\":\"https://airbrake.io/\"}";
-
-                var notifier = new AirbrakeNotifier(config, requestHandler);
-
-                notifier.AddFilter(notice =>
-                {
-                    notice.Context.Action = "modified action";
-                    return notice;
-                });
-
-                var airbrakeResponse = notifier.NotifyAsync(new Exception()).Result;
-                var actualNotice = NoticeBuilder.FromJsonString(requestHandler.HttpRequest.GetRequestStreamContent());
-
-                Assert.True(airbrakeResponse.Status == RequestStatus.Success);
-                Assert.NotNull(actualNotice.Context);
-                Assert.True(actualNotice.Context.Action == "modified action");
-            }
-        }
-
-        [Fact]
-        public void NotifyAsync_ShouldSetStatusToIgnoredIfNoticeIsNullAfterApplyingFilters()
+        public void NotifyAsync_ShouldSetStatusToIgnoredIfNoticeIsNull()
         {
             var config = new AirbrakeConfig
             {
@@ -231,11 +245,9 @@ namespace Sharpbrake.Client.Tests
             using (var requestHandler = new FakeHttpRequestHandler())
             {
                 var notifier = new AirbrakeNotifier(config, requestHandler);
-                notifier.AddFilter(notice => null);
+                var response = notifier.NotifyAsync(null).Result;
 
-                var airbrakeResponse = notifier.NotifyAsync(new Exception()).Result;
-
-                Assert.True(airbrakeResponse.Status == RequestStatus.Ignored);
+                Assert.True(response.Status == RequestStatus.Ignored);
             }
         }
     }

@@ -129,8 +129,9 @@ namespace Sharpbrake.Log4net
         /// </summary>
         protected override void Append(LoggingEvent logEvent)
         {
-            var notifier = Notifier.ForContext(GetHttpContext());
-            notifier.NotifyAsync(GetErrorSeverity(logEvent.Level), logEvent.ExceptionObject, logEvent.RenderedMessage);
+            var notice = Notifier.CreateNotice(GetErrorSeverity(logEvent.Level), logEvent.ExceptionObject, logEvent.RenderedMessage);
+            Notifier.SetHttpContext(notice, GetHttpContext());
+            Notifier.NotifyAsync(notice);
         }
 
         /// <summary>

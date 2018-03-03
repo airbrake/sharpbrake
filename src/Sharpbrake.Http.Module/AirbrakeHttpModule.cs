@@ -40,7 +40,9 @@ namespace Sharpbrake.Http.Module
                 var exception = app.Server.GetLastError().GetBaseException();
                 var context = new AspNetHttpContext(app.Context);
 
-                notifier.ForContext(context).NotifyAsync(exception);
+                var notice = notifier.CreateNotice(exception);
+                notifier.SetHttpContext(notice, context);
+                notifier.NotifyAsync(notice);
             };
         }
 

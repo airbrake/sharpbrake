@@ -17,13 +17,12 @@ using System.Threading.Tasks;
 namespace Sharpbrake.Client
 {
     /// <summary>
-    /// Functionality for notifying Airbrake on exception.
+    /// Functionality for reporting errors to the Airbrake dashboard.
     /// </summary>
     public class AirbrakeNotifier
     {
         private readonly AirbrakeConfig config;
         private readonly IHttpRequestHandler httpRequestHandler;
-        private IHttpContext httpContext;
 
         /// <summary>
         /// List of filters for applying to the <see cref="Notice"/> object.
@@ -53,7 +52,7 @@ namespace Sharpbrake.Client
         }
 
         /// <summary>
-        /// Adds filter to the list of filters for the current notifier.
+        /// Adds a filter to the list of filters for the current notifier.
         /// </summary>
         public void AddFilter(Func<Notice, Notice> filter)
         {
@@ -61,85 +60,113 @@ namespace Sharpbrake.Client
         }
 
         /// <summary>
-        /// Clones the current notifier. Sets up provided HTTP context for it.
-        /// </summary>
-        public AirbrakeNotifier ForContext(IHttpContext context)
-        {
-            var notifier = new AirbrakeNotifier(config, httpRequestHandler);
-
-            foreach (var filter in notifier.filters)
-                notifier.AddFilter(filter);
-
-            notifier.httpContext = context;
-
-            return notifier;
-        }
-
-        /// <summary>
-        /// Notifies Airbrake on the exception with <see cref="Severity.Error"/> severity.
+        /// Creates a notice for the exception with <see cref="Severity.Error"/> severity.
         /// </summary>
         /// <param name="exception">Exception to report on.</param>
-        /// <returns>Task which represents an asynchronous operation to Airbrake.</returns>
-        public Task<AirbrakeResponse> NotifyAsync(Exception exception)
+        public Notice CreateNotice(Exception exception)
         {
-            return NotifyAsync(Severity.Error, exception, null, null);
+            return CreateNotice(Severity.Error, exception, null, null);
         }
 
         /// <summary>
-        /// Notifies Airbrake on the error with <see cref="Severity.Error"/> severity.
+        /// Creates a notice for the error with <see cref="Severity.Error"/> severity.
         /// </summary>
         /// <param name="messageTemplate">Message template describing the error.</param>
         /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
-        /// <returns>Task which represents an asynchronous operation to Airbrake.</returns>
-        public Task<AirbrakeResponse> NotifyAsync(string messageTemplate, params object[] propertyValues)
+        public Notice CreateNotice(string messageTemplate, params object[] propertyValues)
         {
-            return NotifyAsync(Severity.Error, null, messageTemplate, propertyValues);
+            return CreateNotice(Severity.Error, null, messageTemplate, propertyValues);
         }
 
         /// <summary>
-        /// Notifies Airbrake on the error with <see cref="Severity.Error"/> severity and associated exception.
+        /// Creates a notice for the error with <see cref="Severity.Error"/> severity and associated exception.
         /// </summary>
         /// <param name="exception">Exception associated with the error.</param>
         /// <param name="messageTemplate">Message template describing the error.</param>
         /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
-        /// <returns>Task which represents an asynchronous operation to Airbrake.</returns>
-        public Task<AirbrakeResponse> NotifyAsync(Exception exception, string messageTemplate, params object[] propertyValues)
+        public Notice CreateNotice(Exception exception, string messageTemplate, params object[] propertyValues)
         {
-            return NotifyAsync(Severity.Error, exception, messageTemplate, propertyValues);
+            return CreateNotice(Severity.Error, exception, messageTemplate, propertyValues);
         }
 
         /// <summary>
-        /// Notifies Airbrake on the exception with specified severity.
+        /// Creates a notice for the exception with specified severity.
         /// </summary>
         /// <param name="severity">Severity level of the error.</param>
         /// <param name="exception">Exception to report on.</param>
-        /// <returns>Task which represents an asynchronous operation to Airbrake.</returns>
-        public Task<AirbrakeResponse> NotifyAsync(Severity severity, Exception exception)
+        public Notice CreateNotice(Severity severity, Exception exception)
         {
-            return NotifyAsync(severity, exception, null, null);
+            return CreateNotice(severity, exception, null, null);
         }
 
         /// <summary>
-        /// Notifies Airbrake on the error with specified severity.
+        /// Creates a notice for the error with specified severity.
         /// </summary>
         /// <param name="severity">Severity level of the error.</param>
         /// <param name="messageTemplate">Message template describing the error.</param>
         /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
-        /// <returns>Task which represents an asynchronous operation to Airbrake.</returns>
-        public Task<AirbrakeResponse> NotifyAsync(Severity severity, string messageTemplate, params object[] propertyValues)
+        public Notice CreateNotice(Severity severity, string messageTemplate, params object[] propertyValues)
         {
-            return NotifyAsync(severity, null, messageTemplate, propertyValues);
+            return CreateNotice(severity, null, messageTemplate, propertyValues);
         }
 
         /// <summary>
-        /// Notifies Airbrake on the error with specified severity and associated exception.
+        /// Creates a notice for the error with specified severity and associated exception.
         /// </summary>
         /// <param name="severity">Severity level of the error.</param>
         /// <param name="exception">Exception associated with the error.</param>
         /// <param name="messageTemplate">Message template describing the error.</param>
         /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
+        public Notice CreateNotice(Severity severity, Exception exception, string messageTemplate, params object[] propertyValues)
+        {
+            var log = InternalLogger.CreateInstance();
+            var notice = NoticeBuilder.CreateNotice();
+
+            log.Trace("Setting error entries");
+            notice.SetErrorEntries(exception,
+                Utils.GetMessage(config.FormatProvider, messageTemplate, propertyValues));
+
+            log.Trace("Setting configuration context");
+            notice.SetConfigurationContext(config);
+
+            log.Trace("Setting severity to {0}", severity);
+            notice.SetSeverity(severity);
+
+            log.Trace("Setting environment context");
+#if NET452
+            notice.SetEnvironmentContext(Dns.GetHostName(), Environment.OSVersion.VersionString, "C#/NET45");
+#elif NETSTANDARD1_4
+            // TODO: check https://github.com/dotnet/corefx/issues/4306 for "Environment.MachineName"
+            notice.SetEnvironmentContext("", RuntimeInformation.OSDescription, "C#/NETCORE");
+#elif NETSTANDARD2_0
+            notice.SetEnvironmentContext(Dns.GetHostName(), RuntimeInformation.OSDescription, "C#/NETCORE2");
+#endif
+
+            if (filters.Count > 0)
+            {
+                log.Trace("Applying filters");
+                notice = Utils.ApplyFilters(notice, filters);
+            }
+
+            log.Trace("Notice was created");
+            return notice;
+        }
+
+        /// <summary>
+        /// Sets HTTP context properties into the notice.
+        /// </summary>
+        public Notice SetHttpContext(Notice notice, IHttpContext context)
+        {
+            notice.SetHttpContext(context, config);
+            return notice;
+        }
+
+        /// <summary>
+        /// Notifies Airbrake on the error using the <see cref="Notice"/> object.
+        /// </summary>
+        /// <param name="notice">The notice describing the error.</param>
         /// <returns>Task which represents an asynchronous operation to Airbrake.</returns>
-        public Task<AirbrakeResponse> NotifyAsync(Severity severity, Exception exception, string messageTemplate, params object[] propertyValues)
+        public Task<AirbrakeResponse> NotifyAsync(Notice notice)
         {
             var log = InternalLogger.CreateInstance();
 
@@ -159,56 +186,19 @@ namespace Sharpbrake.Client
             var tcs = new TaskCompletionSource<AirbrakeResponse>();
             try
             {
-                if (Utils.IsIgnoredEnvironment(config.Environment, config.IgnoreEnvironments))
+                if (notice == null)
                 {
-                    var response = new AirbrakeResponse {Status = RequestStatus.Ignored};
+                    var response = new AirbrakeResponse { Status = RequestStatus.Ignored };
                     tcs.SetResult(response);
-                    log.Trace("Ignoring notice for environment: {0}", config.Environment);
+                    log.Trace("Notice is empty");
                     return tcs.Task;
                 }
 
-                var noticeBuilder = new NoticeBuilder();
-
-                log.Trace("Setting error entries");
-                noticeBuilder.SetErrorEntries(exception,
-                    Utils.GetMessage(config.FormatProvider, messageTemplate, propertyValues));
-
-                log.Trace("Setting configuration context");
-                noticeBuilder.SetConfigurationContext(config);
-
-                log.Trace("Setting severity to {0}", severity);
-                noticeBuilder.SetSeverity(severity);
-
-                if (httpContext != null)
+                if (Utils.IsIgnoredEnvironment(config.Environment, config.IgnoreEnvironments))
                 {
-                    log.Trace("Setting HTTP context");
-                    noticeBuilder.SetHttpContext(httpContext, config);
-                }
-
-                log.Trace("Setting environment context");
-
-#if NET452
-                noticeBuilder.SetEnvironmentContext(Dns.GetHostName(), Environment.OSVersion.VersionString, "C#/NET45");
-#elif NETSTANDARD1_4
-                // TODO: check https://github.com/dotnet/corefx/issues/4306 for "Environment.MachineName"
-                noticeBuilder.SetEnvironmentContext("", RuntimeInformation.OSDescription, "C#/NETCORE");
-#elif NETSTANDARD2_0
-                noticeBuilder.SetEnvironmentContext(Dns.GetHostName(), RuntimeInformation.OSDescription, "C#/NETCORE2");
-#endif
-                var notice = noticeBuilder.ToNotice();
-                log.Trace("Notice was created");
-
-                if (filters.Count > 0)
-                {
-                    log.Trace("Applying filters");
-                    notice = Utils.ApplyFilters(notice, filters);
-                }
-
-                if (notice == null)
-                {
-                    var response = new AirbrakeResponse {Status = RequestStatus.Ignored};
+                    var response = new AirbrakeResponse { Status = RequestStatus.Ignored };
                     tcs.SetResult(response);
-                    log.Trace("Ignoring notice because of filters");
+                    log.Trace("Ignoring notice for environment: {0}", config.Environment);
                     return tcs.Task;
                 }
 
@@ -242,7 +232,7 @@ namespace Sharpbrake.Client
                         using (var requestWriter = new StreamWriter(requestStream))
                         {
                             log.Trace("Writing to request stream");
-                            requestWriter.Write(NoticeBuilder.ToJsonString(notice));
+                            requestWriter.Write(notice.ToJsonString());
                         }
 
                         request.GetResponseAsync().ContinueWith(responseTask =>
@@ -313,7 +303,7 @@ namespace Sharpbrake.Client
             catch (Exception ex)
             {
                 tcs.SetException(ex);
-                log.Trace("Exception occurred when preparing notice: {0}", ex.Message);
+                log.Trace("Exception occurred when sending notice: {0}", ex.Message);
                 return tcs.Task;
             }
 

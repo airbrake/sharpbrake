@@ -137,8 +137,9 @@ namespace Sharpbrake.NLog
         /// </summary>
         protected override void Write(LogEventInfo logEvent)
         {
-            var notifier = Notifier.ForContext(GetHttpContext());
-            notifier.NotifyAsync(GetErrorSeverity(logEvent.Level), logEvent.Exception, logEvent.FormattedMessage);
+            var notice = Notifier.CreateNotice(GetErrorSeverity(logEvent.Level), logEvent.Exception, logEvent.FormattedMessage);
+            Notifier.SetHttpContext(notice, GetHttpContext());
+            Notifier.NotifyAsync(notice);
         }
 
         /// <summary>
