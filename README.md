@@ -92,7 +92,7 @@ namespace ConsoleApplication
 
             try
             {
-                throw new Exception("Oops!"));
+                throw new Exception("Oops!");
             }
             catch (Exception ex)
             {
@@ -264,7 +264,7 @@ var config = new AirbrakeConfig {
 #### BlacklistKeys
 
 Specifies which keys in the payload (parameters, session data, environment data,
-etc) should be filtered. Before sending an error, filtered keys will be
+etc.) should be filtered. Before sending an error, filtered keys will be
 substituted with the `[Filtered]` label.
 
 ```csharp
@@ -287,7 +287,7 @@ will be filtered out.
 #### WhitelistKeys
 
 Specifies which keys in the payload (parameters, session data, environment data,
-etc) should _not_ be filtered. All other keys will be substituted with the
+etc.) should _not_ be filtered. All other keys will be substituted with the
 `[Filtered]` label.
 
 ```csharp
@@ -302,6 +302,11 @@ var config = new AirbrakeConfig {
 //     email: 'john@example.com',
 //     accountId: 42 }
 ```
+
+#### FormatProvider
+
+Specifies formatting information for error messages. Check [IFormatProvider][iformatprovider]
+for details.
 
 API
 ---
@@ -349,7 +354,7 @@ airbrake.NotifyAsync(notice)
 The method also supports `async/await`:
 
 ```csharp
-var response = await airbrake.NotifyAsync(ex);
+var response = await airbrake.NotifyAsync(notice);
 Console.WriteLine(response.Url);
 ```
 
@@ -369,7 +374,7 @@ Usually, our integrations perform this for you.
 
 A notice can be customized or ignored before it is sent to Airbrake via
 `AddFilter`. A lambda expression that is passed to the `AddFilter` method
-accepts a `Notice` that can be processed by your code. The `Notice` object is
+accepts `Notice` that can be processed by your code. The `Notice` object is
 pre-populated with errors, context and params, so you can freely modify these
 values if you wish. The `Notice` object is not sent to Airbrake if the lambda
 expression returns `null`:
@@ -378,15 +383,18 @@ expression returns `null`:
 airbrake.AddFilter(notice =>
 {
     // ignore notice if email is "test@example.com"
-    if (notice.Context.User.Email == "test@example.com")
+    if (notice.Context.User?.Email == "test@example.com")
         return null;
 
     // clear environment variables with "token"-related keys
-    new List<string>(notice.EnvironmentVars.Keys).ForEach(key =>
+    if (notice.EnvironmentVars != null)
     {
-        if (key.ToLowerInvariant().Contains("token"))
-            notice.EnvironmentVars[key] = string.Empty;
-    });
+        new List<string>(notice.EnvironmentVars.Keys).ForEach(key =>
+        {
+            if (key.ToLowerInvariant().Contains("token"))
+                notice.EnvironmentVars[key] = string.Empty;
+        });
+    }
 
     return notice;
 });
@@ -749,11 +757,8 @@ context properties in web applications.
         method after setting up log4net functionality:
 
     ```csharp
-    public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+    public void Configure(IApplicationBuilder app, IHostingEnvironment env)
     {
-        loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-        loggerFactory.AddDebug();
-
         var repoAssembly = Assembly.GetEntryAssembly();
         var loggerRepository = log4net.LogManager.CreateRepository(repoAssembly,
             typeof(log4net.Repository.Hierarchy.Hierarchy));
@@ -925,3 +930,4 @@ The project uses the MIT License. See [LICENSE.md](LICENSE.md) for details.
 [sharpbrake-net35]: https://github.com/airbrake/sharpbrake-net35
 [nlog-config]: https://github.com/NLog/NLog/wiki/Configuration-file
 [log4net-config]: https://logging.apache.org/log4net/release/manual/configuration.html
+[iformatprovider]: https://docs.microsoft.com/en-us/dotnet/api/system.iformatprovider

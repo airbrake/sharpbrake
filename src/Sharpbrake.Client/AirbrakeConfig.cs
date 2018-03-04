@@ -75,7 +75,7 @@ namespace Sharpbrake.Client
         public IList<string> BlacklistKeys { get; set; }
 
         /// <summary>
-        /// Culture-specific formatting information for error messages.
+        /// Formatting information for error messages.
         /// </summary>
         public IFormatProvider FormatProvider { get; set; }
 

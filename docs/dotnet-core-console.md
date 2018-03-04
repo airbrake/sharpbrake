@@ -80,8 +80,8 @@ If you see `dotnet: command not found`, then follow the steps described in https
             {
                 var airbrake = new AirbrakeNotifier(new AirbrakeConfig
                 {
-                    ProjectId = "127178",
-                    ProjectKey = "e0246db6e4e9214b24ad252e3c99a0f6"
+                    ProjectId = "113743",
+                    ProjectKey = "81bbff95d52f8856c770bb39e827f3f6"
                 });
 
                 try
@@ -90,7 +90,8 @@ If you see `dotnet: command not found`, then follow the steps described in https
                 }
                 catch (Exception ex)
                 {
-                    var response = airbrake.NotifyAsync(ex).Result;
+                    var notice = airbrake.CreateNotice(ex);
+                    var response = airbrake.NotifyAsync(notice).Result;
                     Console.WriteLine("Status: {0}, Id: {1}, Url: {2}", response.Status, response.Id, response.Url);
                 }
             }

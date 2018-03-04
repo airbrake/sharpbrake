@@ -71,22 +71,22 @@ namespace Sharpbrake.Client
         /// <summary>
         /// Creates a notice for the error with <see cref="Severity.Error"/> severity.
         /// </summary>
-        /// <param name="messageTemplate">Message template describing the error.</param>
-        /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
-        public Notice CreateNotice(string messageTemplate, params object[] propertyValues)
+        /// <param name="message">Message describing the error.</param>
+        /// <param name="args">Objects positionally formatted into the error message.</param>
+        public Notice CreateNotice(string message, params object[] args)
         {
-            return CreateNotice(Severity.Error, null, messageTemplate, propertyValues);
+            return CreateNotice(Severity.Error, null, message, args);
         }
 
         /// <summary>
         /// Creates a notice for the error with <see cref="Severity.Error"/> severity and associated exception.
         /// </summary>
         /// <param name="exception">Exception associated with the error.</param>
-        /// <param name="messageTemplate">Message template describing the error.</param>
-        /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
-        public Notice CreateNotice(Exception exception, string messageTemplate, params object[] propertyValues)
+        /// <param name="message">Message describing the error.</param>
+        /// <param name="args">Objects positionally formatted into the error message.</param>
+        public Notice CreateNotice(Exception exception, string message, params object[] args)
         {
-            return CreateNotice(Severity.Error, exception, messageTemplate, propertyValues);
+            return CreateNotice(Severity.Error, exception, message, args);
         }
 
         /// <summary>
@@ -103,11 +103,11 @@ namespace Sharpbrake.Client
         /// Creates a notice for the error with specified severity.
         /// </summary>
         /// <param name="severity">Severity level of the error.</param>
-        /// <param name="messageTemplate">Message template describing the error.</param>
-        /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
-        public Notice CreateNotice(Severity severity, string messageTemplate, params object[] propertyValues)
+        /// <param name="message">Message describing the error.</param>
+        /// <param name="args">Objects positionally formatted into the error message.</param>
+        public Notice CreateNotice(Severity severity, string message, params object[] args)
         {
-            return CreateNotice(severity, null, messageTemplate, propertyValues);
+            return CreateNotice(severity, null, message, args);
         }
 
         /// <summary>
@@ -115,16 +115,16 @@ namespace Sharpbrake.Client
         /// </summary>
         /// <param name="severity">Severity level of the error.</param>
         /// <param name="exception">Exception associated with the error.</param>
-        /// <param name="messageTemplate">Message template describing the error.</param>
-        /// <param name="propertyValues">Objects positionally formatted into the message template.</param>
-        public Notice CreateNotice(Severity severity, Exception exception, string messageTemplate, params object[] propertyValues)
+        /// <param name="message">Message describing the error.</param>
+        /// <param name="args">Objects positionally formatted into the error message.</param>
+        public Notice CreateNotice(Severity severity, Exception exception, string message, params object[] args)
         {
             var log = InternalLogger.CreateInstance();
             var notice = NoticeBuilder.CreateNotice();
 
             log.Trace("Setting error entries");
             notice.SetErrorEntries(exception,
-                Utils.GetMessage(config.FormatProvider, messageTemplate, propertyValues));
+                Utils.GetMessage(config.FormatProvider, message, args));
 
             log.Trace("Setting configuration context");
             notice.SetConfigurationContext(config);

@@ -21,8 +21,8 @@ After completing you should have a sample ASP.NET MVC application. We are going 
 
    ```xml
    <appSettings>
-     <add key="Airbrake.ProjectId" value="127178"/>
-     <add key="Airbrake.ProjectKey" value="e0246db6e4e9214b24ad252e3c99a0f6"/>
+     <add key="Airbrake.ProjectId" value="113743"/>
+     <add key="Airbrake.ProjectKey" value="81bbff95d52f8856c770bb39e827f3f6"/>
    </appSettings>
    ```
 
@@ -97,7 +97,10 @@ public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
         catch (Exception ex)
         {
             var airbrake = (AirbrakeHttpModule)HttpContext.ApplicationInstance.Modules["Airbrake"];
-            airbrake.GetNotifier().Notify(ex, new AspNetHttpContext(System.Web.HttpContext.Current));
+            var notifier = airbrake.GetNotifier();
+            var notice = notifier.CreateNotice(ex);
+            notice.SetHttpContext(notice, new AspNetHttpContext(System.Web.HttpContext.Current));
+            notifier.Notify(notice);
         }
     }
     // If we got this far, something failed, redisplay form
@@ -112,8 +115,8 @@ In a case when the database is not available `UserManager` throws an exception t
 In previous example credentials that user has entered in Login form are also sent to Airbrake because they are a part of the current HTTP request. To filter out that sensitive information go to `Web.config` and add `password` to the `BlacklistKeys` collection:
 
 ```xml
-<add key="Airbrake.ProjectId" value="127178"/>
-<add key="Airbrake.ProjectKey" value="e0246db6e4e9214b24ad252e3c99a0f6"/>
+<add key="Airbrake.ProjectId" value="113743"/>
+<add key="Airbrake.ProjectKey" value="81bbff95d52f8856c770bb39e827f3f6"/>
 <add key="Airbrake.BlacklistKeys" value="\bpassword\b"/>
 ```
 

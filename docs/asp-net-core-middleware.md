@@ -19,8 +19,8 @@ You can follow [Getting started with ASP.NET Core MVC](https://docs.microsoft.co
 
    ```json
    "Airbrake": {
-     "ProjectId": "127178",
-     "ProjectKey": "e0246db6e4e9214b24ad252e3c99a0f6"
+     "ProjectId": "113743",
+     "ProjectKey": "81bbff95d52f8856c770bb39e827f3f6"
    }
    ```
 
@@ -72,7 +72,9 @@ public IActionResult Contact()
         if (airbrakeFeature != null)
         {
             var notifier = airbrakeFeature.GetNotifier();
-            notifier.Notify(ex, new AspNetCoreHttpContext(HttpContext));
+            var notice = notifier.CreateNotice(ex);
+            notice.SetHttpContext(notice, new AspNetCoreHttpContext(HttpContext));
+            notifier.Notify(notice);
         }
     }
 
@@ -88,8 +90,8 @@ Let's demonstrate how you can filter out some sensitive information using "MS-AS
 
 ```json
 "Airbrake": {
-  "ProjectId": "127178",
-  "ProjectKey": "e0246db6e4e9214b24ad252e3c99a0f6",
+  "ProjectId": "113743",
+  "ProjectKey": "81bbff95d52f8856c770bb39e827f3f6",
   "BlacklistKeys": "MS-ASPNETCORE-TOKEN"
 }
 ```
