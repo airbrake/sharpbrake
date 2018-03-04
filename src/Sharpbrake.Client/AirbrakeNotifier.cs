@@ -142,12 +142,6 @@ namespace Sharpbrake.Client
             notice.SetEnvironmentContext(Dns.GetHostName(), RuntimeInformation.OSDescription, "C#/NETCORE2");
 #endif
 
-            if (filters.Count > 0)
-            {
-                log.Trace("Applying filters");
-                notice = Utils.ApplyFilters(notice, filters);
-            }
-
             log.Trace("Notice was created");
             return notice;
         }
@@ -188,15 +182,29 @@ namespace Sharpbrake.Client
             {
                 if (notice == null)
                 {
-                    var response = new AirbrakeResponse { Status = RequestStatus.Ignored };
+                    var response = new AirbrakeResponse {Status = RequestStatus.Ignored};
                     tcs.SetResult(response);
                     log.Trace("Notice is empty");
                     return tcs.Task;
                 }
 
+                if (filters.Count > 0)
+                {
+                    log.Trace("Applying filters");
+                    notice = Utils.ApplyFilters(notice, filters);
+                }
+
+                if (notice == null)
+                {
+                    var response = new AirbrakeResponse {Status = RequestStatus.Ignored};
+                    tcs.SetResult(response);
+                    log.Trace("Ignoring notice because of filters");
+                    return tcs.Task;
+                }
+
                 if (Utils.IsIgnoredEnvironment(config.Environment, config.IgnoreEnvironments))
                 {
-                    var response = new AirbrakeResponse { Status = RequestStatus.Ignored };
+                    var response = new AirbrakeResponse {Status = RequestStatus.Ignored};
                     tcs.SetResult(response);
                     log.Trace("Ignoring notice for environment: {0}", config.Environment);
                     return tcs.Task;
