@@ -3,16 +3,19 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization.Json;
 using System.Text;
 using Sharpbrake.Client.Model;
+
+[assembly: InternalsVisibleTo("Sharpbrake.Client.Tests")]
 
 namespace Sharpbrake.Client
 {
     /// <summary>
     /// Builder for the <see cref="Notice"/> object.
     /// </summary>
-    public static class NoticeBuilder
+    internal static class NoticeBuilder
     {
         private const int MaxInnerExceptions = 3;
 
