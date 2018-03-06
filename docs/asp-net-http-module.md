@@ -98,7 +98,7 @@ public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
         {
             var airbrake = (AirbrakeHttpModule)HttpContext.ApplicationInstance.Modules["Airbrake"];
             var notifier = airbrake.GetNotifier();
-            var notice = notifier.CreateNotice(ex);
+            var notice = notifier.BuildNotice(ex);
             notice.SetHttpContext(notice, new AspNetHttpContext(System.Web.HttpContext.Current));
             notifier.Notify(notice);
         }

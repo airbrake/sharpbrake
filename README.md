@@ -96,7 +96,7 @@ namespace ConsoleApplication
             }
             catch (Exception ex)
             {
-                var notice = airbrake.CreateNotice(ex);
+                var notice = airbrake.BuildNotice(ex);
                 var response = airbrake.NotifyAsync(notice).Result;
                 Console.WriteLine("Status: {0}, Id: {1}, Url: {2}", response.Status, response.Id, response.Url);
             }
@@ -330,13 +330,13 @@ var config = AirbrakeConfig.Load(settings);
 
 ### AirbrakeNotifier
 
-#### CreateNotice
+#### BuildNotice
 
-`CreateNotice` creates a notice with error details that can be sent to the
+`BuildNotice` builds a notice with error details that can be sent to the
 Airbrake dashboard with the help of [`NotifyAsync`](#notifyasync):
 
 ```csharp
-notifier.CreateNotice(Severity.Error, exception, "Failed with message {0}", exception.Message);
+notifier.BuildNotice(Severity.Error, exception, "Failed with message {0}", exception.Message);
 ```
 
 #### NotifyAsync
@@ -363,7 +363,7 @@ Console.WriteLine(response.Url);
 `SetHttpContext` attaches HTTP context properties to the notice:
 
 ```csharp
-var notice = notifier.CreateNotice(ex);
+var notice = notifier.BuildNotice(ex);
 notifier.SetHttpContext(notice, new AspNetCoreHttpContext(context));
 notifier.NotifyAsync(notice);
 ```
@@ -440,10 +440,10 @@ airbrake.AddFilter(notice =>
 
 [Severity][what-is-severity] allows categorizing how severe an error is. By
 default, it's set to `error`. To redefine severity, simply pass the `Severity`
-as a parameter to the `CreateNotice` method. For example:
+as a parameter to the `BuildNotice` method. For example:
 
 ```csharp
-airbrake.CreateNotice(Severity.Critical, exception);
+airbrake.BuildNotice(Severity.Critical, exception);
 ```
 
 ASP.NET Integration

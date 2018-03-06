@@ -39,7 +39,7 @@ namespace Sharpbrake.Extensions.Logging
             if (formatter != null)
                 message = formatter(state, exception);
 
-            var notice = notifier.CreateNotice(GetErrorSeverity(logLevel), exception, message);
+            var notice = notifier.BuildNotice(GetErrorSeverity(logLevel), exception, message);
             notifier.SetHttpContext(notice, GetHttpContext());
             notifier.NotifyAsync(notice);
         }

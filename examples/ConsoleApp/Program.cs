@@ -38,7 +38,7 @@ namespace ConsoleApp
             }
             catch (Exception ex)
             {
-                var notice = notifier.CreateNotice(ex);
+                var notice = notifier.BuildNotice(ex);
                 notifier.NotifyAsync(notice).ContinueWith(task =>
                 {
                     if (task.IsFaulted)
@@ -66,7 +66,7 @@ namespace ConsoleApp
             }
             catch (Exception ex)
             {
-                var notice = notifier.CreateNotice(ex);
+                var notice = notifier.BuildNotice(ex);
                 var response = await notifier.NotifyAsync(notice);
                 if (response != null)
                     Console.WriteLine("Status: {0}, Id: {1}, Url: {2}", response.Status, response.Id, response.Url);

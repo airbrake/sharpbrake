@@ -15,9 +15,9 @@ namespace Sharpbrake.Client.Tests
     public class NoticeBuilderTests
     {
         [Fact]
-        public void CreateNotice_ShouldInitializeContextAndNotifierInfo()
+        public void BuildNotice_ShouldInitializeContextAndNotifierInfo()
         {
-            var notice = NoticeBuilder.CreateNotice();
+            var notice = NoticeBuilder.BuildNotice();
 
             Assert.NotNull(notice.Context);
             Assert.NotNull(notice.Context.Notifier);
@@ -30,7 +30,7 @@ namespace Sharpbrake.Client.Tests
                         new Exception("Inner exception 1",
                             new Exception("Inner exception 2")));
 
-            var notice = NoticeBuilder.CreateNotice();
+            var notice = NoticeBuilder.BuildNotice();
             notice.SetErrorEntries(ex, string.Empty);
 
             var errorEntries = notice.Errors;
@@ -51,7 +51,7 @@ namespace Sharpbrake.Client.Tests
                                 new Exception("Inner exception 3",
                                     new Exception("Inner exception 4")))));
 
-            var notice = NoticeBuilder.CreateNotice();
+            var notice = NoticeBuilder.BuildNotice();
             notice.SetErrorEntries(ex, string.Empty);
 
             var errorEntries = notice.Errors;
@@ -65,7 +65,7 @@ namespace Sharpbrake.Client.Tests
         {
             var ex = new FakeException("error message from exception");
 
-            var notice = NoticeBuilder.CreateNotice();
+            var notice = NoticeBuilder.BuildNotice();
             notice.SetErrorEntries(ex, "message");
 
             var errorEntries = notice.Errors;
@@ -80,7 +80,7 @@ namespace Sharpbrake.Client.Tests
         {
             var ex = new FakeException("error message from exception");
 
-            var notice = NoticeBuilder.CreateNotice();
+            var notice = NoticeBuilder.BuildNotice();
             notice.SetErrorEntries(ex, string.Empty);
 
             var errorEntries = notice.Errors;
@@ -93,7 +93,7 @@ namespace Sharpbrake.Client.Tests
         [Fact]
         public void SetErrorEntries_ShouldSetExceptionProperty()
         {
-            var notice = NoticeBuilder.CreateNotice();
+            var notice = NoticeBuilder.BuildNotice();
             notice.SetErrorEntries(new Exception(), string.Empty);
 
             Assert.NotNull(notice.Exception);
@@ -102,7 +102,7 @@ namespace Sharpbrake.Client.Tests
         [Fact]
         public void SetErrorEntries_ShouldSetErrorEntryUsingMessageIfExceptionEmpty()
         {
-            var notice = NoticeBuilder.CreateNotice();
+            var notice = NoticeBuilder.BuildNotice();
             notice.SetErrorEntries(null, "message");
 
             var errorEntries = notice.Errors;
@@ -115,7 +115,7 @@ namespace Sharpbrake.Client.Tests
         [Fact]
         public void SetConfigurationContext_ShouldSetEnvironmentNameAndAppVersion()
         {
-            var notice = NoticeBuilder.CreateNotice();
+            var notice = NoticeBuilder.BuildNotice();
             notice.SetConfigurationContext(new AirbrakeConfig
             {
                 Environment = "local",
@@ -130,7 +130,7 @@ namespace Sharpbrake.Client.Tests
         [Fact]
         public void SetConfigurationContext_ShouldNotSetEnvironmentNameAndAppVersionIfConfigIsNull()
         {
-            var notice = NoticeBuilder.CreateNotice();
+            var notice = NoticeBuilder.BuildNotice();
             notice.SetConfigurationContext(null);
 
             Assert.NotNull(notice.Context);
@@ -145,7 +145,7 @@ namespace Sharpbrake.Client.Tests
          InlineData("host", "os", "lang")]
         public void SetEnvironmentContext_ShouldSetEnvironmentContextAccordingToPassedParameters(string host, string os, string lang)
         {
-            var notice = NoticeBuilder.CreateNotice();
+            var notice = NoticeBuilder.BuildNotice();
             notice.SetEnvironmentContext(host, os, lang);
 
             if (string.IsNullOrEmpty(host) && string.IsNullOrEmpty(os) && string.IsNullOrEmpty(lang))
@@ -165,7 +165,7 @@ namespace Sharpbrake.Client.Tests
         [Fact]
         public void SetHttpContext_ShouldNotSetHttpContextIfContextParamIsEmpty()
         {
-            var notice = NoticeBuilder.CreateNotice();
+            var notice = NoticeBuilder.BuildNotice();
             notice.SetHttpContext(null, null);
 
             Assert.Null(notice.HttpContext);
@@ -183,7 +183,7 @@ namespace Sharpbrake.Client.Tests
                 UserAgent = userAgent
             };
 
-            var notice = NoticeBuilder.CreateNotice();
+            var notice = NoticeBuilder.BuildNotice();
             notice.SetHttpContext(httpContext, null);
 
             Assert.NotNull(notice.Context);
@@ -205,7 +205,7 @@ namespace Sharpbrake.Client.Tests
                 UserEmail = email
             };
 
-            var notice = NoticeBuilder.CreateNotice();
+            var notice = NoticeBuilder.BuildNotice();
             notice.SetHttpContext(httpContext, null);
 
             Assert.NotNull(notice.Context);
@@ -225,7 +225,7 @@ namespace Sharpbrake.Client.Tests
                 Session = new Dictionary<string, string>()
             };
 
-            var notice = NoticeBuilder.CreateNotice();
+            var notice = NoticeBuilder.BuildNotice();
             notice.SetHttpContext(httpContext, null);
 
             Assert.NotNull(notice.Params);
@@ -245,7 +245,7 @@ namespace Sharpbrake.Client.Tests
 
             var config = new AirbrakeConfig();
 
-            var notice = NoticeBuilder.CreateNotice();
+            var notice = NoticeBuilder.BuildNotice();
             notice.SetHttpContext(httpContext, config);
 
             Assert.NotNull(notice.Params);
@@ -256,7 +256,7 @@ namespace Sharpbrake.Client.Tests
         [Fact]
         public void SetHttpContext_ShouldSetHttpContextProperty()
         {
-            var notice = NoticeBuilder.CreateNotice();
+            var notice = NoticeBuilder.BuildNotice();
             notice.SetHttpContext(new FakeHttpContext(), null);
 
             Assert.NotNull(notice.HttpContext);
@@ -271,7 +271,7 @@ namespace Sharpbrake.Client.Tests
                 Component = "Component"
             };
 
-            var notice = NoticeBuilder.CreateNotice();
+            var notice = NoticeBuilder.BuildNotice();
             notice.SetHttpContext(httpContext, null);
 
             Assert.True(!string.IsNullOrEmpty(notice.Context.Action));
@@ -281,7 +281,7 @@ namespace Sharpbrake.Client.Tests
         [Fact]
         public void SetSeverity_ShouldSetSeverityLowercase()
         {
-            var notice = NoticeBuilder.CreateNotice();
+            var notice = NoticeBuilder.BuildNotice();
             notice.SetSeverity(Severity.Critical);
 
             Assert.Equal("critical", notice.Context.Severity);
@@ -290,7 +290,7 @@ namespace Sharpbrake.Client.Tests
         [Fact]
         public void ToJsonString()
         {
-            var notice = NoticeBuilder.CreateNotice();
+            var notice = NoticeBuilder.BuildNotice();
             notice.SetErrorEntries(new Exception(), string.Empty);
 
             var actualJson = notice.ToJsonString();
@@ -318,7 +318,7 @@ namespace Sharpbrake.Client.Tests
         [Fact]
         public void ToJsonString_ShouldNotSerializeExceptionAndHttpContext()
         {
-            var notice = NoticeBuilder.CreateNotice();
+            var notice = NoticeBuilder.BuildNotice();
 
             notice.SetErrorEntries(new Exception(), string.Empty);
             notice.SetHttpContext(new FakeHttpContext(), null);
@@ -340,7 +340,7 @@ namespace Sharpbrake.Client.Tests
                 }
             };
 
-            var notice = NoticeBuilder.CreateNotice();
+            var notice = NoticeBuilder.BuildNotice();
             notice.SetHttpContext(httpContext, null);
 
             var json = notice.ToJsonString();

@@ -72,7 +72,7 @@ public IActionResult Contact()
         if (airbrakeFeature != null)
         {
             var notifier = airbrakeFeature.GetNotifier();
-            var notice = notifier.CreateNotice(ex);
+            var notice = notifier.BuildNotice(ex);
             notice.SetHttpContext(notice, new AspNetCoreHttpContext(HttpContext));
             notifier.Notify(notice);
         }

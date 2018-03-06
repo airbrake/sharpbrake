@@ -427,11 +427,17 @@ namespace Sharpbrake.Client.Tests
                 Status = RequestStatus.Success
             };
 
-            Utils.LogResponse(logFile, response);
+            try
+            {
+                Utils.LogResponse(logFile, response);
 
-            Assert.True(File.Exists(logFile));
-            Assert.True(!string.IsNullOrEmpty(File.ReadAllText(logFile)));
-            File.Delete(logFile);
+                Assert.True(File.Exists(logFile));
+                Assert.True(!string.IsNullOrEmpty(File.ReadAllText(logFile)));
+            }
+            finally
+            {
+                File.Delete(logFile);
+            }
         }
 
         [Fact]
@@ -439,10 +445,16 @@ namespace Sharpbrake.Client.Tests
         {
             var logFile = Guid.NewGuid() + ".log";
 
-            Utils.LogResponse(logFile, null);
+            try
+            {
+                Utils.LogResponse(logFile, null);
 
-            Assert.True(!File.Exists(logFile));
-            File.Delete(logFile);
+                Assert.True(!File.Exists(logFile));
+            }
+            finally
+            {
+                File.Delete(logFile);
+            }
         }
 
         [Fact]

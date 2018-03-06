@@ -14,10 +14,12 @@ namespace Sharpbrake.Client
     /// </summary>
     public static class NoticeBuilder
     {
+        private const int MaxInnerExceptions = 3;
+
         /// <summary>
         /// Creates a new instance of <see cref="Notice"/>.
         /// </summary>
-        public static Notice CreateNotice()
+        public static Notice BuildNotice()
         {
             return new Notice
             {
@@ -63,7 +65,7 @@ namespace Sharpbrake.Client
             }
 
             // to reduce JSON size no more than 3 inner exceptions are processed
-            while (ex != null && errors.Count < 4)
+            while (ex != null && errors.Count <= MaxInnerExceptions)
             {
                 errors.Add(new ErrorEntry
                 {

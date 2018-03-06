@@ -60,67 +60,67 @@ namespace Sharpbrake.Client
         }
 
         /// <summary>
-        /// Creates a notice for the exception with <see cref="Severity.Error"/> severity.
+        /// Builds a notice for the exception with <see cref="Severity.Error"/> severity.
         /// </summary>
         /// <param name="exception">Exception to report on.</param>
-        public Notice CreateNotice(Exception exception)
+        public Notice BuildNotice(Exception exception)
         {
-            return CreateNotice(Severity.Error, exception, null, null);
+            return BuildNotice(Severity.Error, exception, null, null);
         }
 
         /// <summary>
-        /// Creates a notice for the error with <see cref="Severity.Error"/> severity.
+        /// Builds a notice for the error with <see cref="Severity.Error"/> severity.
         /// </summary>
         /// <param name="message">Message describing the error.</param>
         /// <param name="args">Objects positionally formatted into the error message.</param>
-        public Notice CreateNotice(string message, params object[] args)
+        public Notice BuildNotice(string message, params object[] args)
         {
-            return CreateNotice(Severity.Error, null, message, args);
+            return BuildNotice(Severity.Error, null, message, args);
         }
 
         /// <summary>
-        /// Creates a notice for the error with <see cref="Severity.Error"/> severity and associated exception.
+        /// Builds a notice for the error with <see cref="Severity.Error"/> severity and associated exception.
         /// </summary>
         /// <param name="exception">Exception associated with the error.</param>
         /// <param name="message">Message describing the error.</param>
         /// <param name="args">Objects positionally formatted into the error message.</param>
-        public Notice CreateNotice(Exception exception, string message, params object[] args)
+        public Notice BuildNotice(Exception exception, string message, params object[] args)
         {
-            return CreateNotice(Severity.Error, exception, message, args);
+            return BuildNotice(Severity.Error, exception, message, args);
         }
 
         /// <summary>
-        /// Creates a notice for the exception with specified severity.
+        /// Builds a notice for the exception with specified severity.
         /// </summary>
         /// <param name="severity">Severity level of the error.</param>
         /// <param name="exception">Exception to report on.</param>
-        public Notice CreateNotice(Severity severity, Exception exception)
+        public Notice BuildNotice(Severity severity, Exception exception)
         {
-            return CreateNotice(severity, exception, null, null);
+            return BuildNotice(severity, exception, null, null);
         }
 
         /// <summary>
-        /// Creates a notice for the error with specified severity.
+        /// Builds a notice for the error with specified severity.
         /// </summary>
         /// <param name="severity">Severity level of the error.</param>
         /// <param name="message">Message describing the error.</param>
         /// <param name="args">Objects positionally formatted into the error message.</param>
-        public Notice CreateNotice(Severity severity, string message, params object[] args)
+        public Notice BuildNotice(Severity severity, string message, params object[] args)
         {
-            return CreateNotice(severity, null, message, args);
+            return BuildNotice(severity, null, message, args);
         }
 
         /// <summary>
-        /// Creates a notice for the error with specified severity and associated exception.
+        /// Builds a notice for the error with specified severity and associated exception.
         /// </summary>
         /// <param name="severity">Severity level of the error.</param>
         /// <param name="exception">Exception associated with the error.</param>
         /// <param name="message">Message describing the error.</param>
         /// <param name="args">Objects positionally formatted into the error message.</param>
-        public Notice CreateNotice(Severity severity, Exception exception, string message, params object[] args)
+        public Notice BuildNotice(Severity severity, Exception exception, string message, params object[] args)
         {
             var log = InternalLogger.CreateInstance();
-            var notice = NoticeBuilder.CreateNotice();
+            var notice = NoticeBuilder.BuildNotice();
 
             log.Trace("Setting error entries");
             notice.SetErrorEntries(exception,
