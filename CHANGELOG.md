@@ -3,6 +3,12 @@ Sharpbrake Changelog
 
 ### master
 
+### [v5.0.0][v5.0.0] (March 07, 2018)
+
+* Added support for error messages
+  ([#84](https://github.com/airbrake/sharpbrake/pull/84))
+* Updated notifier API. Check the [migration guide](docs/migration-guide-from-v4-to-v5.md)
+
 ### [v4.5.0][v4.5.0] (January 12, 2018)
 
 * Added internal logging (tracing)
@@ -86,3 +92,4 @@ Sharpbrake Changelog
 [v4.3.0]: https://github.com/airbrake/sharpbrake/releases/tag/v4.3.0
 [v4.4.0]: https://github.com/airbrake/sharpbrake/releases/tag/v4.4.0
 [v4.5.0]: https://github.com/airbrake/sharpbrake/releases/tag/v4.5.0
+[v5.0.0]: https://github.com/airbrake/sharpbrake/releases/tag/v5.0.0
