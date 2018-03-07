@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
+using System.IO;
 using Sharpbrake.Client.Model;
 using Xunit;
 
@@ -279,7 +282,7 @@ namespace Sharpbrake.Client.Tests
         [Fact]
         public void GetBacktrace_ShouldReturnBlankFrameIfStackTraceNotAvailable()
         {
-            var backtrace = Utils.GetBacktrace(new Exception());
+            var backtrace = Utils.GetBacktrace(new StackTrace(new Exception(), true));
 
             Assert.NotNull(backtrace);
             Assert.True(backtrace.Count == 1);
@@ -312,7 +315,7 @@ namespace Sharpbrake.Client.Tests
             }
             catch (Exception ex)
             {
-                var backtrace = Utils.GetBacktrace(ex);
+                var backtrace = Utils.GetBacktrace(new StackTrace(ex, true));
 
                 Assert.NotNull(backtrace);
                 Assert.True(backtrace.Count == 1);
@@ -411,6 +414,71 @@ namespace Sharpbrake.Client.Tests
             Assert.NotNull(noticeOut);
             Assert.NotNull(noticeOut.Context);
             Assert.Equal("test action update 1 update 2", noticeOut.Context.Action);
+        }
+
+        [Fact]
+        public void LogResponse_ShouldLogIfResponseNotEmpty()
+        {
+            var logFile = Guid.NewGuid() + ".log";
+            var response = new AirbrakeResponse
+            {
+                Id = "0005488e-8947-223e-90ca-16fec30b6d72",
+                Url = "https://airbrake.io/locate/0005488e-8947-223e-90ca-16fec30b6d72",
+                Status = RequestStatus.Success
+            };
+
+            try
+            {
+                Utils.LogResponse(logFile, response);
+
+                Assert.True(File.Exists(logFile));
+                Assert.True(!string.IsNullOrEmpty(File.ReadAllText(logFile)));
+            }
+            finally
+            {
+                File.Delete(logFile);
+            }
+        }
+
+        [Fact]
+        public void LogResponse_ShouldNotLogIfResponseEmpty()
+        {
+            var logFile = Guid.NewGuid() + ".log";
+
+            try
+            {
+                Utils.LogResponse(logFile, null);
+
+                Assert.True(!File.Exists(logFile));
+            }
+            finally
+            {
+                File.Delete(logFile);
+            }
+        }
+
+        [Fact]
+        public void GetMessage_ShouldApplyCultureSpecificFormatting()
+        {
+            var date = new DateTime(2018, 3, 2);
+            var number = 1234.56;
+
+            var expected = "Friday, March 2, 2018               1,234.56";
+            var actual = Utils.GetMessage(new CultureInfo("en-US"), "{0,-35:D} {1:N}", date, number);
+
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void GetMessage_ShouldReturnRawMessageIfNoProperties()
+        {
+            Assert.Equal("{Message}", Utils.GetMessage(null, "{Message}", null));
+        }
+
+        [Fact]
+        public void GetMessage_ShouldReturnNullIfMessageTemplateEmpty()
+        {
+            Assert.Null(Utils.GetMessage(null, null, null));
         }
     }
 }

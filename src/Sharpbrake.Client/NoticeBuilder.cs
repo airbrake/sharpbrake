@@ -1,26 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization.Json;
 using System.Text;
 using Sharpbrake.Client.Model;
+
+[assembly: InternalsVisibleTo("Sharpbrake.Client.Tests")]
 
 namespace Sharpbrake.Client
 {
     /// <summary>
     /// Builder for the <see cref="Notice"/> object.
     /// </summary>
-    public class NoticeBuilder
+    internal static class NoticeBuilder
     {
-        private readonly Notice notice;
+        private const int MaxInnerExceptions = 3;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="NoticeBuilder"/> class.
+        /// Creates a new instance of <see cref="Notice"/>.
         /// </summary>
-        public NoticeBuilder()
+        public static Notice BuildNotice()
         {
-            notice = new Notice
+            return new Notice
             {
                 Context = new Context
                 {
@@ -30,27 +34,50 @@ namespace Sharpbrake.Client
         }
 
         /// <summary>
-        /// Sets exception data into notice errors list.
+        /// Sets error entries into notice errors list.
         /// </summary>
-        public void SetErrorEntries(Exception exception)
+        public static void SetErrorEntries(this Notice notice, Exception exception, string message)
         {
             notice.Exception = exception;
+            notice.Message = message;
 
             var errors = new List<ErrorEntry>();
+            var ex = exception;
 
-            // main exception + no more than 3 inner exceptions (to reduce JSON size)
-            while (errors.Count < 4 && exception != null)
+            if (ex != null)
             {
-                var exceptionType = exception.GetType();
                 errors.Add(new ErrorEntry
                 {
-                    Message = !string.IsNullOrEmpty(exception.Message)
-                        ? string.Format("{0}: {1}", exceptionType.Name, exception.Message)
-                        : exceptionType.Name,
-                    Type = exceptionType.FullName,
-                    Backtrace = Utils.GetBacktrace(exception)
+                    Message = !string.IsNullOrEmpty(message) ? message : ex.Message,
+                    Type = ex.GetType().FullName,
+                    Backtrace = Utils.GetBacktrace(new StackTrace(ex, true))
                 });
-                exception = exception.InnerException;
+
+                ex = ex.InnerException;
+            }
+            else
+            {
+                errors.Add(new ErrorEntry
+                {
+                    Message = message,
+#if !NETSTANDARD1_4
+                    // skip 2 stack frames (for NotifyAsync and SetErrorEntries methods)
+                    Backtrace = Utils.GetBacktrace(new StackTrace(3, true))
+#endif
+                });
+            }
+
+            // to reduce JSON size no more than 3 inner exceptions are processed
+            while (ex != null && errors.Count <= MaxInnerExceptions)
+            {
+                errors.Add(new ErrorEntry
+                {
+                    Message = ex.Message,
+                    Type = ex.GetType().FullName,
+                    Backtrace = Utils.GetBacktrace(new StackTrace(ex, true))
+                });
+
+                ex = ex.InnerException;
             }
 
             notice.Errors = errors;
@@ -67,7 +94,7 @@ namespace Sharpbrake.Client
         /// <summary>
         /// Sets configuration context into corresponding properties of notice.
         /// </summary>
-        public void SetConfigurationContext(AirbrakeConfig config)
+        public static void SetConfigurationContext(this Notice notice, AirbrakeConfig config)
         {
             if (config == null)
                 return;
@@ -79,7 +106,7 @@ namespace Sharpbrake.Client
         /// <summary>
         /// Sets environment context (host, OS and C#/.NET info) into corresponding properties of notice.
         /// </summary>
-        public void SetEnvironmentContext(string hostName, string osVersion, string langVersion)
+        public static void SetEnvironmentContext(this Notice notice, string hostName, string osVersion, string langVersion)
         {
             if (string.IsNullOrEmpty(hostName) && string.IsNullOrEmpty(osVersion) && string.IsNullOrEmpty(langVersion))
                 return;
@@ -92,7 +119,7 @@ namespace Sharpbrake.Client
         /// <summary>
         /// Sets error severity.
         /// </summary>
-        public void SetSeverity(Severity severity)
+        public static void SetSeverity(this Notice notice, Severity severity)
         {
             notice.Context.Severity = severity.ToString().ToLowerInvariant();
         }
@@ -100,9 +127,9 @@ namespace Sharpbrake.Client
         /// <summary>
         /// Sets the current Http context properties into corresponding properties of notice.
         /// </summary>
-        public void SetHttpContext(IHttpContext httpContext, AirbrakeConfig config)
+        public static void SetHttpContext(this Notice notice, IHttpContext httpContext, AirbrakeConfig config)
         {
-            if (httpContext == null)
+            if (notice == null || httpContext == null)
                 return;
 
             notice.HttpContext = httpContext;
@@ -141,20 +168,12 @@ namespace Sharpbrake.Client
         }
 
         /// <summary>
-        /// Gets the current instance of <see cref="Notice"/>.
-        /// </summary>
-        public Notice ToNotice()
-        {
-            return notice;
-        }
-
-        /// <summary>
         /// Gets JSON string for the instance of <see cref="Notice"/>.
         /// </summary>
         /// <remarks>
         /// Notice that exceeds 64 KB is truncated.
         /// </remarks>
-        public static string ToJsonString(Notice notice)
+        public static string ToJsonString(this Notice notice)
         {
             const int noticeLengthMax = 64000;
             const int stringLengthMax = 1024;

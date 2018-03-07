@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
+using System.IO;
 using System.Net;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -121,7 +123,7 @@ namespace Sharpbrake.Client
         /// <summary>
         /// Gets list of <see cref="Frame"/> (backtrace) for exception.
         /// </summary>
-        public static IList<Frame> GetBacktrace(Exception exception)
+        public static IList<Frame> GetBacktrace(StackTrace stackTrace)
         {
             var backtrace = new List<Frame>();
 
@@ -136,7 +138,7 @@ namespace Sharpbrake.Client
             // and https://github.com/dotnet/corefx/issues/1797
             try
             {
-                var frames = new StackTrace(exception, true).GetFrames();
+                var frames = stackTrace.GetFrames();
                 if (frames == null || frames.Length == 0)
                     backtrace.Add(blankFrame);
                 else
@@ -202,6 +204,54 @@ namespace Sharpbrake.Client
         public static IList<Regex> CompileRegex(IList<string> stringPatterns)
         {
             return stringPatterns?.Select(pattern => new Regex(pattern, RegexOptions.Compiled | RegexOptions.IgnoreCase)).ToList();
+        }
+
+#if NETSTANDARD1_4
+        private static readonly object logResponseLocker = new object();
+#endif
+
+        /// <summary>
+        /// Logs response from Airbrake to the file.
+        /// </summary>
+        public static void LogResponse(string logFile, AirbrakeResponse response)
+        {
+            if (response == null)
+                return;
+
+#if NETSTANDARD1_4
+            using (var writer = File.AppendText(logFile))
+            {
+                lock (logResponseLocker)
+                {
+                    writer.WriteLineAsync(
+                        $"[{DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture)}] {response.Status} {response.Id} {response.Url}");
+                }
+            }
+#else
+            using (var writer = TextWriter.Synchronized(File.AppendText(logFile)))
+                writer.WriteLineAsync(
+                    $"[{DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture)}] {response.Status} {response.Id} {response.Url}");
+#endif
+        }
+
+        /// <summary>
+        /// Gets message with properties positionally formatted into the message template
+        /// using culture-specific formatting information.
+        /// </summary>
+        /// <param name="provider">Object that supplies culture-specific formatting information.</param>
+        /// <param name="messageTemplate">Message template that represents .NET composite format string.</param>
+        /// <param name="propertyValues">Zero or more properties to format.</param>
+        /// <returns></returns>
+        public static string GetMessage(IFormatProvider provider, string messageTemplate, params object[] propertyValues)
+        {
+            // TODO: Add support for message templates for structured logging (https://messagetemplates.org/)
+
+            if (string.IsNullOrEmpty(messageTemplate))
+                return null;
+
+            return propertyValues == null || propertyValues.Length == 0
+                ? messageTemplate
+                : string.Format(provider, messageTemplate, propertyValues);
         }
 
         private static int IndexOfRegex(IList<Regex> regexList, string key)

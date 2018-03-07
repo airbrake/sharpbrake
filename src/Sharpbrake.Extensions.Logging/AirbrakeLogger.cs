@@ -9,7 +9,7 @@ using ILogger = Microsoft.Extensions.Logging.ILogger;
 namespace Sharpbrake.Extensions.Logging
 {
     /// <summary>
-    /// Logger that sends an exception to the Airbrake dashboard.
+    /// Logger that sends an error to the Airbrake dashboard.
     /// </summary>
     public class AirbrakeLogger : ILogger
     {
@@ -28,14 +28,20 @@ namespace Sharpbrake.Extensions.Logging
         }
 
         /// <summary>
-        /// Notifies the Airbrake endpoint on an exception.
+        /// Notifies the Airbrake endpoint on an error.
         /// </summary>
         public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
         {
-            if (exception == null)
+            if (!IsEnabled(logLevel))
                 return;
 
-            notifier.NotifyAsync(exception, GetHttpContext(), GetErrorSeverity(logLevel));
+            var message = string.Empty;
+            if (formatter != null)
+                message = formatter(state, exception);
+
+            var notice = notifier.BuildNotice(GetErrorSeverity(logLevel), exception, message);
+            notifier.SetHttpContext(notice, GetHttpContext());
+            notifier.NotifyAsync(notice);
         }
 
         /// <summary>

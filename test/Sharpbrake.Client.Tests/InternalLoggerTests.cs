@@ -52,8 +52,9 @@ namespace Sharpbrake.Client.Tests
                 requestHandler.HttpResponse.StatusCode = HttpStatusCode.Created;
                 requestHandler.HttpResponse.ResponseJson = "{\"Id\":\"12345\",\"Url\":\"https://airbrake.io/\"}";
 
-                var notifier = new AirbrakeNotifier(config, new FakeLogger(), requestHandler);
-                var airbrakeResponse = notifier.NotifyAsync(new Exception()).Result;
+                var notifier = new AirbrakeNotifier(config, requestHandler);
+                var notice = notifier.BuildNotice(new Exception());
+                var airbrakeResponse = notifier.NotifyAsync(notice).Result;
             }
         }
     }

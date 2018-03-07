@@ -66,7 +66,9 @@ namespace Sharpbrake.Http.Middleware
             }
             catch (Exception ex)
             {
-                notifier.Notify(ex, new AspNetCoreHttpContext(context));
+                var notice = notifier.BuildNotice(ex);
+                notifier.SetHttpContext(notice, new AspNetCoreHttpContext(context));
+                await notifier.NotifyAsync(notice);
                 throw;
             }
         }

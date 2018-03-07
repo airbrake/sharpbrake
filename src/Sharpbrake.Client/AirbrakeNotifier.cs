@@ -17,12 +17,11 @@ using System.Threading.Tasks;
 namespace Sharpbrake.Client
 {
     /// <summary>
-    /// Functionality for notifying Airbrake on exception.
+    /// Functionality for reporting errors to the Airbrake dashboard.
     /// </summary>
     public class AirbrakeNotifier
     {
         private readonly AirbrakeConfig config;
-        private readonly ILogger logger;
         private readonly IHttpRequestHandler httpRequestHandler;
 
         /// <summary>
@@ -31,21 +30,21 @@ namespace Sharpbrake.Client
         private readonly IList<Func<Notice, Notice>> filters = new List<Func<Notice, Notice>>();
 
         /// <summary>
+        /// Logs responses from Airbrake into the file.
+        /// </summary>
+        private readonly Action<AirbrakeResponse> logResponse;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="AirbrakeNotifier"/> class.
         /// </summary>
         /// <param name="config">The <see cref="AirbrakeConfig"/> instance to use.</param>
-        /// <param name="logger">The <see cref="ILogger"/> implementation to use.</param>
         /// <param name="httpRequestHandler">The <see cref="IHttpRequestHandler"/> implementation to use.</param>
-        public AirbrakeNotifier(AirbrakeConfig config, ILogger logger = null, IHttpRequestHandler httpRequestHandler = null)
+        public AirbrakeNotifier(AirbrakeConfig config, IHttpRequestHandler httpRequestHandler = null)
         {
             this.config = config ?? throw new ArgumentNullException(nameof(config));
 
-            // use default FileLogger if no custom implementation has been provided
-            // but config contains non-empty value for "LogFile" property
-            if (logger != null)
-                this.logger = logger;
-            else if (!string.IsNullOrEmpty(config.LogFile))
-                this.logger = new FileLogger(config.LogFile);
+            if (!string.IsNullOrEmpty(config.LogFile))
+                logResponse = response => Utils.LogResponse(config.LogFile, response);
 
             // use default provider that returns HttpWebRequest from standard .NET library
             // if custom implementation has not been provided
@@ -53,7 +52,7 @@ namespace Sharpbrake.Client
         }
 
         /// <summary>
-        /// Adds filter to the list of filters for current notifier.
+        /// Adds a filter to the list of filters for the current notifier.
         /// </summary>
         public void AddFilter(Func<Notice, Notice> filter)
         {
@@ -61,31 +60,107 @@ namespace Sharpbrake.Client
         }
 
         /// <summary>
-        /// Notifies Airbrake on error in your app and logs response from Airbrake.
+        /// Builds a notice for the exception with <see cref="Severity.Error"/> severity.
         /// </summary>
-        /// <remarks>
-        /// Call to Airbrake is made asynchronously. Logging is deferred and occurs only if constructor has been
-        /// provided with logger implementation or config contains non-empty value for "LogFile" property.
-        /// </remarks>
-        public void Notify(Exception exception, IHttpContext context = null, Severity severity = Severity.Error)
+        /// <param name="exception">Exception to report on.</param>
+        public Notice BuildNotice(Exception exception)
         {
-            var notifyTask = NotifyAsync(exception, context, severity);
-            if (logger != null)
-            {
-                notifyTask.ContinueWith(response =>
-                {
-                    if (response.IsFaulted)
-                        logger.Log(response.Exception);
-                    else
-                        logger.Log(response.Result);
-                });
-            }
+            return BuildNotice(Severity.Error, exception, null, null);
         }
 
         /// <summary>
-        /// Notifies Airbrake on error in your app using asynchronous call.
+        /// Builds a notice for the error with <see cref="Severity.Error"/> severity.
         /// </summary>
-        public Task<AirbrakeResponse> NotifyAsync(Exception exception, IHttpContext context = null, Severity severity = Severity.Error)
+        /// <param name="message">Message describing the error.</param>
+        /// <param name="args">Objects positionally formatted into the error message.</param>
+        public Notice BuildNotice(string message, params object[] args)
+        {
+            return BuildNotice(Severity.Error, null, message, args);
+        }
+
+        /// <summary>
+        /// Builds a notice for the error with <see cref="Severity.Error"/> severity and associated exception.
+        /// </summary>
+        /// <param name="exception">Exception associated with the error.</param>
+        /// <param name="message">Message describing the error.</param>
+        /// <param name="args">Objects positionally formatted into the error message.</param>
+        public Notice BuildNotice(Exception exception, string message, params object[] args)
+        {
+            return BuildNotice(Severity.Error, exception, message, args);
+        }
+
+        /// <summary>
+        /// Builds a notice for the exception with specified severity.
+        /// </summary>
+        /// <param name="severity">Severity level of the error.</param>
+        /// <param name="exception">Exception to report on.</param>
+        public Notice BuildNotice(Severity severity, Exception exception)
+        {
+            return BuildNotice(severity, exception, null, null);
+        }
+
+        /// <summary>
+        /// Builds a notice for the error with specified severity.
+        /// </summary>
+        /// <param name="severity">Severity level of the error.</param>
+        /// <param name="message">Message describing the error.</param>
+        /// <param name="args">Objects positionally formatted into the error message.</param>
+        public Notice BuildNotice(Severity severity, string message, params object[] args)
+        {
+            return BuildNotice(severity, null, message, args);
+        }
+
+        /// <summary>
+        /// Builds a notice for the error with specified severity and associated exception.
+        /// </summary>
+        /// <param name="severity">Severity level of the error.</param>
+        /// <param name="exception">Exception associated with the error.</param>
+        /// <param name="message">Message describing the error.</param>
+        /// <param name="args">Objects positionally formatted into the error message.</param>
+        public Notice BuildNotice(Severity severity, Exception exception, string message, params object[] args)
+        {
+            var log = InternalLogger.CreateInstance();
+            var notice = NoticeBuilder.BuildNotice();
+
+            log.Trace("Setting error entries");
+            notice.SetErrorEntries(exception,
+                Utils.GetMessage(config.FormatProvider, message, args));
+
+            log.Trace("Setting configuration context");
+            notice.SetConfigurationContext(config);
+
+            log.Trace("Setting severity to {0}", severity);
+            notice.SetSeverity(severity);
+
+            log.Trace("Setting environment context");
+#if NET452
+            notice.SetEnvironmentContext(Dns.GetHostName(), Environment.OSVersion.VersionString, "C#/NET45");
+#elif NETSTANDARD1_4
+            // TODO: check https://github.com/dotnet/corefx/issues/4306 for "Environment.MachineName"
+            notice.SetEnvironmentContext("", RuntimeInformation.OSDescription, "C#/NETCORE");
+#elif NETSTANDARD2_0
+            notice.SetEnvironmentContext(Dns.GetHostName(), RuntimeInformation.OSDescription, "C#/NETCORE2");
+#endif
+
+            log.Trace("Notice was created");
+            return notice;
+        }
+
+        /// <summary>
+        /// Sets HTTP context properties into the notice.
+        /// </summary>
+        public Notice SetHttpContext(Notice notice, IHttpContext context)
+        {
+            notice.SetHttpContext(context, config);
+            return notice;
+        }
+
+        /// <summary>
+        /// Notifies Airbrake on the error using the <see cref="Notice"/> object.
+        /// </summary>
+        /// <param name="notice">The notice describing the error.</param>
+        /// <returns>Task which represents an asynchronous operation to Airbrake.</returns>
+        public Task<AirbrakeResponse> NotifyAsync(Notice notice)
         {
             var log = InternalLogger.CreateInstance();
 
@@ -105,43 +180,13 @@ namespace Sharpbrake.Client
             var tcs = new TaskCompletionSource<AirbrakeResponse>();
             try
             {
-                if (Utils.IsIgnoredEnvironment(config.Environment, config.IgnoreEnvironments))
+                if (notice == null)
                 {
-                    var response = new AirbrakeResponse { Status = RequestStatus.Ignored };
+                    var response = new AirbrakeResponse {Status = RequestStatus.Ignored};
                     tcs.SetResult(response);
-                    log.Trace("Ignoring notice for environment: {0}", config.Environment);
+                    log.Trace("Notice is empty");
                     return tcs.Task;
                 }
-
-                var noticeBuilder = new NoticeBuilder();
-
-                log.Trace("Setting error entries");
-                noticeBuilder.SetErrorEntries(exception);
-
-                log.Trace("Setting configuration context");
-                noticeBuilder.SetConfigurationContext(config);
-
-                log.Trace("Setting severity to {0}", severity);
-                noticeBuilder.SetSeverity(severity);
-
-                if (context != null)
-                {
-                    log.Trace("Setting HTTP context");
-                    noticeBuilder.SetHttpContext(context, config);
-                }
-
-                log.Trace("Setting environment context");
-
-#if NET452
-                noticeBuilder.SetEnvironmentContext(Dns.GetHostName(), Environment.OSVersion.VersionString, "C#/NET45");
-#elif NETSTANDARD1_4
-                // TODO: check https://github.com/dotnet/corefx/issues/4306 for "Environment.MachineName"
-                noticeBuilder.SetEnvironmentContext("", RuntimeInformation.OSDescription, "C#/NETCORE");
-#elif NETSTANDARD2_0
-                noticeBuilder.SetEnvironmentContext(Dns.GetHostName(), RuntimeInformation.OSDescription, "C#/NETCORE2");
-#endif
-                var notice = noticeBuilder.ToNotice();
-                log.Trace("Notice was created");
 
                 if (filters.Count > 0)
                 {
@@ -151,9 +196,17 @@ namespace Sharpbrake.Client
 
                 if (notice == null)
                 {
-                    var response = new AirbrakeResponse { Status = RequestStatus.Ignored };
+                    var response = new AirbrakeResponse {Status = RequestStatus.Ignored};
                     tcs.SetResult(response);
                     log.Trace("Ignoring notice because of filters");
+                    return tcs.Task;
+                }
+
+                if (Utils.IsIgnoredEnvironment(config.Environment, config.IgnoreEnvironments))
+                {
+                    var response = new AirbrakeResponse {Status = RequestStatus.Ignored};
+                    tcs.SetResult(response);
+                    log.Trace("Ignoring notice for environment: {0}", config.Environment);
                     return tcs.Task;
                 }
 
@@ -187,7 +240,7 @@ namespace Sharpbrake.Client
                         using (var requestWriter = new StreamWriter(requestStream))
                         {
                             log.Trace("Writing to request stream");
-                            requestWriter.Write(NoticeBuilder.ToJsonString(notice));
+                            requestWriter.Write(notice.ToJsonString());
                         }
 
                         request.GetResponseAsync().ContinueWith(responseTask =>
@@ -232,7 +285,6 @@ namespace Sharpbrake.Client
                                             airbrakeResponse = (AirbrakeResponse)serializer.ReadObject(memoryStream);
                                         }
 
-                                        //JsonConvert.DeserializeObject<AirbrakeResponse>(responseReader.ReadToEnd());
                                         // Note: a success response means that the data has been received and accepted for processing.
                                         // Use the URL or id from the response to query the status of an error. This will tell you if the error has been processed,
                                         // or if it has been rejected for reasons including invalid JSON and rate limiting.
@@ -242,6 +294,8 @@ namespace Sharpbrake.Client
 
                                         tcs.SetResult(airbrakeResponse);
                                         log.Trace("Notice was registered: {0}", airbrakeResponse.Url);
+
+                                        logResponse?.Invoke(airbrakeResponse);
                                     }
                                 }
                                 finally
@@ -257,7 +311,7 @@ namespace Sharpbrake.Client
             catch (Exception ex)
             {
                 tcs.SetException(ex);
-                log.Trace("Exception occurred when preparing notice: {0}", ex.Message);
+                log.Trace("Exception occurred when sending notice: {0}", ex.Message);
                 return tcs.Task;
             }
 
