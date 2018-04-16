@@ -216,6 +216,14 @@ namespace Sharpbrake.Client
                 request.Accept = "application/json";
                 request.Method = "POST";
 
+                if (!string.IsNullOrEmpty(config.ProxyUri))
+                {
+                    request.Proxy = Utils.ConfigureProxy(
+                        config.ProxyUri,
+                        config.ProxyUsername,
+                        config.ProxyPassword);
+                }
+
                 request.GetRequestStreamAsync().ContinueWith(requestStreamTask =>
                 {
                     if (requestStreamTask.IsFaulted)

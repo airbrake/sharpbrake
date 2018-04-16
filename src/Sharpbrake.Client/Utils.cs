@@ -46,7 +46,7 @@ namespace Sharpbrake.Client
         {
             if (string.IsNullOrEmpty(uri)) return null;
 
-            var proxy = new WebProxy(new Uri(uri), true);
+            var proxy = new WebProxy(new Uri(uri));
 
             if (!string.IsNullOrEmpty(username) &&
                 !string.IsNullOrEmpty(password))
