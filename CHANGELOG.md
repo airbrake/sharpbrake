@@ -3,6 +3,11 @@ Sharpbrake Changelog
 
 ### master
 
+### [v5.0.1][v5.0.1] (April 16, 2018)
+
+* Fixed broken proxy support
+  ([#88](https://github.com/airbrake/sharpbrake/pull/88))
+
 ### [v5.0.0][v5.0.0] (March 07, 2018)
 
 * Added support for error messages
@@ -93,3 +98,4 @@ Sharpbrake Changelog
 [v4.4.0]: https://github.com/airbrake/sharpbrake/releases/tag/v4.4.0
 [v4.5.0]: https://github.com/airbrake/sharpbrake/releases/tag/v4.5.0
 [v5.0.0]: https://github.com/airbrake/sharpbrake/releases/tag/v5.0.0
+[v5.0.1]: https://github.com/airbrake/sharpbrake/releases/tag/v5.0.1
