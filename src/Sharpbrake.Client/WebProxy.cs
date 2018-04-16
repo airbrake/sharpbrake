@@ -1,25 +1,23 @@
-﻿#if NETSTANDARD1_4 || NETSTANDARD2_0
+﻿#if NETSTANDARD1_4
 using System;
 using System.Net;
 
 namespace Sharpbrake.Client
 {
     /// <summary>
-    /// Implementation of <see cref="IWebProxy"/> for .NET Core.
+    /// Implementation of <see cref="IWebProxy"/> for .NET Core 1.x.
     /// </summary>
     /// <remarks>
-    /// There is no default implementation of IWebProxy in .NET Core.
+    /// There is no default implementation of IWebProxy in .NET Core 1.x.
     /// For more details see here: https://github.com/NuGet/Home/issues/1858#issuecomment-167651718
     /// </remarks>
     public class WebProxy : IWebProxy
     {
-        private readonly bool bypassOnLocal;
         private readonly Uri uri;
 
-        public WebProxy(Uri uri, bool bypassOnLocal)
+        public WebProxy(Uri uri)
         {
             this.uri = uri ?? throw new ArgumentNullException(nameof(uri));
-            this.bypassOnLocal = bypassOnLocal;
         }
 
         public ICredentials Credentials { get; set; }
@@ -31,7 +29,7 @@ namespace Sharpbrake.Client
 
         public bool IsBypassed(Uri host)
         {
-            return bypassOnLocal;
+            return false;
         }
     }
 }
