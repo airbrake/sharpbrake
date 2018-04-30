@@ -66,6 +66,14 @@ Sharpbrake.Log4net            | Airbrake log4net appender                       
 Sharpbrake.Log4net.Web        | Airbrake log4net appender for ASP.NET                  | [![NuGet](https://img.shields.io/nuget/v/Sharpbrake.Log4net.Web.svg)](https://www.nuget.org/packages/Sharpbrake.Log4net.Web)
 Sharpbrake.Extensions.Logging | Airbrake provider for Microsoft.Extensions.Logging     | [![NuGet](https://img.shields.io/nuget/v/Sharpbrake.Extensions.Logging.svg)](https://www.nuget.org/packages/Sharpbrake.Extensions.Logging)
 
+For .NET 4.5.2 applications and above install the `Sharpbrake.Client` package
+available on [NuGet](https://www.nuget.org/packages/Sharpbrake.Client) via your
+[Package Manager Console](https://docs.nuget.org/docs/start-here/using-the-package-manager-console):
+
+```
+PM> Install-Package Sharpbrake.Client
+```
+
 Examples
 --------
 
