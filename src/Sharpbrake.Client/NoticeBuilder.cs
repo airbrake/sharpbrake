@@ -135,6 +135,7 @@ namespace Sharpbrake.Client
             notice.HttpContext = httpContext;
 
             notice.Context.Url = httpContext.Url;
+            notice.Context.UserAddr = httpContext.UserAddr;
             notice.Context.UserAgent = httpContext.UserAgent;
 
             if (httpContext.Action != null && httpContext.Component != null)

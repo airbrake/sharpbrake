@@ -10,6 +10,7 @@ namespace Sharpbrake.Client.Tests.Mocks
         public IDictionary<string, string> Session { get; set; }
         public IDictionary<string, string> Parameters { get; set; }
         public IDictionary<string, string> EnvironmentVars { get; set; }
+        public string UserAddr { get; set; }
         public string UserAgent { get; set; }
         public string Url { get; set; }
         public string UserId { get; set; }

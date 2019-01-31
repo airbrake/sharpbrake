@@ -21,6 +21,11 @@ namespace Sharpbrake.Client
         /// Environment variables which usually take from HTML headers.
         /// </summary>
         IDictionary<string, string> EnvironmentVars { get; set; }
+        
+        /// <summary>
+        /// The IP address of the user that triggered the notice.
+        /// </summary>
+        string UserAddr { get; set; }
 
         /// <summary>
         /// Browser user agent.

@@ -70,6 +70,12 @@ namespace Sharpbrake.Client.Model
         public string Url { get; set; }
 
         /// <summary>
+        /// The IP address of the user that triggered the notice.
+        /// </summary>
+        [DataMember(Name = "userAddr", EmitDefaultValue = false)]
+        public string UserAddr { get; set; }
+        
+        /// <summary>
         /// The requesting browser's full user-agent string.
         /// </summary>
         [DataMember(Name = "userAgent", EmitDefaultValue = false)]

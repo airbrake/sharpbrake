@@ -15,6 +15,7 @@ namespace Sharpbrake.Web
         public IDictionary<string, string> Parameters { get; set; }
         public IDictionary<string, string> EnvironmentVars { get; set; }
 
+        public string UserAddr { get; set; }
         public string UserAgent { get; set; }
         public string Url { get; set; }
 
@@ -34,6 +35,9 @@ namespace Sharpbrake.Web
             UserId = null;
 
             Url = request.Url.AbsoluteUri;
+            UserAddr = request.ServerVariables["HTTP_X_FORWARDED_FOR"];
+            if (string.IsNullOrEmpty(UserAddr) || UserAddr.ToLower() == "unknown")
+	            UserAddr = request.ServerVariables["REMOTE_ADDR"];
             UserAgent = request.UserAgent;
 
             UserName = context.User != null && context.User.Identity.IsAuthenticated

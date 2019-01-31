@@ -19,6 +19,7 @@ namespace Sharpbrake.Web
         public IDictionary<string, string> Parameters { get; set; }
         public IDictionary<string, string> EnvironmentVars { get; set; }
 
+        public string UserAddr { get; set; }
         public string UserAgent { get; set; }
         public string Url { get; set; }
 
@@ -65,6 +66,7 @@ namespace Sharpbrake.Web
                 var environmentVars = context.Request.Headers.Keys.ToDictionary<string, string, string>(key => key, key => context.Request.Headers[key]);
                 EnvironmentVars = environmentVars;
 
+                UserAddr = context.Request.HttpContext.Connection.RemoteIpAddress.ToString();
                 UserAgent = context.Request.Headers["User-Agent"].ToString();
             }
 

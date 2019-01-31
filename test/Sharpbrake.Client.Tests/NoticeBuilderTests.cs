@@ -172,15 +172,17 @@ namespace Sharpbrake.Client.Tests
         }
 
         [Theory,
-         InlineData("", ""),
-         InlineData("url", ""),
-         InlineData("url", "userAgent")]
-        public void SetHttpContext_ContextHttpParameters(string url, string userAgent)
+         InlineData("", "", ""),
+         InlineData("url", "", ""),
+         InlineData("url", "userAgent", ""),
+         InlineData("url", "userAgent", "userAddr")]
+        public void SetHttpContext_ContextHttpParameters(string url, string userAgent, string userAddr)
         {
             var httpContext = new FakeHttpContext
             {
                 Url = url,
-                UserAgent = userAgent
+                UserAgent = userAgent,
+                UserAddr = userAddr
             };
 
             var notice = NoticeBuilder.BuildNotice();
