@@ -3,6 +3,11 @@ Sharpbrake Changelog
 
 ### master
 
+### [v5.0.2][v5.0.2] (Jan 31, 2019)
+
+* Fixed an issue with context.userAddr
+  ([#88](https://github.com/airbrake/sharpbrake/pull/98))
+
 ### [v5.0.1][v5.0.1] (April 16, 2018)
 
 * Fixed broken proxy support
@@ -99,3 +104,4 @@ Sharpbrake Changelog
 [v4.5.0]: https://github.com/airbrake/sharpbrake/releases/tag/v4.5.0
 [v5.0.0]: https://github.com/airbrake/sharpbrake/releases/tag/v5.0.0
 [v5.0.1]: https://github.com/airbrake/sharpbrake/releases/tag/v5.0.1
+[v5.0.2]: https://github.com/airbrake/sharpbrake/releases/tag/v5.0.2
