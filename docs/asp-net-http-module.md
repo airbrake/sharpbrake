@@ -3,21 +3,19 @@ ASP.NET MVC 5 application with error reporting
 
 ## Complete with [Getting Started with ASP.NET MVC 5](https://docs.microsoft.com/en-us/aspnet/mvc/overview/getting-started/introduction/getting-started) tutorial
 
-After completing you should have a sample ASP.NET MVC application. We are going to add exception reporting to that application. You can also download the completed project [here](https://github.com/Rick-Anderson/MvcMovie5).
+After completing you should have a sample ASP.NET MVC application. We are going to add exception reporting to that application.
 
 ## Integrate Airbrake ASP.NET HTTP Module
 
 ### Enable reporting of all unhandled exceptions
 
-1. Open [MvcMovie5](https://github.com/Rick-Anderson/MvcMovie5) in Visual Studio. Build and run solution to ensure that everything works.
-
-2. Install the `Sharpbrake.Http.Module` package using `Package Manager Console` (View -> Other Windows -> Package Manager Console):
+1. Install the `Sharpbrake.Http.Module` package using `Package Manager Console` (View -> Other Windows -> Package Manager Console):
 
    ```powershell
    PM> Install-Package Sharpbrake.Http.Module
    ```
 
-3. Go to the project's `Web.config` and add your ProjectId and ProjectKey to the `appSettings` section:
+2. Go to the project's `Web.config` and add your ProjectId and ProjectKey to the `appSettings` section:
 
    ```xml
    <appSettings>
@@ -26,7 +24,7 @@ After completing you should have a sample ASP.NET MVC application. We are going 
    </appSettings>
    ```
 
-4. Add the `AirbrakeHttpModule` module to the `system.webServer` section in `Web.config`:
+3. Add the `AirbrakeHttpModule` module to the `system.webServer` section in `Web.config`:
 
    ```xml
    <add name="Airbrake" type="Sharpbrake.Http.Module.AirbrakeHttpModule, Sharpbrake.Http.Module"/>
