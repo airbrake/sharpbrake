@@ -1,6 +1,5 @@
 #tool nuget:?package=OpenCover&version=4.6.519
 #tool nuget:?package=ReportGenerator&version=2.5.8
-#addin nuget:?package=Cake.StrongNameTool
 
 var target = Context.Argument("target", "Default");
 
@@ -82,9 +81,9 @@ Task("Sign-Assemblies")
 {
     var assemblies = GetFiles("./src/**/*.dll");
 
-    StrongNameReSign(assemblies, new StrongNameToolSettings {
-		Container = "StrongKey.snk"
-    });
+	foreach (var assembly in assemblies) {
+		System.Diagnostics.Process.Start("sn.exe", "-R \"" + assembly.FullPath + "\" ./StrongKey.snk");
+    }
 });
 
 Task("Run-Unit-Tests")
