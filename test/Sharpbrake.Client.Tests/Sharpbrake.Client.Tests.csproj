@@ -2,6 +2,9 @@
 
   <PropertyGroup>
     <TargetFrameworks>netcoreapp2.0;net452</TargetFrameworks>
+	<SignAssembly>true</SignAssembly>
+	<DelaySign>true</DelaySign>
+	<AssemblyOriginatorKeyFile>..\..\PublicKey.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <ItemGroup>

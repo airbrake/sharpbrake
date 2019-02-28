@@ -8,7 +8,12 @@ using System.Runtime.Serialization.Json;
 using System.Text;
 using Sharpbrake.Client.Model;
 
-[assembly: InternalsVisibleTo("Sharpbrake.Client.Tests")]
+[assembly: InternalsVisibleTo("Sharpbrake.Client.Tests, PublicKey="+
+    "00240000048000009400000006020000002400005253413100040000010001008908299a9b6c75"+
+    "9ca80a7a8b408800460fef23364646ffa994b45c4a15854791c8310ce74a475f768a8a6415e371"+
+    "331b6831981680f0a80f71559a4513a99feaf31fedd65cbab8d4f2a1f6e3995bb0bc3bdc31b382"+
+    "512c88925a75f59102fbe077c2664fba1321a66db7f2341d39f10bb7ee6d8670412315dccf78e9"+
+    "dd0e66da")]
 
 namespace Sharpbrake.Client
 {

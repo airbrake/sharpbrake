@@ -75,8 +75,20 @@ Task("Build")
     }
 });
 
+Task("Sign-Assemblies")
+    .IsDependentOn("Build")
+    .Does(() =>
+{
+    var assemblies = GetFiles("./src/**/*.dll");
+
+    StrongNameReSign(assemblies, new StrongNameToolSettings {
+		Container = "StrongKey.snk"
+    });
+});
+
 Task("Run-Unit-Tests")
     .IsDependentOn("Build")
+	.IsDependentOn("Sign-Assemblies")
     .Does(() =>
 {
     var testProject = MakeAbsolute(new FilePath("./test/Sharpbrake.Client.Tests/Sharpbrake.Client.Tests.csproj")).FullPath;

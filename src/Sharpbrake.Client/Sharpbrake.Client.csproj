@@ -12,6 +12,9 @@
     <TargetFrameworks>netstandard2.0;netstandard1.4;net452</TargetFrameworks>
     <Title>Airbrake C#/.NET Notifier</Title>
     <Version>5.0.2</Version>
+	<SignAssembly>true</SignAssembly>
+	<DelaySign>true</DelaySign>
+	<AssemblyOriginatorKeyFile>..\..\PublicKey.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.4'">

@@ -19,9 +19,16 @@ environment:
     secure: OwB/A40na4tDmHKU8y5LeDl19drugeGF6DXX1cv528s=
   # where email notification on build analysis results will be sent
   COVERITY_NOTIFICATION_EMAIL: sharpbrake@airbrake.io
+  
+  STRONG_KEY_DECRYPT:
+    secure: GDWeVcxc4PEYjnmEnCDfTA==
 
 init:
   - git config --global core.autocrlf true
+  
+install:
+  - ps: iex ((New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/appveyor/secure-file/master/install.ps1'))
+  - cmd: appveyor-tools\secure-file -decrypt StrongKey.snk.enc -secret %STRONG_KEY_DECRYPT%
 
 build_script:
   - ps: .\build.ps1 -target $env:TARGET -configuration $env:CONFIGURATION
