@@ -81,7 +81,7 @@ Task("Sign-Assemblies")
 {
     var assemblies = GetFiles("./src/**/*.dll");
 
-	var snPath = null;
+	string snPath = null;
 	foreach (var file in GetFiles("c:\\**\\sn.exe")) {
 		snPath = file.FullPath;
 		break;
