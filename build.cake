@@ -1,5 +1,6 @@
 #tool nuget:?package=OpenCover&version=4.6.519
 #tool nuget:?package=ReportGenerator&version=2.5.8
+#addin nuget:?package=Cake.StrongNameTool
 
 var target = Context.Argument("target", "Default");
 
