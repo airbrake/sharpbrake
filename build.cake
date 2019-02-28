@@ -81,8 +81,13 @@ Task("Sign-Assemblies")
 {
     var assemblies = GetFiles("./src/**/*.dll");
 
+	var snPath = null;
+	foreach (var file in GetFiles("c:\\**\\sn.exe")) {
+		snPath = file.FullPath;
+		break;
+	}
 	foreach (var assembly in assemblies) {
-		System.Diagnostics.Process.Start("sn.exe", "-R \"" + assembly.FullPath + "\" ./StrongKey.snk");
+		System.Diagnostics.Process.Start(snPath, "-R \"" + assembly.FullPath + "\" ./StrongKey.snk");
     }
 });
 
