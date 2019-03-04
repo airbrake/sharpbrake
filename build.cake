@@ -83,7 +83,7 @@ Task("Sign-Assemblies")
     var assemblies = GetFiles("./src/**/*.dll");
 
 	StrongNameReSign(assemblies, new StrongNameToolSettings {
-		Container = "./StrongKey.snk"
+		Container = "StrongKey.snk"
     });
 });
 
