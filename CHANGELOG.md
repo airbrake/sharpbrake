@@ -3,10 +3,15 @@ Sharpbrake Changelog
 
 ### master
 
+### [v5.0.3][v5.0.3] (Mar 05, 2019)
+
+* Added assemblies signing, to get assemblies with strong names
+  ([#103](https://github.com/airbrake/sharpbrake/pull/103))
+
 ### [v5.0.2][v5.0.2] (Jan 31, 2019)
 
 * Fixed an issue with context.userAddr
-  ([#88](https://github.com/airbrake/sharpbrake/pull/98))
+  ([#98](https://github.com/airbrake/sharpbrake/pull/98))
 
 ### [v5.0.1][v5.0.1] (April 16, 2018)
 
@@ -105,3 +110,4 @@ Sharpbrake Changelog
 [v5.0.0]: https://github.com/airbrake/sharpbrake/releases/tag/v5.0.0
 [v5.0.1]: https://github.com/airbrake/sharpbrake/releases/tag/v5.0.1
 [v5.0.2]: https://github.com/airbrake/sharpbrake/releases/tag/v5.0.2
+[v5.0.3]: https://github.com/airbrake/sharpbrake/releases/tag/v5.0.3

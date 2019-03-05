@@ -11,7 +11,7 @@
     <RepositoryUrl>https://github.com/airbrake/sharpbrake</RepositoryUrl>
     <TargetFrameworks>net452</TargetFrameworks>
     <Title>Airbrake ASP.NET HTTP Module</Title>
-    <Version>3.0.2</Version>
+    <Version>3.0.3</Version>
 	<SignAssembly>true</SignAssembly>
 	<DelaySign>true</DelaySign>
 	<AssemblyOriginatorKeyFile>..\..\PublicKey.snk</AssemblyOriginatorKeyFile>

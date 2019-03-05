@@ -21,7 +21,7 @@ namespace Sharpbrake.Client.Tests
         {
             var notifierInfo = new NotifierInfo();
 
-            Assert.Equal("5.0.2", notifierInfo.Version);
+            Assert.Equal("5.0.3", notifierInfo.Version);
         }
 
         [Fact]
