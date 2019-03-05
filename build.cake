@@ -75,8 +75,25 @@ Task("Build")
     }
 });
 
+Task("Sign-Assemblies")
+    .IsDependentOn("Build")
+    .Does(() =>
+{
+    var assemblies = GetFiles("./src/**/*.dll");
+
+	FilePath snPath = null;
+	foreach (var file in GetFiles("C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v10.0A\\bin\\**\\sn.exe")) {
+		snPath = file;
+		break;
+	}
+	foreach (var assembly in assemblies) {
+		StartProcess(snPath, "-R \"" + assembly.FullPath + "\" ./StrongKey.snk");
+    }
+});
+
 Task("Run-Unit-Tests")
     .IsDependentOn("Build")
+	.IsDependentOn("Sign-Assemblies")
     .Does(() =>
 {
     var testProject = MakeAbsolute(new FilePath("./test/Sharpbrake.Client.Tests/Sharpbrake.Client.Tests.csproj")).FullPath;

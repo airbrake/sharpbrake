@@ -13,6 +13,9 @@
     <TargetFrameworks>netstandard2.0;netstandard1.4</TargetFrameworks>
     <Title>Sharpbrake.Extensions.Logging</Title>
     <Version>2.0.2</Version>
+	<SignAssembly>true</SignAssembly>
+	<DelaySign>true</DelaySign>
+	<AssemblyOriginatorKeyFile>..\..\PublicKey.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
