@@ -86,9 +86,7 @@ Task("Sign-Assemblies")
 		snPath = file;
 		break;
 	}
-	Information(snPath.FullPath);
 	foreach (var assembly in assemblies) {
-		Information(assembly.FullPath);
 		StartProcess(snPath, "-R \"" + assembly.FullPath + "\" ./StrongKey.snk");
     }
 });
