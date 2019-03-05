@@ -81,15 +81,15 @@ Task("Sign-Assemblies")
 {
     var assemblies = GetFiles("./src/**/*.dll");
 
-	string snPath = null;
+	FilePath snPath = null;
 	foreach (var file in GetFiles("C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v10.0A\\bin\\**\\sn.exe")) {
-		snPath = file.FullPath;
+		snPath = file;
 		break;
 	}
-	Information(snPath);
+	Information(snPath.FullPath);
 	foreach (var assembly in assemblies) {
 		Information(assembly.FullPath);
-		System.Diagnostics.Process.Start(snPath, "-R \"" + assembly.FullPath + "\" ./StrongKey.snk");
+		StartProcess(snPath, "-R \"" + assembly.FullPath + "\" ./StrongKey.snk");
     }
 });
 
