@@ -79,15 +79,26 @@ Task("Sign-Assemblies")
     .IsDependentOn("Build")
     .Does(() =>
 {
-    var assemblies = GetFiles("./src/**/*.dll");
+    var assemblies = GetFiles("./src/*/bin/Release/*/Sharpbrake*.dll");
 
 	FilePath snPath = null;
 	foreach (var file in GetFiles("C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v10.0A\\bin\\**\\sn.exe")) {
 		snPath = file;
 		break;
 	}
+	Information("SN Tool " + snPath.FullPath);
+    var sign = FileExists("./StrongKey.snk");
 	foreach (var assembly in assemblies) {
-		StartProcess(snPath, "-R \"" + assembly.FullPath + "\" ./StrongKey.snk");
+		if (sign)
+        {
+            Information("Trying to resign assembly " + assembly.FullPath);
+		    StartProcess(snPath, "-R \"" + assembly.FullPath + "\" ./StrongKey.snk");
+        }
+        else
+        {
+            Information("Registering assembly for verification skipping " + assembly.FullPath);
+		    StartProcess(snPath, "-Vr \"" + assembly.FullPath + "\"");
+        }
     }
 });
 

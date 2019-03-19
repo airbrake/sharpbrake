@@ -27,8 +27,12 @@ init:
   - git config --global core.autocrlf true
   
 install:
-  - ps: iex ((New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/appveyor/secure-file/master/install.ps1'))
-  - cmd: appveyor-tools\secure-file -decrypt StrongKey.snk.enc -secret %STRONG_KEY_DECRYPT%
+  - ps: |
+      if (-not $env:APPVEYOR_PULL_REQUEST_NUMBER)
+      {
+        iex ((New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/appveyor/secure-file/master/install.ps1'))
+        appveyor-tools\secure-file -decrypt StrongKey.snk.enc -secret $env:STRONG_KEY_DECRYPT
+      }
 
 build_script:
   - ps: .\build.ps1 -target $env:TARGET -configuration $env:CONFIGURATION
