@@ -24,6 +24,29 @@ namespace Sharpbrake.Client
     {
         private const int MaxInnerExceptions = 3;
 
+#if !NETSTANDARD1_4
+        /// <summary>
+        /// Gets number of frames to skip when logging messages
+        /// </summary>
+        /// <param name="stackTrace">Current Stack Trace</param>
+        /// <returns></returns>
+        private static int GetNumberOfFramesToSkip(StackTrace stackTrace)
+        {
+            var stackFrames = stackTrace.GetFrames();
+            int result = 0;
+            if (stackFrames != null)
+                foreach (var stackFrame in stackFrames)
+                {
+                    var methodBase = stackFrame.GetMethod();
+                    if (!(methodBase.DeclaringType?.Namespace?.StartsWith("Sharpbrake.", StringComparison.Ordinal) ?? false)
+                        && !(methodBase.DeclaringType?.Namespace?.StartsWith("log4net.", StringComparison.Ordinal) ?? false))
+                        break;
+                    ++result;
+                }
+            return result;
+        }
+#endif
+
         /// <summary>
         /// Creates a new instance of <see cref="Notice"/>.
         /// </summary>
@@ -66,8 +89,8 @@ namespace Sharpbrake.Client
                 {
                     Message = message,
 #if !NETSTANDARD1_4
-                    // skip 2 stack frames (for NotifyAsync and SetErrorEntries methods)
-                    Backtrace = Utils.GetBacktrace(new StackTrace(3, true))
+                    // skip stack frames (for NotifyAsync and SetErrorEntries methods)
+                    Backtrace = Utils.GetBacktrace(new StackTrace(GetNumberOfFramesToSkip(new StackTrace()), true))
 #endif
                 });
             }
