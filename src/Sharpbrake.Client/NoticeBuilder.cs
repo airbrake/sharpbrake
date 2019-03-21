@@ -37,11 +37,16 @@ namespace Sharpbrake.Client
             if (stackFrames != null)
                 foreach (var stackFrame in stackFrames)
                 {
-                    var methodBase = stackFrame.GetMethod();
-                    if (!(methodBase.DeclaringType?.Namespace?.StartsWith("Sharpbrake.", StringComparison.Ordinal) ?? false)
-                        && !(methodBase.DeclaringType?.Namespace?.StartsWith("log4net.", StringComparison.Ordinal) ?? false))
-                        break;
-                    ++result;
+                    var namesp = stackFrame.GetMethod().DeclaringType?.Namespace;
+                    if (string.IsNullOrEmpty(namesp)
+                        || namesp.StartsWith("Sharpbrake", StringComparison.Ordinal)
+                        || namesp.StartsWith("log4net", StringComparison.Ordinal)
+                        || namesp.StartsWith("NLog", StringComparison.Ordinal))
+                    {
+                        ++result;
+                        continue;
+                    }
+                    break;
                 }
             return result;
         }
