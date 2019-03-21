@@ -3,6 +3,15 @@ Sharpbrake Changelog
 
 ### master
 
+### [v5.0.4][v5.0.4] (Mar 21, 2019)
+
+* Fixed an issue with file and method names reported from Log4Net.
+  ([#109](https://github.com/airbrake/sharpbrake/pull/109))
+* Fixed an issue with security protocols.
+  ([#107](https://github.com/airbrake/sharpbrake/pull/107))
+* Fixed an issue with Log4Net Assemblies strong name.
+  ([#106](https://github.com/airbrake/sharpbrake/pull/106))
+
 ### [v5.0.3][v5.0.3] (Mar 05, 2019)
 
 * Added assemblies signing, to get assemblies with strong names
