@@ -4,7 +4,7 @@ environment:
 
   NUGET_SERVER_URL: https://www.nuget.org/api/v2/package
   NUGET_API_KEY:
-    secure: ZOfa/I/yJnmrPhguM/uqkDDSXlMkHlsX4G2jq1ZtLWlAyIZI435++yrJQsJJ+Fyk
+    secure: UnnrTJYiqB5WLsS6/TP2kijxQbPVVK8YdVqeQtpZGB7bJ6RENJeW+3pS9Ui1WrDe
 
   MYGET_SERVER_URL: https://www.myget.org/F/sharpbrake/api/v2
   MYGET_SYMBOL_SERVER_URL: https://www.myget.org/F/sharpbrake/symbols/api/v2/package
