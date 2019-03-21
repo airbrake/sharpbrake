@@ -210,6 +210,9 @@ namespace Sharpbrake.Client
                     return tcs.Task;
                 }
 
+#if !NETSTANDARD1_4
+                ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
+#endif
                 var request = httpRequestHandler.Get();
 
                 request.ContentType = "application/json";
