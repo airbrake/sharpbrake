@@ -11,7 +11,7 @@
     <RepositoryUrl>https://github.com/airbrake/sharpbrake</RepositoryUrl>
     <TargetFrameworks>netstandard2.0;netstandard1.4;net452</TargetFrameworks>
     <Title>Airbrake C#/.NET Notifier</Title>
-    <Version>5.0.3</Version>
+    <Version>5.0.4</Version>
 	<SignAssembly>true</SignAssembly>
 	<DelaySign>true</DelaySign>
 	<AssemblyOriginatorKeyFile>..\..\PublicKey.snk</AssemblyOriginatorKeyFile>
