@@ -11,7 +11,7 @@
     <RepositoryUrl>https://github.com/airbrake/sharpbrake</RepositoryUrl>
     <TargetFrameworks>netstandard2.0;netstandard1.4</TargetFrameworks>
     <Title>Airbrake ASP.NET Core Middleware</Title>
-    <Version>3.0.4</Version>
+    <Version>3.0.5</Version>
 	<SignAssembly>true</SignAssembly>
 	<DelaySign>true</DelaySign>
 	<AssemblyOriginatorKeyFile>..\..\PublicKey.snk</AssemblyOriginatorKeyFile>
