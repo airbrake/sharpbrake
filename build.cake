@@ -187,6 +187,7 @@ Task("Create-Packages")
     {
         Configuration = configuration,
         OutputDirectory = nugetDir,
+        NoBuild = true,
         ArgumentCustomization = args => args.Append("--include-symbols")
     };
 
