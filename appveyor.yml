@@ -9,7 +9,7 @@ environment:
   MYGET_SERVER_URL: https://www.myget.org/F/sharpbrake/api/v2
   MYGET_SYMBOL_SERVER_URL: https://www.myget.org/F/sharpbrake/symbols/api/v2/package
   MYGET_API_KEY:
-    secure: /A9mXORoeN6GMmx8yyygIO/r5Jgx91h8Rzw/udcXPzUj/CmBI0Te+nagcL2RGcjR
+    secure: B04FarFRxVG5SnJK1jA0rsi2R0BORUOhSlTFf10/ON2+TWX5Uu3GMaURf+ZaoyQ6
 
   CODECOV_TOKEN:
     secure: en+k+6zevr/HyzZacXebARkVoy5Dy0p7pj2LdfYC+eUOveJPoCe6C4LsLbBbaTPY
