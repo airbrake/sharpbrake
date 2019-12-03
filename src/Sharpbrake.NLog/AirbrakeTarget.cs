@@ -1,5 +1,7 @@
-﻿using NLog;
+﻿using System;
+using NLog;
 using NLog.Config;
+using NLog.Layouts;
 using NLog.Targets;
 using Sharpbrake.Client;
 using Sharpbrake.Client.Model;
@@ -79,6 +81,11 @@ namespace Sharpbrake.NLog
         /// </summary>
         public string BlacklistKeys { get; set; }
 
+        public AirbrakeTarget()
+        {
+            Layout = "${message}";
+        }
+
         /// <summary>
         /// Maps NLog log level onto <see cref="Severity"/> of the error.
         /// </summary>
@@ -115,29 +122,43 @@ namespace Sharpbrake.NLog
 
             var config = new AirbrakeConfig
             {
-                Environment = Environment,
-                AppVersion = AppVersion,
-                ProjectKey = ProjectKey,
-                ProjectId = ProjectId,
-                Host = Host,
-                LogFile = LogFile,
-                ProxyUri = ProxyUri,
-                ProxyUsername = ProxyUsername,
-                ProxyPassword = ProxyPassword,
-                IgnoreEnvironments = Utils.ParseParameter(IgnoreEnvironments),
-                WhitelistKeys = Utils.ParseParameter(WhitelistKeys),
-                BlacklistKeys = Utils.ParseParameter(BlacklistKeys)
+                Environment = RenderSimpleLayout(Environment, nameof(Environment)),
+                AppVersion = RenderSimpleLayout(AppVersion, nameof(AppVersion)),
+                ProjectKey = RenderSimpleLayout(ProjectKey, nameof(ProjectKey)),
+                ProjectId = RenderSimpleLayout(ProjectId, nameof(ProjectId)),
+                Host = RenderSimpleLayout(Host, nameof(Host)),
+                LogFile = RenderSimpleLayout(LogFile, nameof(LogFile)),
+                ProxyUri = RenderSimpleLayout(ProxyUri, nameof(ProxyUri)),
+                ProxyUsername = RenderSimpleLayout(ProxyUsername, nameof(ProxyUsername)),
+                ProxyPassword = RenderSimpleLayout(ProxyPassword, nameof(ProxyPassword)),
+                IgnoreEnvironments = Utils.ParseParameter(RenderSimpleLayout(IgnoreEnvironments, nameof(IgnoreEnvironments))),
+                WhitelistKeys = Utils.ParseParameter(RenderSimpleLayout(WhitelistKeys, nameof(WhitelistKeys))),
+                BlacklistKeys = Utils.ParseParameter(RenderSimpleLayout(BlacklistKeys, nameof(BlacklistKeys))),
             };
 
             Notifier = new AirbrakeNotifier(config);
         }
+
+        private string RenderSimpleLayout(string simpleLayout, string propertyName)
+        {
+            try
+            {
+                return string.IsNullOrEmpty(simpleLayout) ? string.Empty : new SimpleLayout(simpleLayout).Render(LogEventInfo.CreateNullEvent());
+            }
+            catch
+            {
+                return simpleLayout;
+            }
+        }
+
 
         /// <summary>
         /// Notifies Airbrake on the error.
         /// </summary>
         protected override void Write(LogEventInfo logEvent)
         {
-            var notice = Notifier.BuildNotice(GetErrorSeverity(logEvent.Level), logEvent.Exception, logEvent.FormattedMessage);
+            var mesage = Layout?.Render(logEvent) ?? logEvent.FormattedMessage;
+            var notice = Notifier.BuildNotice(GetErrorSeverity(logEvent.Level), logEvent.Exception, mesage);
             Notifier.SetHttpContext(notice, GetHttpContext());
             Notifier.NotifyAsync(notice);
         }
