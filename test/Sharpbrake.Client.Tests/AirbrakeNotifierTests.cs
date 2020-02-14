@@ -170,7 +170,7 @@ namespace Sharpbrake.Client.Tests
             using (var requestHandler = new FakeHttpRequestHandler())
             {
                 requestHandler.HttpResponse.StatusCode = HttpStatusCode.Created;
-                requestHandler.HttpResponse.ResponseJson = "{\"Id\":\"12345\",\"Url\":\"https://airbrake.io/\"}";
+                requestHandler.HttpResponse.ResponseJson = "{\"Id\":\"12345\",\"Url\":\"https://api.airbrake.io/\"}";
 
                 var notifier = new AirbrakeNotifier(config, requestHandler);
 
@@ -225,7 +225,7 @@ namespace Sharpbrake.Client.Tests
             using (var requestHandler = new FakeHttpRequestHandler())
             {
                 requestHandler.HttpResponse.StatusCode = HttpStatusCode.Created;
-                requestHandler.HttpResponse.ResponseJson = "{\"Id\":\"12345\",\"Url\":\"https://airbrake.io/\"}";
+                requestHandler.HttpResponse.ResponseJson = "{\"Id\":\"12345\",\"Url\":\"https://api.airbrake.io/\"}";
 
                 requestHandler.HttpRequest.IsFaultedGetRequestStream = faultedTask == "GetRequestStream";
                 requestHandler.HttpRequest.IsFaultedGetResponse = faultedTask == "GetResponse";
@@ -257,7 +257,7 @@ namespace Sharpbrake.Client.Tests
             using (var requestHandler = new FakeHttpRequestHandler())
             {
                 requestHandler.HttpResponse.StatusCode = HttpStatusCode.Created;
-                requestHandler.HttpResponse.ResponseJson = "{\"Id\":\"12345\",\"Url\":\"https://airbrake.io/\"}";
+                requestHandler.HttpResponse.ResponseJson = "{\"Id\":\"12345\",\"Url\":\"https://api.airbrake.io/\"}";
 
                 requestHandler.HttpRequest.IsCanceledGetRequestStream = canceledTask == "GetRequestStream";
                 requestHandler.HttpRequest.IsCanceledGetResponse = canceledTask == "GetResponse";
@@ -291,7 +291,7 @@ namespace Sharpbrake.Client.Tests
                 requestHandler.HttpResponse.StatusCode = isStatusCodeCreated
                     ? HttpStatusCode.Created
                     : HttpStatusCode.BadRequest;
-                requestHandler.HttpResponse.ResponseJson = "{\"Id\":\"12345\",\"Url\":\"https://airbrake.io/\"}";
+                requestHandler.HttpResponse.ResponseJson = "{\"Id\":\"12345\",\"Url\":\"https://api.airbrake.io/\"}";
 
                 var notifier = new AirbrakeNotifier(config, requestHandler);
                 var airbrakeResponse = notifier.NotifyAsync(NoticeBuilder.BuildNotice()).Result;
