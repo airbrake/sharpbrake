@@ -29,14 +29,14 @@ namespace Sharpbrake.Client.Tests
         }
 
         [Theory,
-        InlineData("https://airbrake.io"),
-        InlineData("https://airbrake.io/")]
+        InlineData("https://api.airbrake.io"),
+        InlineData("https://api.airbrake.io/")]
         public void GetRequestUri_ShouldProduceValidEndpointRegardlessHostEnding(string host)
         {
             const string projectId = "127348";
             const string projectKey = "e2046ca6e4e9214b24ad252e3c99a0f6";
 
-            const string expected = "https://airbrake.io/api/v3/projects/127348/notices?key=e2046ca6e4e9214b24ad252e3c99a0f6";
+            const string expected = "https://api.airbrake.io/api/v3/projects/127348/notices?key=e2046ca6e4e9214b24ad252e3c99a0f6";
 
             var actual = Utils.GetRequestUri(projectId, projectKey, host);
 
@@ -46,8 +46,8 @@ namespace Sharpbrake.Client.Tests
         [Theory,
         InlineData("", "127348", "e2046ca6e4e9214b24ad252e3c99a0f6"),
         InlineData(null, "127348", "e2046ca6e4e9214b24ad252e3c99a0f6"),
-        InlineData("", "e2046ca6e4e9214b24ad252e3c99a0f6", "https://airbrake.io/"),
-        InlineData("127348", "", "https://airbrake.io/")]
+        InlineData("", "e2046ca6e4e9214b24ad252e3c99a0f6", "https://api.airbrake.io/"),
+        InlineData("127348", "", "https://api.airbrake.io/")]
         public void GetRequestUri_ShouldThrowArgumentNullExceptionIfProjectIdOrKeyAreEmptyOrNull(string projectId, string projectKey, string host)
         {
             var exception = Record.Exception(() => Utils.GetRequestUri(projectId, projectKey, host));
@@ -64,7 +64,7 @@ namespace Sharpbrake.Client.Tests
             const string projectId = "127348";
             const string projectKey = "e2046ca6e4e9214b24ad252e3c99a0f6";
 
-            const string expected = "https://airbrake.io/api/v3/projects/127348/notices?key=e2046ca6e4e9214b24ad252e3c99a0f6";
+            const string expected = "https://api.airbrake.io/api/v3/projects/127348/notices?key=e2046ca6e4e9214b24ad252e3c99a0f6";
 
             var actual = Utils.GetRequestUri(projectId, projectKey, host);
 
@@ -423,7 +423,7 @@ namespace Sharpbrake.Client.Tests
             var response = new AirbrakeResponse
             {
                 Id = "0005488e-8947-223e-90ca-16fec30b6d72",
-                Url = "https://airbrake.io/locate/0005488e-8947-223e-90ca-16fec30b6d72",
+                Url = "https://api.airbrake.io/locate/0005488e-8947-223e-90ca-16fec30b6d72",
                 Status = RequestStatus.Success
             };
 

@@ -34,7 +34,7 @@ namespace Sharpbrake.Client
                 throw new ArgumentNullException(nameof(projectKey));
 
             if (string.IsNullOrEmpty(host))
-                host = "https://airbrake.io";
+                host = "https://api.airbrake.io";
 
             return string.Format("{0}/api/v3/projects/{1}/notices?key={2}", host.Trim('/'), projectId, projectKey);
         }
