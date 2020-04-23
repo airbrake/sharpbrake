@@ -12,7 +12,7 @@
     <RepositoryUrl>https://github.com/airbrake/sharpbrake</RepositoryUrl>
     <TargetFrameworks>netstandard2.0;netstandard1.4;net452</TargetFrameworks>
     <Title>Sharpbrake Log4net</Title>
-    <Version>2.0.5</Version>
+    <Version>2.0.6</Version>
 	<SignAssembly>true</SignAssembly>
 	<DelaySign>true</DelaySign>
 	<AssemblyOriginatorKeyFile>..\..\PublicKey.snk</AssemblyOriginatorKeyFile>
