@@ -3,11 +3,6 @@ Sharpbrake Changelog
 
 ### master
 
-### [v5.0.6][v5.0.6] (Apr 23, 2020)
-
-* Updated API URL.
-  ([#121](https://github.com/airbrake/sharpbrake/pull/121))
-
 ### [v5.0.5][v5.0.5] (Mar 22, 2019)
 
 * Fixed an issue with Log4Net Assemblies strong name.
