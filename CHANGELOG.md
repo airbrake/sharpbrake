@@ -3,7 +3,7 @@ Sharpbrake Changelog
 
 ### master
 
-### [v5.0.6][v5.0.6] (Apr 23, 2020)
+### [v5.0.6][v5.0.6] (Apr 28, 2020)
 
 * Updated API URL.
   ([#121](https://github.com/airbrake/sharpbrake/pull/121))
