@@ -37,7 +37,7 @@ Key features
 * Support for environments<sup>[[link](#environment)]</sup>
 * Support for proxying<sup>[[link](#proxy)]</sup>
 * Filters support (filter out sensitive or unwanted data that shouldn't be sent
-  to our servers)<sup>[[link](#blacklistkeys)]</sup>
+  to our servers)<sup>[[link](#blocklist)]</sup>
 * Ability to ignore errors from specified environments<sup>[[link](#ignoreenvironments)]</sup>
 * Severity support<sup>[[link](#setting-severity)]</sup>
 
@@ -269,7 +269,7 @@ var config = new AirbrakeConfig {
 };
 ```
 
-#### BlacklistKeys
+#### Blocklist
 
 Specifies which keys in the payload (parameters, session data, environment data,
 etc.) should be filtered. Before sending an error, filtered keys will be
@@ -277,7 +277,7 @@ substituted with the `[Filtered]` label.
 
 ```csharp
 var config = new AirbrakeConfig {
-    BlacklistKeys = new List<string> { "password", "creditCard", "email" }
+    Blocklist = new List<string> { "password", "creditCard", "email" }
 };
 
 // The dashboard will display this parameter as filtered, but other values won't
@@ -288,11 +288,11 @@ var config = new AirbrakeConfig {
 //     creditCard: '[Filtered]' }
 ```
 
-**Note:** `BlacklistKeys` has higher priority than `WhitelistKeys`. It means
+**Note:** `Blocklist` has higher priority than `Allowlist`. It means
 that if you set the same value into both blacklist and whitelist - that value
 will be filtered out.
 
-#### WhitelistKeys
+#### Allowlist
 
 Specifies which keys in the payload (parameters, session data, environment data,
 etc.) should _not_ be filtered. All other keys will be substituted with the
@@ -300,7 +300,7 @@ etc.) should _not_ be filtered. All other keys will be substituted with the
 
 ```csharp
 var config = new AirbrakeConfig {
-    WhitelistKeys = new List<string> { "user", "email", "accountId" }
+    Allowlist = new List<string> { "user", "email", "accountId" }
 };
 
 // The dashboard will display this parameter as is, but all other values will be

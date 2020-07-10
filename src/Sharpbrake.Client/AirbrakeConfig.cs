@@ -67,12 +67,12 @@ namespace Sharpbrake.Client
         /// List of the parameters which will not be filtered.
         /// If count of parameters is not zero - all not listed parameters will be filtered.
         /// </summary>
-        public IList<string> WhitelistKeys { get; set; }
+        public IList<string> Allowlist { get; set; }
 
         /// <summary>
         /// List of the parameters which will be filtered out.
         /// </summary>
-        public IList<string> BlacklistKeys { get; set; }
+        public IList<string> Blocklist { get; set; }
 
         /// <summary>
         /// Formatting information for error messages.
@@ -85,8 +85,8 @@ namespace Sharpbrake.Client
         public AirbrakeConfig()
         {
             IgnoreEnvironments = new List<string>();
-            WhitelistKeys = new List<string>();
-            BlacklistKeys = new List<string>();
+            Allowlist = new List<string>();
+            Blocklist = new List<string>();
         }
 
         /// <summary>
