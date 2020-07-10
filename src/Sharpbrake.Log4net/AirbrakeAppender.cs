@@ -71,12 +71,12 @@ namespace Sharpbrake.Log4net
         /// Comma-separated list of parameters which will not be filtered.
         /// If count of parameters is not zero - all not listed parameters will be filtered.
         /// </summary>
-        public string WhitelistKeys { get; set; }
+        public string Allowlist { get; set; }
 
         /// <summary>
         /// Comma-separated list of parameters which will be filtered out.
         /// </summary>
-        public string BlacklistKeys { get; set; }
+        public string Blocklist { get; set; }
 
         /// <summary>
         /// Initializes the appender based on the options set.
@@ -97,8 +97,8 @@ namespace Sharpbrake.Log4net
                 ProxyUsername = ProxyUsername,
                 ProxyPassword = ProxyPassword,
                 IgnoreEnvironments = Utils.ParseParameter(IgnoreEnvironments),
-                WhitelistKeys = Utils.ParseParameter(WhitelistKeys),
-                BlacklistKeys = Utils.ParseParameter(BlacklistKeys)
+                Allowlist = Utils.ParseParameter(Allowlist),
+                Blocklist = Utils.ParseParameter(Blocklist)
             };
 
             Notifier = new AirbrakeNotifier(config);

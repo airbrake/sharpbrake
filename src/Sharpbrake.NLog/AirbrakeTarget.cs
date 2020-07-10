@@ -74,12 +74,12 @@ namespace Sharpbrake.NLog
         /// Comma-separated list of parameters which will not be filtered.
         /// If count of parameters is not zero - all not listed parameters will be filtered.
         /// </summary>
-        public string WhitelistKeys { get; set; }
+        public string Allowlist { get; set; }
 
         /// <summary>
         /// Comma-separated list of parameters which will be filtered out.
         /// </summary>
-        public string BlacklistKeys { get; set; }
+        public string Blocklist { get; set; }
 
         public AirbrakeTarget()
         {
@@ -132,8 +132,8 @@ namespace Sharpbrake.NLog
                 ProxyUsername = RenderSimpleLayout(ProxyUsername, nameof(ProxyUsername)),
                 ProxyPassword = RenderSimpleLayout(ProxyPassword, nameof(ProxyPassword)),
                 IgnoreEnvironments = Utils.ParseParameter(RenderSimpleLayout(IgnoreEnvironments, nameof(IgnoreEnvironments))),
-                WhitelistKeys = Utils.ParseParameter(RenderSimpleLayout(WhitelistKeys, nameof(WhitelistKeys))),
-                BlacklistKeys = Utils.ParseParameter(RenderSimpleLayout(BlacklistKeys, nameof(BlacklistKeys))),
+                Allowlist = Utils.ParseParameter(RenderSimpleLayout(Allowlist, nameof(Allowlist))),
+                Blocklist = Utils.ParseParameter(RenderSimpleLayout(Blocklist, nameof(Blocklist))),
             };
 
             Notifier = new AirbrakeNotifier(config);

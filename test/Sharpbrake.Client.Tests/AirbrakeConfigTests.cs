@@ -15,8 +15,8 @@ namespace Sharpbrake.Client.Tests
 
             Assert.NotNull(config);
             Assert.NotNull(config.IgnoreEnvironments);
-            Assert.NotNull(config.WhitelistKeys);
-            Assert.NotNull(config.BlacklistKeys);
+            Assert.NotNull(config.Allowlist);
+            Assert.NotNull(config.Blocklist);
         }
 
         [Fact]
@@ -28,7 +28,7 @@ namespace Sharpbrake.Client.Tests
                 {"Airbrake:ProjectKey", "e2046ca6e4e9214b24ad252e3c99a0f6"},
                 {"Airbrake:Environment", "test"},
                 {"IgnoreEnvironments", "test,dev" },
-                {"BlacklistKeys", "password" },
+                {"Blocklist", "password" },
                 {"Environment", "dev"},
                 {"NonExistingProperty", "value"}
             };
@@ -45,9 +45,9 @@ namespace Sharpbrake.Client.Tests
             Assert.True(config.IgnoreEnvironments[0] == "test");
             Assert.True(config.IgnoreEnvironments[1] == "dev");
 
-            Assert.NotNull(config.BlacklistKeys);
-            Assert.True(config.BlacklistKeys.Count == 1);
-            Assert.True(config.BlacklistKeys[0] == "password");
+            Assert.NotNull(config.Blocklist);
+            Assert.True(config.Blocklist.Count == 1);
+            Assert.True(config.Blocklist[0] == "password");
         }
     }
 }

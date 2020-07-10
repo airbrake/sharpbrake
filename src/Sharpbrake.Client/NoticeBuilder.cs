@@ -192,8 +192,8 @@ namespace Sharpbrake.Client
             }
             else
             {
-                var blackListRegex = Utils.CompileRegex(config.BlacklistKeys);
-                var whiteListRegex = Utils.CompileRegex(config.WhitelistKeys);
+                var blackListRegex = Utils.CompileRegex(config.Blocklist);
+                var whiteListRegex = Utils.CompileRegex(config.Allowlist);
 
                 notice.Params = Utils.FilterParameters(httpContext.Parameters, blackListRegex, whiteListRegex);
                 notice.EnvironmentVars = Utils.FilterParameters(httpContext.EnvironmentVars, blackListRegex, whiteListRegex);
