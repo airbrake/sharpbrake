@@ -59,7 +59,7 @@ namespace Sharpbrake.Web
             if (context.Session != null && context.Session.Keys.Count > 0)
             {
                 Session = context.Session.Keys.Cast<string>()
-                    .ToDictionary(key => key, key => context.Session[key].ToString());
+                    .ToDictionary(key => key, key => context.Session[key]?.ToString());
             }
 
             var routeData = request.RequestContext.RouteData;
