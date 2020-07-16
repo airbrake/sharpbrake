@@ -3,6 +3,15 @@ Sharpbrake Changelog
 
 ### master
 
+### [v5.1.0][v5.1.0] (Jul 16, 2020)
+
+* Fixed NullReferenceException in AspNetHttpContext constructor when session key exists with null value.
+  ([#129](https://github.com/airbrake/sharpbrake/pull/129))
+* Replaced filter parameters `BlacklistKeys` and `WhitelistKeys` with `Blocklist` and `Allowlist`
+  ([#128](https://github.com/airbrake/sharpbrake/pull/128))
+* Updated NLog to latest version, instead of BETA
+  ([#93](https://github.com/airbrake/sharpbrake/pull/93))
+
 ### [v5.0.6][v5.0.6] (Apr 28, 2020)
 
 * Updated API URL.

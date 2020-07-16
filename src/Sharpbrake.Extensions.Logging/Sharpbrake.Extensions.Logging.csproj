@@ -12,7 +12,7 @@
     <RepositoryUrl>https://github.com/airbrake/sharpbrake</RepositoryUrl>
     <TargetFrameworks>netstandard2.0;netstandard1.4</TargetFrameworks>
     <Title>Sharpbrake.Extensions.Logging</Title>
-    <Version>2.0.6</Version>
+    <Version>2.1.0</Version>
 	<SignAssembly>true</SignAssembly>
 	<DelaySign>true</DelaySign>
 	<AssemblyOriginatorKeyFile>..\..\PublicKey.snk</AssemblyOriginatorKeyFile>
