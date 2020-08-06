@@ -4,7 +4,7 @@ Sharpbrake
 [![Build status](https://ci.appveyor.com/api/projects/status/e4o7ffmhq6y4rhei/branch/master?svg=true)](https://ci.appveyor.com/project/airbrake/sharpbrake/branch/master)
 [![Coverage](https://codecov.io/gh/airbrake/sharpbrake/branch/master/graph/badge.svg)](https://codecov.io/gh/airbrake/sharpbrake)
 
-![The Sharpbrake notifier for C#/.NET](https://s3.amazonaws.com/airbrake-github-assets/sharpbrake/arthur-sharpbrake.jpeg)
+![The Sharpbrake notifier for C#/.NET](dot_net_flag.jpg)
 
 * [Example apps](https://github.com/airbrake/sharpbrake/tree/master/examples)
 
@@ -586,7 +586,7 @@ to the Airbrake dashboard.
    ```csharp
    var airbrakeTarget = (AirbrakeTarget)LogManager.Configuration.AllTargets
        .FirstOrDefault(t => t.GetType() == typeof(AirbrakeTarget));
-   
+
    airbrakeTarget?.Notifier.AddFilter(notice =>
    {
        // clear environment variables with "token"-related keys
@@ -595,7 +595,7 @@ to the Airbrake dashboard.
            if (key.ToLowerInvariant().Contains("token"))
                notice.EnvironmentVars[key] = "[removed]";
        });
-   
+
        return notice;
    });
    ```
