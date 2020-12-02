@@ -1,10 +1,12 @@
+<p align="center">
+  <img src="https://airbrake-github-assets.s3.amazonaws.com/brand/airbrake-full-logo.png" width="200">
+</p>
+
 Sharpbrake
 ==========
 
 [![Build status](https://ci.appveyor.com/api/projects/status/e4o7ffmhq6y4rhei/branch/master?svg=true)](https://ci.appveyor.com/project/airbrake/sharpbrake/branch/master)
 [![Coverage](https://codecov.io/gh/airbrake/sharpbrake/branch/master/graph/badge.svg)](https://codecov.io/gh/airbrake/sharpbrake)
-
-![The Sharpbrake notifier for C#/.NET](dot_net_flag.jpg)
 
 * [Example apps](https://github.com/airbrake/sharpbrake/tree/master/examples)
 
