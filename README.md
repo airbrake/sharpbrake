@@ -234,7 +234,7 @@ var config = new AirbrakeConfig {
 
 #### Host
 
-By default, it is set to `airbrake.io`. A `host` is a web address containing a
+By default, it is set to `api.airbrake.io`. A `host` is a web address containing a
 scheme ("http" or "https"), a host and a port. You can omit the port (80 will be
 assumed) and the scheme ("https" will be assumed).
 
